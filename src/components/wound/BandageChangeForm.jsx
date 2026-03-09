@@ -119,7 +119,8 @@ function VoiceRecorder({ transcript, onTranscriptChange }) {
         </button>
       </div>
       <textarea
-        className="w-full px-3 py-2.5 rounded-xl border border-white/15 bg-white/8 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors resize-none"
+        className="w-full px-3 py-2.5 rounded-xl border border-white/15 text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors resize-none"
+        style={{ background: "rgba(0,0,0,0.45)", color: "rgba(255,255,255,0.92)" }}
         rows={5}
         placeholder="Speak or type wound care notes here… e.g. 'Flushed wound with dilute saline, cleaned margins with chlorhexidine, placed honey alginate primary, ABD pad secondary. Change in 2 days.'"
         value={transcript}
