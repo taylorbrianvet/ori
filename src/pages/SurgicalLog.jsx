@@ -142,27 +142,24 @@ export default function SurgicalLog() {
         </button>
       </div>
 
-      {/* Tabs + Search */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-5">
-        <div className="flex gap-1 p-1 rounded-xl bg-white/8 w-fit">
-          {[
-            { id: "all", label: "All Procedures" },
-            { id: "mine", label: "My Log" },
-          ].map((tab) => (
+      {/* Service Filters + Search */}
+      <div className="flex flex-col gap-3 mb-5">
+        <div className="flex flex-wrap gap-1.5">
+          {["all", ...SURGICAL_SERVICES].map((svc) => (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                activeTab === tab.id
-                  ? "bg-white/15 text-white"
-                  : "text-white/50 hover:text-white/80"
+              key={svc}
+              onClick={() => setActiveService(svc)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                activeService === svc
+                  ? "bg-white/20 text-white"
+                  : "bg-white/8 text-white/50 hover:bg-white/12 hover:text-white/80"
               }`}
             >
-              {tab.label}
+              {svc === "all" ? "All Services" : svc}
             </button>
           ))}
         </div>
-        <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/8 border border-white/10">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/8 border border-white/10">
           <Search className="w-3.5 h-3.5 text-white/40 shrink-0" />
           <input
             className="bg-transparent text-xs text-white placeholder:text-white/35 outline-none flex-1"
