@@ -18,6 +18,14 @@ import {
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
+const SURGICAL_SERVICES = [
+  "Orthopedic Surgery",
+  "Soft Tissue Surgery",
+  "Interventional Radiology",
+  "Ophthalmology",
+  "Neurology",
+];
+
 function formatSurgeryDate(dateStr) {
   if (!dateStr) return "—";
   try {
