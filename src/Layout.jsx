@@ -14,6 +14,13 @@ const navItems = [
 
 export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then((u) => {
+      if (u?.role === "admin") setIsAdmin(true);
+    }).catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-background font-inter flex">
