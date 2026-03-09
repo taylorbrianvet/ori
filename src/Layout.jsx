@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Stethoscope, Phone, BookOpen, Menu, X, Settings } from "lucide-react";
+import { Home, Stethoscope, Phone, BookOpen, Menu, X, Settings, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 
