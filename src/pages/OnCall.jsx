@@ -66,15 +66,15 @@ export default function OnCall() {
       />
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-secondary/60 rounded-2xl mb-6 w-fit">
+      <div className="flex gap-1 p-1 bg-white/8 backdrop-blur rounded-2xl mb-6 w-fit border border-white/10">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
               activeTab === tab.id
-                ? "bg-white shadow-sm text-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-white/20 text-white shadow-sm"
+                : "text-white/45 hover:text-white/75"
             }`}
           >
             <tab.icon className="w-3.5 h-3.5" />
@@ -88,7 +88,7 @@ export default function OnCall() {
         <div>
           {servicesWithOnCall.length === 0 ? (
             <div className="glass-card p-10 text-center">
-              <p className="text-muted-foreground text-sm">No on-call assignments recorded for today.</p>
+              <p className="text-white/50 text-sm">No on-call assignments recorded for today.</p>
             </div>
           ) : (
             <>
@@ -117,12 +117,12 @@ export default function OnCall() {
                     {servicesWithoutOnCall.map((svc) => (
                       <div
                         key={svc.id}
-                        className="glass-card py-2.5 px-3 cursor-pointer hover:bg-secondary/60 transition-colors"
+                        className="glass-card py-2.5 px-3 cursor-pointer hover:bg-white/12 transition-colors"
                         onClick={() => navigate(createPageUrl("OnCallDetail") + `?serviceId=${svc.id}`)}
                       >
                         <div className="flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30 shrink-0" />
-                          <p className="text-xs text-muted-foreground truncate">{svc.service_name}</p>
+                          <p className="text-xs text-white/50 truncate">{svc.service_name}</p>
                         </div>
                       </div>
                     ))}
