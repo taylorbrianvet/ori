@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const DEFAULT_TILES = [
-  { key: "my_workspace", title: "My Workspace", subtext: "Personal schedule, logs, and tools.", page: "Home", icon: LayoutGrid, defaultImage: "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=80" },
+  { key: "my_workspace", title: "My Workspace", subtext: "Personal schedule, logs, and tools.", page: "MyWorkspace", icon: LayoutGrid, defaultImage: "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=80" },
   { key: "services", title: "Services", subtext: "Browse all hospital departments.", page: "Services", icon: Stethoscope, defaultImage: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&q=80" },
   { key: "patient_care", title: "Patient Care", subtext: "Wound care and patient tools.", page: "PatientCare", icon: HeartPulse, defaultImage: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80" },
   { key: "transfers", title: "Transfers", subtext: "Manage inter-service transfers.", page: "Home", icon: ArrowRightLeft, defaultImage: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80" },
