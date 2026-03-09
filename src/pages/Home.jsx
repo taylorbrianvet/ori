@@ -29,6 +29,11 @@ export default function Home() {
     initialData: [],
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => base44.auth.me(),
+  });
+
   const configMap = Object.fromEntries((configs || []).map((c) => [c.tile_key, c]));
 
   const tiles = DEFAULT_TILES.map((t) => ({
