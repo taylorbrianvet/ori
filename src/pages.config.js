@@ -52,10 +52,10 @@ import Directory from './pages/Directory';
 import Home from './pages/Home';
 import OnCall from './pages/OnCall';
 import OnCallDetail from './pages/OnCallDetail';
+import PatientCare from './pages/PatientCare';
 import Resources from './pages/Resources';
 import ServiceDetail from './pages/ServiceDetail';
 import Services from './pages/Services';
-import PatientCare from './pages/PatientCare';
 import __Layout from './Layout.jsx';
 
 
@@ -65,10 +65,10 @@ export const PAGES = {
     "Home": Home,
     "OnCall": OnCall,
     "OnCallDetail": OnCallDetail,
+    "PatientCare": PatientCare,
     "Resources": Resources,
     "ServiceDetail": ServiceDetail,
     "Services": Services,
-    "PatientCare": PatientCare,
 }
 
 export const pagesConfig = {
