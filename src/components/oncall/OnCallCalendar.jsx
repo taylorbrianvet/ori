@@ -52,7 +52,7 @@ export default function OnCallCalendar({ schedules, services }) {
       {/* Day headers */}
       <div className="grid grid-cols-7 mb-1">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-          <div key={d} className="text-center text-[10px] font-semibold text-muted-foreground py-1.5">{d}</div>
+          <div key={d} className="text-center text-[10px] font-semibold text-white/40 py-1.5">{d}</div>
         ))}
       </div>
 
@@ -70,24 +70,24 @@ export default function OnCallCalendar({ schedules, services }) {
               onClick={() => setSelected(isSelected ? null : d)}
               className={`relative rounded-xl p-1 min-h-[52px] cursor-pointer transition-all duration-150 ${
                 !inMonth ? "opacity-25 pointer-events-none" : ""
-              } ${today ? "bg-primary/10 ring-1 ring-primary/30" : "hover:bg-secondary/60"} ${
-                isSelected ? "bg-secondary ring-2 ring-primary/40" : ""
+              } ${today ? "bg-white/20 ring-1 ring-white/40" : "hover:bg-white/8"} ${
+                isSelected ? "bg-white/15 ring-2 ring-white/30" : ""
               }`}
             >
-              <span className={`text-[11px] font-medium block text-center ${today ? "text-primary font-bold" : "text-foreground"}`}>
+              <span className={`text-[11px] font-medium block text-center ${today ? "text-white font-bold" : "text-white/70"}`}>
                 {format(d, "d")}
               </span>
               <div className="mt-0.5 space-y-0.5">
                 {entries.slice(0, 2).map((e, j) => {
                   const svc = serviceMap[e.service_id];
                   return (
-                    <div key={j} className="text-[8px] px-1 py-0.5 rounded-md bg-primary/15 text-primary truncate font-medium leading-tight">
+                    <div key={j} className="text-[8px] px-1 py-0.5 rounded-md bg-white/20 text-white/90 truncate font-medium leading-tight">
                       {svc?.service_name?.split(" ")[0] || e.user_name?.split(" ")[0] || "•"}
                     </div>
                   );
                 })}
                 {entries.length > 2 && (
-                  <span className="text-[8px] text-muted-foreground pl-1">+{entries.length - 2}</span>
+                  <span className="text-[8px] text-white/40 pl-1">+{entries.length - 2}</span>
                 )}
               </div>
             </div>
@@ -97,19 +97,19 @@ export default function OnCallCalendar({ schedules, services }) {
 
       {/* Selected day detail */}
       {selected && (
-        <div className="mt-4 pt-4 border-t border-border/50">
-          <p className="text-xs font-semibold text-foreground mb-2">{format(selected, "EEEE, MMMM d")}</p>
+        <div className="mt-4 pt-4 border-t border-white/10">
+          <p className="text-xs font-semibold text-white/90 mb-2">{format(selected, "EEEE, MMMM d")}</p>
           {selectedEntries.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No on-call assignments.</p>
+            <p className="text-xs text-white/40">No on-call assignments.</p>
           ) : (
             <div className="space-y-1.5">
               {selectedEntries.map((e, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary/60 shrink-0" />
-                  <span className="text-foreground font-medium">{e.user_name || "Staff"}</span>
-                  <span className="text-muted-foreground">·</span>
-                  <span className="text-muted-foreground">{serviceMap[e.service_id]?.service_name || "Service"}</span>
-                  {e.team_name && <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-secondary text-muted-foreground">{e.team_name}</span>}
+                  <span className="text-white/90 font-medium">{e.user_name || "Staff"}</span>
+                  <span className="text-white/30">·</span>
+                  <span className="text-white/50">{serviceMap[e.service_id]?.service_name || "Service"}</span>
+                  {e.team_name && <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/10 text-white/55">{e.team_name}</span>}
                 </div>
               ))}
             </div>
