@@ -257,7 +257,7 @@ export default function SurgicalLog() {
           {/* Mobile cards */}
           <div className="lg:hidden divide-y divide-white/5">
             {filtered.map((entry) => (
-              <div key={entry.id} className="p-4 space-y-2">
+              <div key={entry.id} onClick={() => handleRowClick(entry)} className={`p-4 space-y-2 ${canEdit ? "cursor-pointer hover:bg-white/5 transition-colors" : ""}`}>
                 <div className="flex items-start justify-between">
                   <div>
                     <span className="text-sm font-semibold text-white">{entry.case_number}</span>
