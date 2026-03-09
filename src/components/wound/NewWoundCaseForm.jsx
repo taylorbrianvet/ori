@@ -30,6 +30,7 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
     wound_locations: [""],
   });
   const [saving, setSaving] = useState(false);
+  const [existingCases, setExistingCases] = useState(null); // null = no conflict, array = conflict found
 
   const { data: staffList = [] } = useQuery({
     queryKey: ["staff-all"],
