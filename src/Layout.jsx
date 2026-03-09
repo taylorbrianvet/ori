@@ -56,8 +56,21 @@ export default function Layout({ children, currentPageName }) {
             );
           })}
         </nav>
-        <div className="p-4 border-t border-border/50">
-          <p className="text-[11px] text-muted-foreground text-center">© 2026 VetHub</p>
+        <div className="p-4 border-t border-border/50 space-y-1">
+          {isAdmin && (
+            <Link
+              to={createPageUrl("Admin")}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                currentPageName === "Admin"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              }`}
+            >
+              <Settings className={`w-[18px] h-[18px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-primary" : ""}`} />
+              Admin
+            </Link>
+          )}
+          <p className="text-[11px] text-muted-foreground text-center pt-1">© 2026 VetHub</p>
         </div>
       </aside>
 
