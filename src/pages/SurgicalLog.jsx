@@ -196,7 +196,7 @@ export default function SurgicalLog() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-white/10">
-                  {["Case #", "Date", "Service", "Species", "Laterality", "Procedure", "Primary Surgeon", "Residents", "Faculty", "Emergency", "Logged"].map((h) => (
+                  {["Case #", "Date", "Service", "Species", "Laterality", "Procedure", "Primary Surgeon", "Residents", "Faculty", "Emergency"].map((h) => (
                     <th key={h} className="px-4 py-3 text-left text-white/45 font-medium whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
