@@ -253,7 +253,7 @@ export default function SurgicalLogForm({ onClose, onSuccess, staffList = [] }) 
     }
   };
 
-  const fieldClass = "w-full px-3 py-2.5 rounded-xl border border-white/15 bg-white/8 text-sm text-white placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-colors";
+  const fieldClass = "w-full px-3 py-2.5 rounded-xl border border-white/15 bg-white/8 text-sm text-white placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-colors [color-scheme:dark]";
   const labelClass = "block text-xs text-white/60 mb-1.5";
 
   return (
