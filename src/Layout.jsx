@@ -26,14 +26,14 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen font-inter flex">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10">
-        <div className="p-6 border-b border-border/50">
+        <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
-              <Stethoscope className="w-5 h-5 text-primary-foreground" />
+            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center shadow-inner">
+              <Stethoscope className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-base font-semibold text-foreground tracking-tight">VetHub</h1>
-              <p className="text-[11px] text-muted-foreground font-medium">Hospital Management</p>
+              <h1 className="text-base font-semibold text-white tracking-tight">VetHub</h1>
+              <p className="text-[11px] text-white/50 font-medium">Hospital Management</p>
             </div>
           </div>
         </div>
@@ -44,33 +44,33 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.page}
                 to={createPageUrl(item.page)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                   isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-white/15 text-white shadow-sm"
+                    : "text-white/55 hover:bg-white/10 hover:text-white/90"
                 }`}
               >
-                <item.icon className={`w-[18px] h-[18px] transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-primary" : ""}`} />
+                <item.icon className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-white" : "text-white/50"}`} />
                 {item.name}
               </Link>
             );
           })}
         </nav>
-        <div className="p-4 border-t border-border/50 space-y-1">
+        <div className="p-4 border-t border-white/10 space-y-1">
           {isAdmin && (
             <Link
               to={createPageUrl("Admin")}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                 currentPageName === "Admin"
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-white/55 hover:bg-white/10 hover:text-white/90"
               }`}
             >
-              <Settings className={`w-[18px] h-[18px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-primary" : ""}`} />
+              <Settings className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-white" : "text-white/50"}`} />
               Admin
             </Link>
           )}
-          <p className="text-[11px] text-muted-foreground text-center pt-1">© 2026 VetHub</p>
+          <p className="text-[11px] text-white/30 text-center pt-1">© 2026 VetHub</p>
         </div>
       </aside>
 
