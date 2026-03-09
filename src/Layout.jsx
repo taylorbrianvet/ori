@@ -142,6 +142,20 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   );
                 })}
+                {isAdmin && (
+                  <Link
+                    to={createPageUrl("Admin")}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      currentPageName === "Admin"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    }`}
+                  >
+                    <Settings className={`w-[18px] h-[18px] ${currentPageName === "Admin" ? "text-primary" : ""}`} />
+                    Admin
+                  </Link>
+                )}
               </nav>
             </motion.div>
           </>
