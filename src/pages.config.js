@@ -57,6 +57,7 @@ import Resources from './pages/Resources';
 import ServiceDetail from './pages/ServiceDetail';
 import Services from './pages/Services';
 import SurgicalLog from './pages/SurgicalLog';
+import MyWorkspace from './pages/MyWorkspace';
 import __Layout from './Layout.jsx';
 
 
@@ -71,6 +72,7 @@ export const PAGES = {
     "ServiceDetail": ServiceDetail,
     "Services": Services,
     "SurgicalLog": SurgicalLog,
+    "MyWorkspace": MyWorkspace,
 }
 
 export const pagesConfig = {
