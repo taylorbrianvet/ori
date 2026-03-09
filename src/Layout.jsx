@@ -23,7 +23,7 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background font-inter flex">
+    <div className="min-h-screen font-inter flex">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10">
         <div className="p-6 border-b border-border/50">

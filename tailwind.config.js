@@ -9,7 +9,7 @@ export default {
       },
       colors: {
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        foreground: "rgba(255,255,255,0.95)",
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
