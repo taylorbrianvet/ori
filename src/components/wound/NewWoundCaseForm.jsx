@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { X, Plus, Trash2, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { X, Plus, Trash2, Loader2, AlertTriangle, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { createPageUrl } from "@/utils";
 
 const SERVICES = [
   "Soft Tissue Surgery", "Orthopedic Surgery", "Neurology", "Dermatology",
