@@ -324,7 +324,7 @@ export default function SurgicalLogForm({ onClose, onSuccess, staffList = [] }) 
           {/* Procedure */}
           <SearchableSelect
             label="Procedure"
-            options={PROCEDURES}
+            options={procedureOptions}
             value={form.procedure}
             onChange={(v) => set("procedure", v)}
             required
