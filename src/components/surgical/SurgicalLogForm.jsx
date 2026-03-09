@@ -175,6 +175,13 @@ function SearchableSelect({ label, options, value, onChange, required, placehold
 export default function SurgicalLogForm({ onClose, onSuccess, staffList = [] }) {
   const today = format(new Date(), "yyyy-MM-dd");
 
+  const { data: procedureRecords = [] } = useQuery({
+    queryKey: ["surgical-procedures"],
+    queryFn: () => base44.entities.SurgicalProcedure.filter({ active: true }, "category", 500),
+  });
+
+  const procedureOptions = procedureRecords.map((p) => p.procedure_name);
+
   const residentOptions = staffList
     .filter((s) => ["Resident", "Intern"].includes(s.role))
     .map((s) => `${s.first_name} ${s.last_name}`);
