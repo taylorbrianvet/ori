@@ -73,7 +73,7 @@ function LoggedBadge({ entry, userEmail }) {
 
 export default function SurgicalLog() {
   const [showForm, setShowForm] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeService, setActiveService] = useState("all");
   const [search, setSearch] = useState("");
 
   const queryClient = useQueryClient();
