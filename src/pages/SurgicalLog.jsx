@@ -220,7 +220,8 @@ export default function SurgicalLog() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.03 }}
-                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                    onClick={() => handleRowClick(entry)}
+                    className={`border-b border-white/5 hover:bg-white/5 transition-colors ${canEdit ? "cursor-pointer" : ""}`}
                   >
                     <td className="px-4 py-3 text-white font-medium">{entry.case_number}</td>
                     <td className="px-4 py-3 text-white/70 whitespace-nowrap">{formatSurgeryDate(entry.surgery_date)}</td>
