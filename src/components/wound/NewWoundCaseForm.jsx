@@ -56,6 +56,11 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
     set("wound_locations", arr.length === 0 ? [""] : arr);
   };
 
+  const proceedCreate = async () => {
+    setExistingCases(null);
+    await doCreate();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const wounds = form.wound_locations.filter(w => w.trim());
@@ -64,6 +69,26 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
       return;
     }
 
+    // Check for existing wound cases with same patient ID
+    if (form.patient_case_number) {
+      setSaving(true);
+      try {
+        const found = await base44.entities.WoundCase.filter({ patient_case_number: form.patient_case_number });
+        if (found.length > 0) {
+          setExistingCases(found);
+          setSaving(false);
+          return;
+        }
+      } finally {
+        setSaving(false);
+      }
+    }
+
+    await doCreate();
+  };
+
+  const doCreate = async () => {
+    const wounds = form.wound_locations.filter(w => w.trim());
     setSaving(true);
     try {
       // Check for existing patient by case number
