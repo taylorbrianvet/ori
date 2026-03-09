@@ -253,7 +253,6 @@ export default function SurgicalLog() {
                       <span className="ml-2 text-[10px] text-red-400 font-medium">EMERGENCY</span>
                     )}
                   </div>
-                  <LoggedBadge entry={entry} userEmail={userEmail} />
                 </div>
                 <p className="text-xs text-white/80 font-medium">{entry.procedure}</p>
                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/50">
