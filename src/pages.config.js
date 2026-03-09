@@ -53,6 +53,7 @@ import ServiceDetail from './pages/ServiceDetail';
 import OnCall from './pages/OnCall';
 import Resources from './pages/Resources';
 import Admin from './pages/Admin';
+import OnCallDetail from './pages/OnCallDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +64,7 @@ export const PAGES = {
     "OnCall": OnCall,
     "Resources": Resources,
     "Admin": Admin,
+    "OnCallDetail": OnCallDetail,
 }
 
 export const pagesConfig = {

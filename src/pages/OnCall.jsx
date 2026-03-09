@@ -1,26 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { createPageUrl } from "@/utils";
+import { useNavigate } from "react-router-dom";
 import PageContainer from "../components/shared/PageContainer";
 import PageHeader from "../components/shared/PageHeader";
-import GlassCard from "../components/shared/GlassCard";
-import { Phone, Mail, MessageSquare } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import SectionHeader from "../components/shared/SectionHeader";
+import OnCallServiceCard from "../components/oncall/OnCallServiceCard";
+import OnCallCalendar from "../components/oncall/OnCallCalendar";
+import UpcomingShiftList from "../components/oncall/UpcomingShiftList";
+import { Users, CalendarDays, Clock } from "lucide-react";
+
+const TABS = [
+  { id: "current", label: "Current", icon: Users },
+  { id: "upcoming", label: "Upcoming", icon: Clock },
+  { id: "calendar", label: "Calendar", icon: CalendarDays },
+];
 
 export default function OnCall() {
+  const [activeTab, setActiveTab] = useState("current");
+  const navigate = useNavigate();
   const today = format(new Date(), "yyyy-MM-dd");
-
-  const { data: schedules, isLoading } = useQuery({
-    queryKey: ["oncall-today", today],
-    queryFn: () => base44.entities.Schedule.filter({ date: today, on_call: true }),
-    initialData: [],
-  });
 
   const { data: services } = useQuery({
     queryKey: ["services-all"],
-    queryFn: () => base44.entities.Service.list(),
+    queryFn: () => base44.entities.Service.list("display_order"),
+    initialData: [],
+  });
+
+  const { data: schedules } = useQuery({
+    queryKey: ["schedules-all"],
+    queryFn: () => base44.entities.Schedule.list("-date", 500),
     initialData: [],
   });
 
@@ -30,64 +41,114 @@ export default function OnCall() {
     initialData: [],
   });
 
-  const serviceMap = Object.fromEntries(services.map((s) => [s.id, s]));
   const userMap = Object.fromEntries(users.map((u) => [u.id, u]));
+
+  // Today's on-call entries grouped by service
+  const todayOnCall = schedules.filter((s) => s.date === today && s.on_call);
+  const activeServices = services.filter((s) => s.active !== false);
+
+  // Only show services that have on-call entries today
+  const servicesWithOnCall = activeServices.filter((svc) =>
+    todayOnCall.some((e) => e.service_id === svc.id)
+  );
+  const servicesWithoutOnCall = activeServices.filter(
+    (svc) => !todayOnCall.some((e) => e.service_id === svc.id)
+  );
+
+  const getEntriesForService = (serviceId) =>
+    todayOnCall.filter((e) => e.service_id === serviceId);
 
   return (
     <PageContainer>
-      <PageHeader title="On Call" subtitle={`Today · ${format(new Date(), "EEEE, MMMM d, yyyy")}`} />
+      <PageHeader
+        title="On Call"
+        subtitle={format(new Date(), "EEEE, MMMM d, yyyy")}
+      />
 
-      {isLoading ? (
-        <div className="space-y-3">
-          {Array(4).fill(0).map((_, i) => (
-            <Skeleton key={i} className="h-20 w-full rounded-xl" />
-          ))}
-        </div>
-      ) : schedules.length === 0 ? (
-        <GlassCard>
-          <p className="text-sm text-muted-foreground text-center py-8">No on-call assignments for today.</p>
-        </GlassCard>
-      ) : (
-        <div className="space-y-3">
-          {schedules.map((sch) => {
-            const service = serviceMap[sch.service_id];
-            const user = userMap[sch.user_id];
-            return (
-              <GlassCard key={sch.id} className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                  <span className="text-sm font-semibold text-primary">
-                    {(sch.user_name || user?.full_name || "?").charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{sch.user_name || user?.full_name || "Unknown"}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <Badge className="text-[10px] bg-primary/10 text-primary">{service?.service_name || "Service"}</Badge>
-                    {sch.start_time && sch.end_time && (
-                      <span className="text-[11px] text-muted-foreground">{sch.start_time} – {sch.end_time}</span>
-                    )}
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 bg-secondary/60 rounded-2xl mb-6 w-fit">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+              activeTab === tab.id
+                ? "bg-white shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Current Tab */}
+      {activeTab === "current" && (
+        <div>
+          {servicesWithOnCall.length === 0 ? (
+            <div className="glass-card p-10 text-center">
+              <p className="text-muted-foreground text-sm">No on-call assignments recorded for today.</p>
+            </div>
+          ) : (
+            <>
+              <SectionHeader
+                title="On Call Now"
+                icon={Users}
+                subtitle={`${servicesWithOnCall.length} active service${servicesWithOnCall.length !== 1 ? "s" : ""}`}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {servicesWithOnCall.map((svc, i) => (
+                  <OnCallServiceCard
+                    key={svc.id}
+                    service={svc}
+                    entries={getEntriesForService(svc.id)}
+                    userMap={userMap}
+                    index={i}
+                    onClick={() => navigate(createPageUrl("OnCallDetail") + `?serviceId=${svc.id}`)}
+                  />
+                ))}
+              </div>
+
+              {servicesWithoutOnCall.length > 0 && (
+                <div className="mt-8">
+                  <SectionHeader title="No Assignment Today" subtitle="Services without on-call entries" />
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                    {servicesWithoutOnCall.map((svc) => (
+                      <div
+                        key={svc.id}
+                        className="glass-card py-2.5 px-3 cursor-pointer hover:bg-secondary/60 transition-colors"
+                        onClick={() => navigate(createPageUrl("OnCallDetail") + `?serviceId=${svc.id}`)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30 shrink-0" />
+                          <p className="text-xs text-muted-foreground truncate">{svc.service_name}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  {user?.phone && (
-                    <a href={`tel:${user.phone}`} className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center hover:bg-green-500/20 transition-colors">
-                      <Phone className="w-3.5 h-3.5 text-green-600" />
-                    </a>
-                  )}
-                  {user?.phone && (
-                    <a href={`sms:${user.phone}`} className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center hover:bg-blue-500/20 transition-colors">
-                      <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
-                    </a>
-                  )}
-                  {user?.email && (
-                    <a href={`mailto:${user.email}`} className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors">
-                      <Mail className="w-3.5 h-3.5 text-primary" />
-                    </a>
-                  )}
-                </div>
-              </GlassCard>
-            );
-          })}
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Upcoming Tab */}
+      {activeTab === "upcoming" && (
+        <div>
+          <SectionHeader title="Upcoming On-Call Shifts" icon={Clock} />
+          <div className="glass-card p-4">
+            <UpcomingShiftList schedules={schedules} services={services} userMap={userMap} />
+          </div>
+        </div>
+      )}
+
+      {/* Calendar Tab */}
+      {activeTab === "calendar" && (
+        <div>
+          <SectionHeader title="Schedule Calendar" icon={CalendarDays} subtitle="Click a day to see details" />
+          <OnCallCalendar schedules={schedules} services={services} />
         </div>
       )}
     </PageContainer>
