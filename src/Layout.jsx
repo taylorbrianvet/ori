@@ -110,15 +110,15 @@ export default function Layout({ children, currentPageName }) {
               transition={{ type: "spring", damping: 26, stiffness: 300 }}
               className="md:hidden fixed inset-y-0 left-0 z-50 w-72 glass-panel border-r border-white/10"
             >
-              <div className="p-6 border-b border-border/50">
+              <div className="p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                      <Stethoscope className="w-4 h-4 text-primary-foreground" />
+                    <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+                      <Stethoscope className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-sm font-semibold">VetHub</span>
+                    <span className="text-sm font-semibold text-white">VetHub</span>
                   </div>
-                  <button onClick={() => setMobileOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-secondary">
+                  <button onClick={() => setMobileOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/70">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -131,13 +131,13 @@ export default function Layout({ children, currentPageName }) {
                       key={item.page}
                       to={createPageUrl(item.page)}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                          ? "bg-white/15 text-white"
+                          : "text-white/55 hover:bg-white/10 hover:text-white/90"
                       }`}
                     >
-                      <item.icon className={`w-[18px] h-[18px] ${isActive ? "text-primary" : ""}`} />
+                      <item.icon className={`w-[17px] h-[17px] ${isActive ? "text-white" : "text-white/50"}`} />
                       {item.name}
                     </Link>
                   );
@@ -146,13 +146,13 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     to={createPageUrl("Admin")}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                       currentPageName === "Admin"
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        ? "bg-white/15 text-white"
+                        : "text-white/55 hover:bg-white/10 hover:text-white/90"
                     }`}
                   >
-                    <Settings className={`w-[18px] h-[18px] ${currentPageName === "Admin" ? "text-primary" : ""}`} />
+                    <Settings className={`w-[17px] h-[17px] ${currentPageName === "Admin" ? "text-white" : "text-white/50"}`} />
                     Admin
                   </Link>
                 )}
