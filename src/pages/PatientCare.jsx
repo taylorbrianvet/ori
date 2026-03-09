@@ -36,7 +36,7 @@ const CARE_OPTIONS = [
     key: "wound_care",
     title: "Wound Care",
     subtext: "Document wound assessments and bandage changes.",
-    page: "PatientCare",
+    page: "WoundCare",
     icon: Bandage,
     color: "from-green-900/60 to-green-800/30",
     image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=80",
