@@ -41,12 +41,19 @@ export default function Home() {
     image: configMap[t.key]?.image_url || t.defaultImage,
   }));
 
+  const firstName = currentUser?.full_name?.split(" ")[0] || "";
+
   return (
     <PageContainer>
-      <PageHeader
-        title="Welcome back"
-        subtitle="Navigate to your hospital tools and services."
-      />
+      <div className="flex items-start justify-between mb-6 lg:mb-8">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-semibold text-white tracking-tight">Texas A&M University</h1>
+          <p className="text-sm text-white/50 mt-1">Small Animal Teaching Hospital</p>
+        </div>
+        {firstName && (
+          <p className="text-sm text-white/60 mt-1">Welcome, <span className="text-white font-medium">{firstName}</span></p>
+        )}
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
         {tiles.map((tile, i) => (
           <HomeTile key={tile.title} {...tile} index={i} />
