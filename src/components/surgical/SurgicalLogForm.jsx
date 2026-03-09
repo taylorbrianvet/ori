@@ -7,21 +7,11 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 
 const SERVICES = [
-  { service: "Soft Tissue Surgery", department: "Surgery" },
-  { service: "Orthopedic Surgery", department: "Surgery" },
-  { service: "Neurosurgery", department: "Surgery" },
-  { service: "Internal Medicine", department: "Internal Medicine" },
-  { service: "Interventional Radiology", department: "Internal Medicine" },
-  { service: "Cardiology", department: "Internal Medicine" },
-  { service: "Oncology", department: "Internal Medicine" },
-  { service: "Neurology", department: "Neurology" },
-  { service: "Emergency", department: "Emergency and Critical Care" },
-  { service: "Critical Care", department: "Emergency and Critical Care" },
-  { service: "Anesthesia", department: "Anesthesia" },
-  { service: "Ophthalmology", department: "Ophthalmology" },
-  { service: "Dermatology", department: "Dermatology" },
-  { service: "Radiology", department: "Radiology" },
-  { service: "Clinical Pathology", department: "Clinical Pathology" },
+  "Orthopedic Surgery",
+  "Soft Tissue Surgery",
+  "Interventional Radiology",
+  "Ophthalmology",
+  "Neurology",
 ];
 
 const SPECIES = ["Canine", "Feline", "Porcine", "Equine", "Caprine", "Bovine", "Other"];
