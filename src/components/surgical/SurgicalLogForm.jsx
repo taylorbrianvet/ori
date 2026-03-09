@@ -287,7 +287,7 @@ export default function SurgicalLogForm({ onClose, onSuccess, staffList = [] }) 
           {/* Service */}
           <SearchableSelect
             label="Service"
-            options={SERVICES.map((s) => s.service)}
+            options={SERVICES}
             value={form.service}
             onChange={(v) => set("service", v)}
             placeholder="Select service…"
