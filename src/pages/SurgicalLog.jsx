@@ -97,6 +97,16 @@ export default function SurgicalLog() {
   });
 
   const userEmail = currentUser?.email || "";
+  const userRole = currentUser?.role || "";
+
+  // Match current user to staff record to get their role
+  const staffRecord = staffList.find((s) => s.email === userEmail);
+  const staffRole = staffRecord?.role || "";
+  const canEdit = userRole === "admin" || ["Faculty", "Resident"].includes(staffRole);
+
+  const handleRowClick = (entry) => {
+    if (canEdit) setEditingEntry(entry);
+  };
 
   const filtered = entries.filter((e) => {
     const matchesService =
