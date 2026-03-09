@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
 import PageContainer from "../components/shared/PageContainer";
 import SurgicalLogForm from "../components/surgical/SurgicalLogForm";
+import SurgicalLogEditModal from "../components/surgical/SurgicalLogEditModal";
 import {
   Plus,
   Scissors,
