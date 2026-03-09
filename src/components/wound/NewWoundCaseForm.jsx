@@ -265,6 +265,61 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
           </div>
         </form>
       </motion.div>
+
+      {/* Existing case conflict dialog */}
+      <AnimatePresence>
+        {existingCases && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setExistingCases(null)} />
+            <motion.div initial={{ scale: 0.94, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.94, opacity: 0 }}
+              className="relative glass-panel rounded-2xl w-full max-w-sm p-5">
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="w-4.5 h-4.5 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Patient Already Has a Wound Case</h3>
+                  <p className="text-xs text-white/50 mt-0.5 leading-relaxed">
+                    Patient ID <span className="text-white/75 font-medium">{form.patient_case_number}</span> already has {existingCases.length} wound case{existingCases.length !== 1 ? "s" : ""}. Would you like to add wound care to an existing case, or log a brand new case?
+                  </p>
+                </div>
+              </div>
+
+              {/* Existing cases */}
+              <div className="space-y-2 mb-4">
+                {existingCases.map(c => (
+                  <button key={c.id}
+                    onClick={() => { window.location.href = createPageUrl(`WoundCaseDetail?id=${c.id}`); }}
+                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-white/8 hover:bg-white/14 transition-colors text-left">
+                    <div>
+                      <p className="text-xs font-medium text-white">{c.patient_name}</p>
+                      <p className="text-[10px] text-white/40 mt-0.5">
+                        {(c.wound_locations || []).join(", ")}
+                        {c.status === "complete" && <span className="text-green-400 ml-1.5">· Healed</span>}
+                        {c.status !== "complete" && <span className="text-amber-400 ml-1.5">· Active</span>}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-white/25" />
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-2">
+                <button onClick={() => setExistingCases(null)}
+                  className="flex-1 py-2.5 rounded-xl text-xs text-white/50 hover:text-white hover:bg-white/10 transition-colors">
+                  Go Back
+                </button>
+                <button onClick={proceedCreate} disabled={saving}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-medium bg-white/15 hover:bg-white/22 text-white transition-colors flex items-center justify-center gap-1.5 disabled:opacity-60">
+                  {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  Log New Case Anyway
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
