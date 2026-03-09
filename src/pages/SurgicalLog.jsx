@@ -295,6 +295,13 @@ export default function SurgicalLog() {
             staffList={staffList}
           />
         )}
+        {editingEntry && (
+          <SurgicalLogEditModal
+            entry={editingEntry}
+            onClose={() => setEditingEntry(null)}
+            staffList={staffList}
+          />
+        )}
       </AnimatePresence>
     </PageContainer>
   );
