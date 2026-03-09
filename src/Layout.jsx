@@ -57,6 +57,17 @@ export default function Layout({ children, currentPageName }) {
           })}
         </nav>
         <div className="p-4 border-t border-white/10 space-y-1">
+          <Link
+            to={createPageUrl("Directory")}
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+              currentPageName === "Directory"
+                ? "bg-white/15 text-white shadow-sm"
+                : "text-white/55 hover:bg-white/10 hover:text-white/90"
+            }`}
+          >
+            <Users className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-white" : "text-white/50"}`} />
+            Directory
+          </Link>
           {isAdmin && (
             <Link
               to={createPageUrl("Admin")}
