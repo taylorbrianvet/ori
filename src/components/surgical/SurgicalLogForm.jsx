@@ -12,6 +12,7 @@ const SERVICES = [
   "Interventional Radiology",
   "Ophthalmology",
   "Neurology",
+  "Dentistry",
 ];
 
 const SPECIES = ["Canine", "Feline", "Porcine", "Equine", "Caprine", "Bovine", "Other"];
