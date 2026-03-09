@@ -34,18 +34,18 @@ export default function OnCallServiceCard({ service, entries, userMap, index, on
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-2 h-2 rounded-full bg-green-500 shadow-sm shadow-green-500/50" />
-            <h3 className="text-sm font-semibold text-foreground">{service?.service_name || "Service"}</h3>
+            <div className="w-2 h-2 rounded-full bg-green-400 shadow-sm shadow-green-400/60" />
+            <h3 className="text-sm font-semibold text-white">{service?.service_name || "Service"}</h3>
           </div>
-          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
+          <ChevronRight className="w-3.5 h-3.5 text-white/30 group-hover:text-white/70 group-hover:translate-x-0.5 transition-all duration-200" />
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-border/50 mb-3" />
+        <div className="h-px bg-white/10 mb-3" />
 
         {/* Teams */}
         {entries.length === 0 ? (
-          <p className="text-xs text-muted-foreground italic">No assignments today</p>
+          <p className="text-xs text-white/40 italic">No assignments today</p>
         ) : (
           teamKeys.map((teamKey) => (
             <TeamRosterMiniBlock
