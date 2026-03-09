@@ -205,9 +205,6 @@ export default function MyWorkspace() {
                         <span className="text-white/35">No</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
-                      <LoggedBadge entry={entry} userEmail={userEmail} />
-                    </td>
                   </motion.tr>
                 ))}
               </tbody>
