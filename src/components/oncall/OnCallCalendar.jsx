@@ -36,14 +36,14 @@ export default function OnCallCalendar({ schedules, services }) {
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-          className="w-8 h-8 rounded-xl hover:bg-secondary flex items-center justify-center transition-colors"
+          className="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center transition-colors text-white/60"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <span className="text-sm font-semibold text-foreground">{format(currentMonth, "MMMM yyyy")}</span>
+        <span className="text-sm font-semibold text-white/90">{format(currentMonth, "MMMM yyyy")}</span>
         <button
           onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-          className="w-8 h-8 rounded-xl hover:bg-secondary flex items-center justify-center transition-colors"
+          className="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center transition-colors text-white/60"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

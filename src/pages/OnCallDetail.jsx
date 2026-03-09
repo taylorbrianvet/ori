@@ -75,7 +75,7 @@ export default function OnCallDetail() {
       {/* Back */}
       <Link
         to={createPageUrl("OnCall")}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-5"
+        className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white/80 transition-colors mb-5"
       >
         <ArrowLeft className="w-4 h-4" />
         On Call
@@ -83,10 +83,10 @@ export default function OnCallDetail() {
 
       {/* Title */}
       <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-semibold text-foreground tracking-tight">
+        <h1 className="text-2xl lg:text-3xl font-semibold text-white tracking-tight">
           {service?.service_name || "Service"}
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">On-Call Overview · {format(new Date(), "EEEE, MMMM d")}</p>
+        <p className="text-sm text-white/45 mt-1">On-Call Overview · {format(new Date(), "EEEE, MMMM d")}</p>
       </div>
 
       {/* On Call Now */}
@@ -94,7 +94,7 @@ export default function OnCallDetail() {
         <SectionHeader title="On Call Today" icon={Users} subtitle={`${todayOnCall.length} assignment${todayOnCall.length !== 1 ? "s" : ""}`} />
         <div className="glass-card p-5">
           {todayOnCall.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">No on-call assignments today.</p>
+            <p className="text-sm text-white/40 text-center py-4">No on-call assignments today.</p>
           ) : (
             teamKeys.map((key) => (
               <TeamRosterMiniBlock
