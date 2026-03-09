@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, Search } from "lucide-react";
 import { format } from "date-fns";
@@ -21,59 +22,6 @@ const SERVICES = [
   { service: "Dermatology", department: "Dermatology" },
   { service: "Radiology", department: "Radiology" },
   { service: "Clinical Pathology", department: "Clinical Pathology" },
-];
-
-const PROCEDURES = [
-  "Exploratory Laparotomy",
-  "Splenectomy",
-  "Gastrotomy",
-  "Intestinal Resection and Anastomosis",
-  "Cystotomy",
-  "Gastropexy",
-  "Prophylactic Gastropexy",
-  "Ovariohysterectomy",
-  "Orchiectomy",
-  "Mastectomy",
-  "Hemangiosarcoma Excision",
-  "Soft Tissue Sarcoma Excision",
-  "Mast Cell Tumor Excision",
-  "Medial Patellar Luxation Repair",
-  "TPLO (Tibial Plateau Leveling Osteotomy)",
-  "TTA (Tibial Tuberosity Advancement)",
-  "Femoral Head and Neck Ostectomy (FHO)",
-  "Total Hip Replacement",
-  "Fracture Repair - Plating",
-  "Fracture Repair - IM Pin",
-  "Fracture Repair - External Fixator",
-  "Amputation - Forelimb",
-  "Amputation - Hindlimb",
-  "Stifle Arthroscopy",
-  "Elbow Arthroscopy",
-  "Shoulder Arthroscopy",
-  "Intervertebral Disc Surgery (IVDD)",
-  "Atlantoaxial Instability Repair",
-  "Portosystemic Shunt Attenuation",
-  "Pericardectomy",
-  "Lung Lobectomy",
-  "Thoracotomy",
-  "Thoracoscopy",
-  "Laparoscopy - Diagnostic",
-  "Laparoscopic Gastropexy",
-  "Laparoscopic Ovariectomy",
-  "Cholecystectomy",
-  "Adrenalectomy",
-  "Thyroidectomy",
-  "Parathyroidectomy",
-  "Salivary Mucocele Excision",
-  "Aural Hematoma Repair",
-  "Total Ear Canal Ablation (TECA)",
-  "Enucleation",
-  "Entropion / Ectropion Repair",
-  "Cleft Palate Repair",
-  "Perineal Urethrostomy",
-  "Prepubic Urethrostomy",
-  "Urethral Obstruction Relief",
-  "Other",
 ];
 
 const SPECIES = ["Canine", "Feline", "Porcine", "Equine", "Caprine", "Bovine", "Other"];
