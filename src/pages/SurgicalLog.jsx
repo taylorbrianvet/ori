@@ -192,7 +192,7 @@ export default function SurgicalLog() {
             <Scissors className="w-6 h-6 text-white/30" />
           </div>
           <p className="text-sm text-white/40">No surgical log entries found.</p>
-          {activeTab === "all" && (
+          {activeService === "all" && (
             <button
               onClick={() => setShowForm(true)}
               className="mt-4 text-xs text-white/50 hover:text-white underline"
