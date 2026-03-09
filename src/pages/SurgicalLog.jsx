@@ -24,6 +24,7 @@ const SURGICAL_SERVICES = [
   "Interventional Radiology",
   "Ophthalmology",
   "Neurology",
+  "Dentistry",
 ];
 
 function formatSurgeryDate(dateStr) {
