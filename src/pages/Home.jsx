@@ -46,9 +46,12 @@ export default function Home() {
   return (
     <PageContainer>
       <div className="flex items-start justify-between mb-6 lg:mb-8">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-semibold text-white tracking-tight">Texas A&M University</h1>
-          <p className="text-sm text-white/50 mt-1">Small Animal Teaching Hospital</p>
+        <div className="flex items-center gap-3">
+          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/ffde2fc2d_Screenshot2026-03-09at41623PM.png" alt="Texas A&M Logo" className="w-12 h-12 rounded-xl object-cover shrink-0" />
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-semibold text-white tracking-tight">Texas A&M University</h1>
+            <p className="text-sm text-white/50 mt-1">Small Animal Teaching Hospital</p>
+          </div>
         </div>
         {firstName && (
           <p className="text-sm text-white/60 mt-1">Welcome, <span className="text-white font-medium">{firstName}</span></p>
