@@ -94,16 +94,10 @@ export default function SurgicalLog() {
   });
 
   const userEmail = currentUser?.email || "";
-  const userFullName = currentUser?.full_name || "";
-  const firstName = userFullName.split(" ")[0]?.toLowerCase() || "";
 
   const filtered = entries.filter((e) => {
-    const matchesTab =
-      activeTab === "all" ||
-      (activeTab === "mine" &&
-        (e.residents_scrubbed_in || []).some((r) =>
-          r.toLowerCase().includes(firstName)
-        ));
+    const matchesService =
+      activeService === "all" || e.service === activeService;
 
     const matchesSearch =
       !search ||
@@ -112,7 +106,7 @@ export default function SurgicalLog() {
       (e.primary_surgeon || "").toLowerCase().includes(search.toLowerCase()) ||
       (e.species || "").toLowerCase().includes(search.toLowerCase());
 
-    return matchesTab && matchesSearch;
+    return matchesService && matchesSearch;
   });
 
   return (
