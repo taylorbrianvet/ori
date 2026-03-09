@@ -15,7 +15,7 @@ export default function UpcomingShiftList({ schedules, services, userMap }) {
   if (upcoming.length === 0) {
     return (
       <GlassCard>
-        <p className="text-xs text-muted-foreground text-center py-4">No upcoming on-call shifts.</p>
+      <p className="text-xs text-white/40 text-center py-4">No upcoming on-call shifts.</p>
       </GlassCard>
     );
   }
@@ -35,25 +35,25 @@ export default function UpcomingShiftList({ schedules, services, userMap }) {
           <div key={i}>
             {showDate && (
               <div className="flex items-center gap-2 mt-3 mb-1.5 first:mt-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/50 shrink-0" />
-                <p className="text-[11px] font-semibold text-muted-foreground">
+                <div className="w-1.5 h-1.5 rounded-full bg-white/40 shrink-0" />
+                <p className="text-[11px] font-semibold text-white/50">
                   {format(parseISO(s.date), "EEEE, MMM d")}
                 </p>
               </div>
             )}
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-secondary/50 transition-colors">
-              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="text-[10px] font-bold text-primary">{name.charAt(0)}</span>
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors">
+              <div className="w-7 h-7 rounded-lg bg-white/12 flex items-center justify-center shrink-0">
+                <span className="text-[10px] font-bold text-white/80">{name.charAt(0)}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-foreground truncate">{name}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{svc?.service_name}</p>
+                <p className="text-xs font-medium text-white/85 truncate">{name}</p>
+                <p className="text-[10px] text-white/45 truncate">{svc?.service_name}</p>
               </div>
               {s.team_name && (
-                <span className="text-[10px] px-2 py-0.5 rounded-lg bg-secondary text-muted-foreground shrink-0">{s.team_name}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-lg bg-white/10 text-white/50 shrink-0">{s.team_name}</span>
               )}
               {s.start_time && (
-                <div className="flex items-center gap-1 text-[10px] text-muted-foreground shrink-0">
+                <div className="flex items-center gap-1 text-[10px] text-white/40 shrink-0">
                   <Clock className="w-3 h-3" />
                   {s.start_time}
                 </div>
