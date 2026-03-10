@@ -35,7 +35,10 @@ Deno.serve(async (req) => {
       max_tokens: 500
     });
 
-    const initialData = JSON.parse(initialResponse.choices[0].message.content);
+    let initialContent = initialResponse.choices[0].message.content;
+    // Remove markdown code blocks if present
+    initialContent = initialContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const initialData = JSON.parse(initialContent);
     const { title = "", authors = [], journal_year = null } = initialData;
 
     // Check for duplicate article
@@ -82,7 +85,10 @@ Rules:
       max_tokens: 4000
     });
 
-    const parsed = JSON.parse(parseResponse.choices[0].message.content);
+    let parseContent = parseResponse.choices[0].message.content;
+    // Remove markdown code blocks if present
+    parseContent = parseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const parsed = JSON.parse(parseContent);
 
     const updateData = {
       title: parsed.title || "Untitled Article",
