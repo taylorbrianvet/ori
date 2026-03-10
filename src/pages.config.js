@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Admin from './pages/Admin';
+import Diagnostics from './pages/Diagnostics';
 import Directory from './pages/Directory';
 import EducationalRounds from './pages/EducationalRounds';
 import Home from './pages/Home';
@@ -57,6 +58,7 @@ import MyWorkspace from './pages/MyWorkspace';
 import OnCall from './pages/OnCall';
 import OnCallDetail from './pages/OnCallDetail';
 import PatientCare from './pages/PatientCare';
+import Pharmacy from './pages/Pharmacy';
 import Resources from './pages/Resources';
 import ServiceBoard from './pages/ServiceBoard';
 import ServiceDetail from './pages/ServiceDetail';
@@ -65,13 +67,13 @@ import SurgicalLog from './pages/SurgicalLog';
 import Transfers from './pages/Transfers';
 import WoundCare from './pages/WoundCare';
 import WoundCaseDetail from './pages/WoundCaseDetail';
-import Pharmacy from './pages/Pharmacy';
-import Diagnostics from './pages/Diagnostics';
+import StudentSchedule from './pages/StudentSchedule';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Admin": Admin,
+    "Diagnostics": Diagnostics,
     "Directory": Directory,
     "EducationalRounds": EducationalRounds,
     "Home": Home,
@@ -81,6 +83,7 @@ export const PAGES = {
     "OnCall": OnCall,
     "OnCallDetail": OnCallDetail,
     "PatientCare": PatientCare,
+    "Pharmacy": Pharmacy,
     "Resources": Resources,
     "ServiceBoard": ServiceBoard,
     "ServiceDetail": ServiceDetail,
@@ -89,8 +92,7 @@ export const PAGES = {
     "Transfers": Transfers,
     "WoundCare": WoundCare,
     "WoundCaseDetail": WoundCaseDetail,
-    "Pharmacy": Pharmacy,
-    "Diagnostics": Diagnostics,
+    "StudentSchedule": StudentSchedule,
 }
 
 export const pagesConfig = {
