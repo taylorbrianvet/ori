@@ -13,6 +13,7 @@ import EstimateList from "../components/service-detail/EstimateList";
 import TodaysClinicTeam from "../components/clinic/TodaysClinicTeam";
 import ConsultBoard from "../components/clinic/ConsultBoard";
 import ConsultRequestForm from "../components/clinic/ConsultRequestForm";
+import ClinicScheduleSection from "../components/clinic/ClinicScheduleSection";
 import { AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
