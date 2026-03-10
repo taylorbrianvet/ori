@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
@@ -8,20 +8,29 @@ import RoundRow from "../components/rounds/RoundRow";
 import RoundDetailModal from "../components/rounds/RoundDetailModal";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import {
-  ChevronLeft, BookOpen, GraduationCap, CalendarDays, Users
-} from "lucide-react";
+import { ChevronLeft, BookOpen, CalendarDays } from "lucide-react";
 import {
   startOfWeek, endOfWeek, addWeeks, subWeeks, eachDayOfInterval,
-  format, parseISO, isWithinInterval, isFriday
+  format, parseISO, isWithinInterval
 } from "date-fns";
 
-const DEPT_COLORS = {
-  "Surgery": "bg-blue-500/20 text-blue-200",
-  "Internal Medicine": "bg-green-500/20 text-green-200",
-  "Emergency & Critical Care": "bg-red-500/20 text-red-200",
-  "Neurology": "bg-purple-500/20 text-purple-200",
-  "default": "bg-white/10 text-white/60",
+const DEPARTMENTS = [
+  "Surgery", "Internal Medicine", "Emergency & Critical Care",
+  "Neurology", "Oncology", "Dermatology", "Cardiology",
+  "Ophthalmology", "Radiology", "Anesthesia"
+];
+
+const DEPT_SHORT = {
+  "Surgery": "Surgery",
+  "Internal Medicine": "Int Med",
+  "Emergency & Critical Care": "ECC",
+  "Neurology": "Neuro",
+  "Oncology": "Onco",
+  "Dermatology": "Derm",
+  "Cardiology": "Cardio",
+  "Ophthalmology": "Ophth",
+  "Radiology": "Radiology",
+  "Anesthesia": "Anesth",
 };
 
 function SeminarRow({ round, onClick }) {
@@ -47,7 +56,20 @@ function SeminarRow({ round, onClick }) {
 export default function EducationalRounds() {
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedRound, setSelectedRound] = useState(null);
+  const [activeDept, setActiveDept] = useState(null); // null = not yet loaded
   const queryClient = useQueryClient();
+
+  // Load user preference
+  const { data: currentUser } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => base44.auth.me(),
+  });
+
+  useEffect(() => {
+    if (currentUser && activeDept === null) {
+      setActiveDept(currentUser.default_rounds_department || "Surgery");
+    }
+  }, [currentUser, activeDept]);
 
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
 
@@ -61,17 +83,28 @@ export default function EducationalRounds() {
     queryFn: () => base44.entities.Staff.list(),
   });
 
-  // Filter rounds for current week
+  const handleSetDefault = async (dept) => {
+    setActiveDept(dept);
+    await base44.auth.updateMe({ default_rounds_department: dept });
+  };
+
+  // Filter rounds for current week + active department
   const weekRounds = rounds.filter(r => {
     const d = parseISO(r.date);
-    return isWithinInterval(d, { start: weekStart, end: weekEnd });
+    if (!isWithinInterval(d, { start: weekStart, end: weekEnd })) return false;
+    // Match if department (legacy) or departments array includes the active dept
+    const depts = r.departments?.length > 0 ? r.departments : (r.department ? [r.department] : []);
+    return !activeDept || depts.includes(activeDept) || depts.length === 0;
   });
 
   const seminars = weekRounds.filter(r => r.is_seminar || r.event_type === "Seminar");
   const regularRounds = weekRounds.filter(r => !r.is_seminar && r.event_type !== "Seminar");
 
-  // Group regular rounds by day
-  const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
+  // Group Mon–Fri (skip Saturday/Sunday for display)
+  const days = eachDayOfInterval({ start: weekStart, end: weekEnd }).filter(d => {
+    const dow = d.getDay();
+    return dow >= 1 && dow <= 5; // Mon-Fri
+  });
 
   const roundsByDay = days.reduce((acc, day) => {
     const dayStr = format(day, "yyyy-MM-dd");
@@ -79,10 +112,9 @@ export default function EducationalRounds() {
     return acc;
   }, {});
 
-  // Stats
-  const totalThisWeek = weekRounds.length;
-  const approvedThisWeek = weekRounds.filter(r => r.status === "approved").length;
-  const cancelledThisWeek = weekRounds.filter(r => r.status === "cancelled").length;
+  // Mon–Thu regular rounds, Friday seminars
+  const monThuDays = days.filter(d => d.getDay() >= 1 && d.getDay() <= 4);
+  const friDays = days.filter(d => d.getDay() === 5);
 
   return (
     <PageContainer>
@@ -94,7 +126,7 @@ export default function EducationalRounds() {
       </div>
 
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-5">
         <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
           <BookOpen className="w-5 h-5 text-white/70" />
         </div>
@@ -104,19 +136,30 @@ export default function EducationalRounds() {
         </div>
       </div>
 
-      {/* Week stats */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="glass-card p-3 text-center">
-          <p className="text-lg font-bold text-white">{totalThisWeek}</p>
-          <p className="text-[10px] text-white/35">This week</p>
+      {/* Department selector */}
+      <div className="mb-5">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] text-white/35 uppercase tracking-wider font-semibold">Service</p>
+          {activeDept && (
+            <p className="text-[10px] text-white/25">
+              Default: <span className="text-white/45">{activeDept}</span> · tap to change
+            </p>
+          )}
         </div>
-        <div className="glass-card p-3 text-center">
-          <p className="text-lg font-bold text-green-300">{approvedThisWeek}</p>
-          <p className="text-[10px] text-white/35">Approved</p>
-        </div>
-        <div className="glass-card p-3 text-center">
-          <p className="text-lg font-bold text-red-300">{cancelledThisWeek}</p>
-          <p className="text-[10px] text-white/35">Cancelled</p>
+        <div className="flex flex-wrap gap-2">
+          {DEPARTMENTS.map(dept => (
+            <button
+              key={dept}
+              onClick={() => handleSetDefault(dept)}
+              className={`text-xs px-3 py-1.5 rounded-xl border transition-colors font-medium ${
+                activeDept === dept
+                  ? "bg-white/18 border-white/30 text-white"
+                  : "bg-white/4 border-white/12 text-white/40 hover:bg-white/10 hover:text-white/70"
+              }`}
+            >
+              {DEPT_SHORT[dept] || dept}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -127,23 +170,9 @@ export default function EducationalRounds() {
         onNext={() => setWeekStart(w => addWeeks(w, 1))}
       />
 
-      {/* Seminars section (Fridays) */}
-      {seminars.length > 0 && (
-        <div className="mb-5">
-          <p className="text-[10px] text-white/35 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1.5">
-            <CalendarDays className="w-3 h-3" /> Friday Seminar
-          </p>
-          <div className="space-y-2">
-            {seminars.map(r => (
-              <SeminarRow key={r.id} round={r} onClick={() => setSelectedRound(r)} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Regular rounds by day */}
-      <div className="space-y-4">
-        {days.map(day => {
+      {/* Mon–Thu rounds */}
+      <div className="space-y-4 mb-6">
+        {monThuDays.map(day => {
           const dayStr = format(day, "yyyy-MM-dd");
           const dayRounds = roundsByDay[dayStr] || [];
           if (dayRounds.length === 0) return null;
@@ -163,9 +192,29 @@ export default function EducationalRounds() {
         })}
       </div>
 
+      {/* Friday Seminar — always at bottom */}
+      {(seminars.length > 0 || friDays.length > 0) && (
+        <div>
+          <p className="text-[10px] text-white/35 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1.5">
+            <CalendarDays className="w-3 h-3" /> Friday Seminar
+          </p>
+          <div className="space-y-2">
+            {seminars.length > 0 ? (
+              seminars.map(r => (
+                <SeminarRow key={r.id} round={r} onClick={() => setSelectedRound(r)} />
+              ))
+            ) : (
+              <div className="rounded-xl border border-white/8 bg-white/3 p-3 text-xs text-white/20 text-center">
+                No seminar scheduled this Friday
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {weekRounds.length === 0 && (
         <div className="text-center py-16 text-white/25 text-sm">
-          No rounds scheduled for this week.
+          No rounds scheduled for {activeDept ? `${activeDept} ` : ""}this week.
         </div>
       )}
 
