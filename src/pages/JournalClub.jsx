@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
@@ -64,6 +65,7 @@ export default function JournalClub() {
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
   const { data: journals = [], isLoading } = useQuery({
     queryKey: ["journals"],
@@ -113,8 +115,8 @@ export default function JournalClub() {
           backgroundImage: 'url(https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1600&q=60)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'blur(40px) brightness(0.3)',
-          opacity: 0.4,
+          filter: 'blur(25px) brightness(0.4)',
+          opacity: 0.55,
         }}
       />
       
@@ -162,13 +164,16 @@ export default function JournalClub() {
 
           {/* Articles section */}
           <div className="mb-6">
-            <div className="flex items-baseline gap-2 mb-6">
-              <h2 className="text-2xl font-semibold text-white">Articles</h2>
-              <span className="text-sm text-white/50">({journals.length} total)</span>
-            </div>
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+              <TabsList className="grid w-full max-w-xs grid-cols-2 bg-white/10 border border-white/15">
+                <TabsTrigger value="all" className="text-xs sm:text-sm">All Articles</TabsTrigger>
+                <TabsTrigger value="favorites" className="text-xs sm:text-sm">My Favorites</TabsTrigger>
+              </TabsList>
+            </Tabs>
 
-      {/* Search + Filter */}
-      <div className="flex gap-2 mb-5">
+            {/* Search + Filter */}
+            <div className="flex gap-2 mb-5">
         <div className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/8 border border-white/10">
           <Search className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
           <input
@@ -209,27 +214,53 @@ export default function JournalClub() {
         )}
       </AnimatePresence>
 
-      {isLoading ? (
-        <div className="py-20 text-center text-white/40 text-sm">Loading…</div>
-      ) : filtered.length === 0 ? (
-        <div className="py-16 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-white/8 flex items-center justify-center mx-auto mb-3">
-            <BookOpen className="w-6 h-6 text-white/25" />
+      <TabsContent value="all" className="mt-0">
+        {isLoading ? (
+          <div className="py-20 text-center text-white/40 text-sm">Loading…</div>
+        ) : filtered.length === 0 ? (
+          <div className="py-16 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-white/8 flex items-center justify-center mx-auto mb-3">
+              <BookOpen className="w-6 h-6 text-white/25" />
+            </div>
+            <p className="text-sm text-white/40 mb-1">{search || serviceFilter ? "No articles match your search" : "No articles yet"}</p>
+            {!search && !serviceFilter && (
+              <button onClick={() => setShowUpload(true)} className="text-xs text-white/50 hover:text-white underline transition-colors">
+                Upload the first article
+              </button>
+            )}
           </div>
-          <p className="text-sm text-white/40 mb-1">{search || serviceFilter ? "No articles match your search" : "No articles yet"}</p>
-          {!search && !serviceFilter && (
-            <button onClick={() => setShowUpload(true)} className="text-xs text-white/50 hover:text-white underline transition-colors">
-              Upload the first article
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filtered.map(j => (
-            <JournalCard key={j.id} journal={j} userEmail={userEmail} />
-          ))}
-        </div>
-      )}
+        ) : (
+          <div className="space-y-3">
+            {filtered.map(j => (
+              <JournalCard key={j.id} journal={j} userEmail={userEmail} />
+            ))}
+          </div>
+        )}
+      </TabsContent>
+
+      <TabsContent value="favorites" className="mt-0">
+        {isLoading ? (
+          <div className="py-20 text-center text-white/40 text-sm">Loading…</div>
+        ) : (
+          (() => {
+            const favorites = filtered.filter(j => (j.favorited_by || []).includes(userEmail));
+            return favorites.length === 0 ? (
+              <div className="py-16 text-center">
+                <div className="w-14 h-14 rounded-2xl bg-white/8 flex items-center justify-center mx-auto mb-3">
+                  <Star className="w-6 h-6 text-white/25" />
+                </div>
+                <p className="text-sm text-white/40">No favorite articles yet</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {favorites.map(j => (
+                  <JournalCard key={j.id} journal={j} userEmail={userEmail} />
+                ))}
+              </div>
+            );
+          })()
+        )}
+      </TabsContent>
       </div>
       </PageContainer>
       </div>
