@@ -62,7 +62,8 @@ export default function StudentScheduleView({ service: initialService, blockStar
 
   const weekData = useMemo(() => {
     const weeks = [];
-    const numWeeks = blockType === "3-week" ? 3 : 2;
+    const effectiveBlockType = selectedService === "Anesthesia" ? "3-week" : blockType;
+    const numWeeks = effectiveBlockType === "3-week" ? 3 : 2;
     for (let weekNum = 0; weekNum < numWeeks; weekNum++) {
       const week = [];
       // Start from Monday of the block
@@ -82,7 +83,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
       weeks.push(week);
     }
     return weeks;
-  }, [blockStartDate, blockType]);
+  }, [blockStartDate, blockType, selectedService]);
 
   return (
     <div className="space-y-8">
