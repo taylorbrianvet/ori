@@ -8,7 +8,7 @@ const CLINICAL_SERVICES = [
   "Neurology", "Oncology", "Ophthalmology", "Orthopedic Surgery", "Primary Care", "Soft Tissue Surgery"
 ];
 
-const DIAGNOSTIC_TYPES = ["CBC", "Chemistry", "NOVA", "Histopathology", "Cytology", "Urinalysis", "Radiology", "Ultrasound", "CT", "MRI", "X-Ray", "Other"];
+const DIAGNOSTIC_TYPES = ["CBC", "Chemistry", "NOVA", "Histopathology", "Cytology", "Culture", "Urinalysis", "Radiology", "Ultrasound", "CT", "MRI", "X-Ray", "Other"];
 const SAMPLE_TYPES = ["Blood", "Urine", "Tissue", "Bodily Fluid", "Other"];
 
 export default function DiagnosticForm({ staffList, onSaved, onCancel }) {
