@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Set worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 const MESSAGES = [
   "Reading the article…",
@@ -12,6 +16,20 @@ const MESSAGES = [
   "Compiling clinical takeaways…",
   "Finalizing your journal entry…",
 ];
+
+async function extractTextFromPdf(pdfUrl) {
+  const response = await fetch(pdfUrl);
+  const arrayBuffer = await response.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = "";
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(item => item.str).join(" ");
+    fullText += pageText + "\n";
+  }
+  return fullText.trim();
+}
 
 export default function JournalProcessingScreen({ journal, pdfUrl }) {
   const [msgIndex, setMsgIndex] = useState(0);
@@ -27,10 +45,19 @@ export default function JournalProcessingScreen({ journal, pdfUrl }) {
   useEffect(() => {
     const run = async () => {
       try {
+        // Extract text client-side from PDF
+        const raw_text = await extractTextFromPdf(pdfUrl);
+
+        if (!raw_text || raw_text.length < 50) {
+          throw new Error("Could not extract text from PDF. Make sure the PDF contains selectable text (not a scanned image).");
+        }
+
+        // Send text to backend for AI analysis
         await base44.functions.invoke("parseJournalArticle", {
-          pdf_url: pdfUrl,
-          journal_id: journal.id
+          raw_text,
+          journal_id: journal.id,
         });
+
         window.location.href = createPageUrl(`JournalDetail?id=${journal.id}`);
       } catch (err) {
         setError(err.message || "Processing failed.");
@@ -45,7 +72,7 @@ export default function JournalProcessingScreen({ journal, pdfUrl }) {
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
         className="flex flex-col items-center gap-8 px-8 text-center max-w-sm">
 
-        {/* Animated brain/book icon */}
+        {/* Animated book icon */}
         <div className="relative">
           <motion.div
             animate={{ scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
@@ -57,7 +84,6 @@ export default function JournalProcessingScreen({ journal, pdfUrl }) {
               <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
             </svg>
           </motion.div>
-          {/* Orbiting dot */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
@@ -69,9 +95,15 @@ export default function JournalProcessingScreen({ journal, pdfUrl }) {
         </div>
 
         {error ? (
-          <div className="text-center">
-            <p className="text-white/60 text-sm mb-1">Processing failed</p>
-            <p className="text-red-400 text-xs">{error}</p>
+          <div className="text-center space-y-3">
+            <p className="text-white/60 text-sm">Processing failed</p>
+            <p className="text-red-400 text-xs leading-relaxed">{error}</p>
+            <button
+              onClick={() => window.location.href = createPageUrl("JournalClub")}
+              className="text-xs text-white/40 hover:text-white/70 underline transition-colors"
+            >
+              Back to Journal Club
+            </button>
           </div>
         ) : (
           <>
@@ -79,13 +111,11 @@ export default function JournalProcessingScreen({ journal, pdfUrl }) {
               key={msgIndex}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
               className="text-base text-white/80 font-medium"
             >
               {MESSAGES[msgIndex]}
             </motion.p>
 
-            {/* Progress dots */}
             <div className="flex gap-1.5">
               {MESSAGES.map((_, i) => (
                 <div key={i} className={`rounded-full transition-all duration-500 ${
