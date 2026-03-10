@@ -188,10 +188,37 @@ export default function JournalDetail() {
         </div>
       )}
 
+      {/* PDF Viewer */}
+      {journal.pdf_url && (
+        <div className="glass-card overflow-hidden mb-4">
+          <button onClick={() => setShowPdf(v => !v)}
+            className="w-full flex items-center justify-between px-4 py-3 text-left">
+            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">PDF</span>
+            {showPdf ? <ChevronUp className="w-4 h-4 text-white/30" /> : <ChevronDown className="w-4 h-4 text-white/30" />}
+          </button>
+          {showPdf && (
+            <div className="w-full h-[70vh]">
+              <iframe
+                src={journal.pdf_url}
+                className="w-full h-full border-0"
+                title="Article PDF"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       {/* AI Summary */}
       {journal.ai_summary && (
-        <Section title="AI Summary" defaultOpen={true}>
-          <p className="text-sm text-white/70 leading-relaxed">{journal.ai_summary}</p>
+        <Section title="Journal Club Summary" defaultOpen={true}>
+          {journal.ai_summary.trim().startsWith("<") ? (
+            <div
+              className="journal-club-summary text-sm text-white/75 leading-relaxed prose prose-invert prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: journal.ai_summary }}
+            />
+          ) : (
+            <p className="text-sm text-white/70 leading-relaxed">{journal.ai_summary}</p>
+          )}
         </Section>
       )}
 
