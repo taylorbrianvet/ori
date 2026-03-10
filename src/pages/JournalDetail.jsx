@@ -155,38 +155,40 @@ export default function JournalDetail() {
 
       {/* Service + keyword tags */}
       {((journal.associated_services || []).length > 0 || (journal.procedures || []).length > 0 || (journal.disease_processes || []).length > 0) && (
-        <div className="glass-card p-4 mb-4 space-y-3">
-          {(journal.associated_services || []).length > 0 && (
-            <div>
-              <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Services</p>
-              <div className="flex flex-wrap gap-1.5">
-                {journal.associated_services.map(s => (
-                  <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-white/8 border border-white/12 text-white/55">{s}</span>
-                ))}
+        <Section title="Services, Procedures & Disease Processes" defaultOpen={false}>
+          <div className="space-y-3">
+            {(journal.associated_services || []).length > 0 && (
+              <div>
+                <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Services</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {journal.associated_services.map(s => (
+                    <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-white/8 border border-white/12 text-white/55">{s}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          {(journal.procedures || []).length > 0 && (
-            <div>
-              <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Procedures</p>
-              <div className="flex flex-wrap gap-1.5">
-                {journal.procedures.map(p => (
-                  <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-white/6 border border-white/10 text-white/45">{p}</span>
-                ))}
+            )}
+            {(journal.procedures || []).length > 0 && (
+              <div>
+                <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Procedures</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {journal.procedures.map(p => (
+                    <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-white/6 border border-white/10 text-white/45">{p}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          {(journal.disease_processes || []).length > 0 && (
-            <div>
-              <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Disease Processes</p>
-              <div className="flex flex-wrap gap-1.5">
-                {journal.disease_processes.map(d => (
-                  <span key={d} className="text-[10px] px-2 py-0.5 rounded-full bg-white/6 border border-white/10 text-white/45">{d}</span>
-                ))}
+            )}
+            {(journal.disease_processes || []).length > 0 && (
+              <div>
+                <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Disease Processes</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {journal.disease_processes.map(d => (
+                    <span key={d} className="text-[10px] px-2 py-0.5 rounded-full bg-white/6 border border-white/10 text-white/45">{d}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </Section>
       )}
 
       {/* PDF Viewer */}
