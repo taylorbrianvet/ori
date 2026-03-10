@@ -65,7 +65,7 @@ export default function Layout({ children, currentPageName }) {
               <Stethoscope className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-base font-semibold text-white tracking-tight">MedCore</h1>
+              <h1 className="text-base font-semibold text-white tracking-tight">Sol</h1>
               <p className="text-[11px] text-white/50 font-medium">Hospital Management</p>
             </div>
           </div>
@@ -173,7 +173,7 @@ export default function Layout({ children, currentPageName }) {
                     <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
                       <Stethoscope className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-sm font-semibold text-white">MedCore</span>
+                    <span className="text-sm font-semibold text-white">Sol</span>
                   </div>
                   <button onClick={() => setMobileOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/70">
                     <X className="w-4 h-4" />
