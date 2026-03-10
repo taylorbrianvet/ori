@@ -4,8 +4,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import PageContainer from "../components/shared/PageContainer";
 import PageHeader from "../components/shared/PageHeader";
 import GlassCard from "../components/shared/GlassCard";
-import { Upload, ImageIcon, CheckCircle2, Loader2 } from "lucide-react";
+import { Upload, ImageIcon, CheckCircle2, Loader2, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import { format } from "date-fns";
 
 const DEFAULT_TILES = [
   { key: "my_workspace", title: "My Workspace", defaultImage: "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=80" },
@@ -112,6 +114,53 @@ function TileImageEditor({ tile, config }) {
   );
 }
 
+function AnesthesiaScheduleConfig() {
+  const [startDate, setStartDate] = useState("");
+  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Fetch current anesthesia start date from user settings
+    base44.auth.me().then((user) => {
+      if (user?.anesthesia_block_start_date) {
+        setStartDate(user.anesthesia_block_start_date);
+      }
+    }).catch(() => {});
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await base44.auth.updateMe({ anesthesia_block_start_date: startDate });
+      toast.success("Anesthesia block start date updated");
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <GlassCard className="p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <Calendar className="w-5 h-5 text-primary" />
+        <h3 className="text-lg font-semibold text-white">Anesthesia 3-Week Block</h3>
+      </div>
+      <p className="text-sm text-white/60 mb-4">Set the start date for the 3-week anesthesia student schedule block.</p>
+      <div className="flex gap-3">
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="flex-1 px-4 py-2 rounded-lg border border-white/20 bg-white/8 text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+        />
+        <Button onClick={handleSave} disabled={saving} className="text-sm">
+          {saving ? "Saving..." : "Save"}
+        </Button>
+      </div>
+    </GlassCard>
+  );
+}
+
 export default function Admin() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -154,11 +203,22 @@ export default function Admin() {
 
   return (
     <PageContainer>
-      <PageHeader title="Admin" subtitle="Manage home tile images." />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {DEFAULT_TILES.map((tile) => (
-          <TileImageEditor key={tile.key} tile={tile} config={configMap[tile.key]} />
-        ))}
+      <PageHeader title="Admin" subtitle="Manage system settings and home tile images." />
+      
+      {/* Schedule Configuration */}
+      <div className="mb-8">
+        <h2 className="text-xl font-bold text-white mb-4">Schedule Settings</h2>
+        <AnesthesiaScheduleConfig />
+      </div>
+
+      {/* Home Tile Images */}
+      <div>
+        <h2 className="text-xl font-bold text-white mb-4">Home Tile Images</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {DEFAULT_TILES.map((tile) => (
+            <TileImageEditor key={tile.key} tile={tile} config={configMap[tile.key]} />
+          ))}
+        </div>
       </div>
     </PageContainer>
   );
