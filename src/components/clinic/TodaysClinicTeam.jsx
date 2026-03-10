@@ -41,9 +41,18 @@ function TeamBlock({ entry }) {
 
 export default function TodaysClinicTeam({ clinicSchedules = [], serviceName }) {
   const todayStr = format(new Date(), "yyyy-MM-dd");
-  // Match by both exact date string and by formatted date if entries have a display_date field
   const todayEntries = clinicSchedules.filter(e => {
-    const entryDate = e.date ? e.date.slice(0, 10) : "";
+    // Normalize date: strip time component, handle slash-formatted dates (MM/DD/YYYY → yyyy-MM-dd)
+    let entryDate = e.date || "";
+    if (entryDate.includes("/")) {
+      const parts = entryDate.split("/");
+      if (parts.length === 3) {
+        // Could be MM/DD/YYYY or DD/MM/YYYY — try both, prefer MM/DD/YYYY (US standard)
+        entryDate = `${parts[2]}-${parts[0].padStart(2,"0")}-${parts[1].padStart(2,"0")}`;
+      }
+    } else {
+      entryDate = entryDate.slice(0, 10);
+    }
     return entryDate === todayStr && e.service === serviceName;
   });
 
