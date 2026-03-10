@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, CalendarDays } from "lucide-react";
 import { format, addDays } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import OnCallPersonRow from "./OnCallPersonRow";
 import ShiftCountdown from "./ShiftCountdown";
 import OnCallMiniCalendar from "./OnCallMiniCalendar";
@@ -51,12 +53,23 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
   const shiftDate = getShiftDate();
   const nextShiftDate = format(addDays(new Date(shiftDate), 1), "yyyy-MM-dd");
 
+  const { data: studentSchedules = [] } = useQuery({
+    queryKey: ["student-on-call-schedules"],
+    queryFn: () => base44.entities.StudentOnCallSchedule.list(),
+  });
+
   const currentRecord = allRecords.find((r) => r.service === service && r.date === shiftDate);
   const nextRecord = allRecords.find((r) => r.service === service && r.date === nextShiftDate);
 
   const currentSlots = buildSlots(currentRecord);
   const nextSlots = buildSlots(nextRecord);
   const hasData = currentSlots.length > 0;
+
+  // Get current student assignments (primary and secondary)
+  const currentStudents = studentSchedules.filter((s) => s.date === shiftDate && s.service === service).sort((a, b) => a.position === "primary" ? -1 : 1);
+  
+  // Get next shift student assignments
+  const nextStudents = studentSchedules.filter((s) => s.date === nextShiftDate && s.service === service).sort((a, b) => a.position === "primary" ? -1 : 1);
 
   return (
     <motion.div
@@ -112,13 +125,29 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
                     ) : nextSlots.map((s, i) => (
                       <OnCallPersonRow key={i} {...s} />
                     ))}
+                    {/* Next shift students */}
+                    {nextStudents.length > 0 && (
+                      <EntriesBlock 
+                        entries={nextStudents.map((s) => ({ slot: s.position, name: s.student_name }))} 
+                        label="Students On Call" 
+                      />
+                    )}
                   </div>
                 ) : (
-                  hasData ? currentSlots.map((s, i) => (
-                    <OnCallPersonRow key={i} {...s} />
-                  )) : (
-                    <p className="text-xs text-white/35 italic py-2">No on-call data for today.</p>
-                  )
+                  <>
+                    {hasData ? currentSlots.map((s, i) => (
+                      <OnCallPersonRow key={i} {...s} />
+                    )) : (
+                      <p className="text-xs text-white/35 italic py-2">No on-call data for today.</p>
+                    )}
+                    {/* Current shift students */}
+                    {currentStudents.length > 0 && (
+                      <EntriesBlock 
+                        entries={currentStudents.map((s) => ({ slot: s.position, name: s.student_name }))} 
+                        label="Students On Call" 
+                      />
+                    )}
+                  </>
                 )}
 
                 {/* Action buttons */}
