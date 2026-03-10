@@ -60,7 +60,7 @@ function JournalCard({ journal, userEmail }) {
 
 export default function JournalClub() {
   const [showUpload, setShowUpload] = useState(false);
-  const [processing, setProcessing] = useState(null); // { journal, pdfUrl }
+  const [processing, setProcessing] = useState(null); // { journal, pdfFile }
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
