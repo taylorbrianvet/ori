@@ -60,15 +60,20 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen font-inter flex">
       {/* Desktop Sidebar */}
       <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
-        <div className="p-6 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center shadow-inner">
+        <div className={`border-b border-white/10 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
+          <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
+            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center shadow-inner flex-shrink-0">
               <Stethoscope className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-base font-semibold text-white tracking-tight">SoL</h1>
-              <p className="text-[11px] text-white/50 font-medium">Hospital Management</p>
-            </div>
+            {sidebarOpen && (
+              <div>
+                <h1 className="text-base font-semibold text-white tracking-tight">SoL</h1>
+                <p className="text-[11px] text-white/50 font-medium">Hospital Management</p>
+              </div>
+            )}
+            {!sidebarOpen && (
+              <h1 className="text-xs font-semibold text-white tracking-tight">SoL</h1>
+            )}
           </div>
         </div>
         <nav className="flex-1 p-4 space-y-1">
@@ -78,14 +83,17 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.page}
                 to={createPageUrl(item.page)}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                title={!sidebarOpen ? item.name : ""}
+                className={`flex items-center transition-all duration-200 group rounded-xl ${
+                  sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
+                } text-sm font-medium ${
                   isActive
                     ? "bg-white/15 text-white shadow-sm"
                     : "text-white/55 hover:bg-white/10 hover:text-white/90"
                 }`}
               >
-                <item.icon className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-white" : "text-white/50"}`} />
-                {item.name}
+                <item.icon className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-white" : "text-white/50"}`} />
+                {sidebarOpen && <span>{item.name}</span>}
               </Link>
             );
           })}
@@ -93,59 +101,82 @@ export default function Layout({ children, currentPageName }) {
         <div className="p-4 border-t border-white/10 space-y-1">
           <Link
             to={createPageUrl("Pharmacy")}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+            title={!sidebarOpen ? "Pharmacy" : ""}
+            className={`flex items-center transition-all duration-200 group rounded-xl ${
+              sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
+            } text-sm font-medium ${
               currentPageName === "Pharmacy"
                 ? "bg-white/15 text-white shadow-sm"
                 : "text-white/55 hover:bg-white/10 hover:text-white/90"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-white" : "text-white/50"}`} />
-            Pharmacy
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-white" : "text-white/50"}`} />
+            {sidebarOpen && <span>Pharmacy</span>}
           </Link>
           <Link
             to={createPageUrl("Diagnostics")}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+            title={!sidebarOpen ? "Diagnostics" : ""}
+            className={`flex items-center transition-all duration-200 group rounded-xl ${
+              sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
+            } text-sm font-medium ${
               currentPageName === "Diagnostics"
                 ? "bg-white/15 text-white shadow-sm"
                 : "text-white/55 hover:bg-white/10 hover:text-white/90"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Diagnostics" ? "text-white" : "text-white/50"}`} />
-            Diagnostics
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Diagnostics" ? "text-white" : "text-white/50"}`} />
+            {sidebarOpen && <span>Diagnostics</span>}
           </Link>
           <Link
             to={createPageUrl("Directory")}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+            title={!sidebarOpen ? "Directory" : ""}
+            className={`flex items-center transition-all duration-200 group rounded-xl ${
+              sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
+            } text-sm font-medium ${
               currentPageName === "Directory"
                 ? "bg-white/15 text-white shadow-sm"
                 : "text-white/55 hover:bg-white/10 hover:text-white/90"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-white" : "text-white/50"}`} />
-            Directory
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-white" : "text-white/50"}`} />
+            {sidebarOpen && <span>Directory</span>}
           </Link>
           {isAdmin && (
             <Link
               to={createPageUrl("Admin")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+              title={!sidebarOpen ? "Admin" : ""}
+              className={`flex items-center transition-all duration-200 group rounded-xl ${
+                sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
+              } text-sm font-medium ${
                 currentPageName === "Admin"
                   ? "bg-white/15 text-white shadow-sm"
                   : "text-white/55 hover:bg-white/10 hover:text-white/90"
               }`}
             >
-              <Settings className={`w-[17px] h-[17px] transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-white" : "text-white/50"}`} />
-              Admin
+              <Settings className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-white" : "text-white/50"}`} />
+              {sidebarOpen && <span>Admin</span>}
             </Link>
           )}
+
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            title={sidebarOpen ? "Collapse" : "Expand"}
+            className="w-full flex items-center justify-center py-2 mt-2 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition-colors text-xs font-medium"
+          >
+            {sidebarOpen ? "◄" : "►"}
+          </button>
+
           {/* User profile at bottom of sidebar */}
-          {currentUser && (
+          {currentUser && sidebarOpen && (
             <div className="pt-2 px-1">
               <button onClick={() => setShowEditProfile(true)} className="w-full text-left hover:bg-white/8 rounded-xl px-1 py-1 transition-colors">
                 <UserAvatar user={currentUser} staffProfile={staffProfile} />
               </button>
             </div>
           )}
-          <p className="text-[11px] text-white/30 text-center pt-1">© 2026 VetHub</p>
+          {sidebarOpen && (
+            <p className="text-[11px] text-white/30 text-center pt-1">© 2026 VetHub</p>
+          )}
         </div>
       </aside>
 
@@ -251,14 +282,7 @@ export default function Layout({ children, currentPageName }) {
         />
       )}
 
-      {/* Sidebar Toggle Button */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="hidden md:flex fixed left-64 top-6 z-30 w-5 h-5 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-all duration-300 items-center justify-center"
-        style={{ left: sidebarOpen ? "256px" : "80px" }}
-      >
-        {sidebarOpen ? "◄" : "►"}
-      </button>
+
 
       {/* Main Content */}
       <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? "md:ml-64" : "md:ml-20"}`}>

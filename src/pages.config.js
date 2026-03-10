@@ -58,13 +58,13 @@ import OnCall from './pages/OnCall';
 import OnCallDetail from './pages/OnCallDetail';
 import PatientCare from './pages/PatientCare';
 import Resources from './pages/Resources';
+import ServiceBoard from './pages/ServiceBoard';
 import ServiceDetail from './pages/ServiceDetail';
 import Services from './pages/Services';
 import SurgicalLog from './pages/SurgicalLog';
 import Transfers from './pages/Transfers';
 import WoundCare from './pages/WoundCare';
 import WoundCaseDetail from './pages/WoundCaseDetail';
-import ServiceBoard from './pages/ServiceBoard';
 import Pharmacy from './pages/Pharmacy';
 import Diagnostics from './pages/Diagnostics';
 import __Layout from './Layout.jsx';
@@ -82,13 +82,13 @@ export const PAGES = {
     "OnCallDetail": OnCallDetail,
     "PatientCare": PatientCare,
     "Resources": Resources,
+    "ServiceBoard": ServiceBoard,
     "ServiceDetail": ServiceDetail,
     "Services": Services,
     "SurgicalLog": SurgicalLog,
     "Transfers": Transfers,
     "WoundCare": WoundCare,
     "WoundCaseDetail": WoundCaseDetail,
-    "ServiceBoard": ServiceBoard,
     "Pharmacy": Pharmacy,
     "Diagnostics": Diagnostics,
 }
