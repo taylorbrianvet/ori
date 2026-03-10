@@ -160,6 +160,25 @@ export default function RoundDetailModal({ round, onClose, onSaved, staffList = 
         </div>
 
         <div className="p-5 space-y-5">
+          {/* Departments (multi-select) */}
+          <div>
+            <label className="text-[10px] text-white/40 uppercase tracking-wider font-semibold block mb-2">Department(s)</label>
+            <div className="flex flex-wrap gap-2">
+              {ALL_DEPARTMENTS.map(d => {
+                const selected = (form.departments || []).includes(d);
+                return (
+                  <button key={d} onClick={() => {
+                    const curr = form.departments || [];
+                    set("departments", selected ? curr.filter(x => x !== d) : [...curr, d]);
+                  }}
+                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${selected ? "bg-white/18 border-white/30 text-white" : "bg-white/4 border-white/12 text-white/45 hover:bg-white/10"}`}>
+                    {d}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Event type */}
           <div>
             <label className="text-[10px] text-white/40 uppercase tracking-wider font-semibold block mb-2">Event Type</label>
