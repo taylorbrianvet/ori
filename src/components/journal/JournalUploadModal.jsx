@@ -30,22 +30,19 @@ export default function JournalUploadModal({ onClose, onProcessing }) {
     try {
       const user = await base44.auth.me();
 
-      // Upload PDF
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-
-      // Create placeholder journal record
+      // Create a placeholder journal record (no upload yet - just to have an ID)
       const journal = await base44.entities.Journal.create({
         title: file.name.replace(".pdf", ""),
-        pdf_url: file_url,
         uploaded_by: user.email,
         uploaded_by_name: user.full_name,
         favorited_by: [],
         ai_processed: false,
       });
 
-      onProcessing(journal, file_url);
+      // Pass the raw file object so text can be extracted client-side
+      onProcessing(journal, file);
     } catch (err) {
-      toast.error("Upload failed: " + err.message);
+      toast.error("Failed: " + err.message);
       setUploading(false);
     }
   };
