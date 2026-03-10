@@ -6,7 +6,7 @@ import PageContainer from "../components/shared/PageContainer";
 import PageHeader from "../components/shared/PageHeader";
 import OnCallServicePanel from "../components/oncall/OnCallServicePanel";
 import OnCallEditPanel from "../components/oncall/OnCallEditPanel";
-import StudentScheduleView from "../components/oncall/StudentScheduleView.js";
+import StudentScheduleView from "../components/oncall/StudentScheduleView";
 import { Phone, Edit3, Users } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { useNavigate } from "react-router-dom";

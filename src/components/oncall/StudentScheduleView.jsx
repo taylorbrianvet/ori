@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { format, addDays, startOfDay } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import StudentShiftSlot from "./StudentShiftSlot.js";
+import StudentShiftSlot from "./StudentShiftSlot";
 
 export default function StudentScheduleView({ service, blockStartDate, currentUser }) {
   const [students, setStudents] = useState([]);
