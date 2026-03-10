@@ -71,6 +71,9 @@ export default function TransferCard({ transfers, transfer, onUpdated }) {
             <span className="px-2.5 py-1 rounded-lg bg-white/8 border border-white/12 text-white/65 font-medium">{t.requesting_service}</span>
             <ArrowRight className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
             <span className="px-2.5 py-1 rounded-lg bg-white/12 border border-white/18 text-white/85 font-medium">{t.receiving_service}</span>
+            {t.estimate && (
+              <span className="ml-auto text-white/70 font-medium">${t.estimate.toLocaleString()}</span>
+            )}
           </div>
         ))}
       </div>
