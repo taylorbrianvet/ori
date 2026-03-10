@@ -92,7 +92,7 @@ export default function ServiceBoard() {
         <h1 className="text-3xl font-bold text-white tracking-tight mb-1">{selectedService}</h1>
         <p className="text-sm text-white/50">Board</p>
       </div>
-      <div className="mb-4 flex items-start justify-between">
+      <div className="mb-4 flex items-start justify-end">
         <div>
         <div className="relative">
           <button
