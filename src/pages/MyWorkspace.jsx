@@ -7,6 +7,7 @@ import SurgicalLogForm from "../components/surgical/SurgicalLogForm";
 import WorkspaceProfile from "../components/workspace/WorkspaceProfile";
 import ProcedureLogView from "../components/workspace/ProcedureLogView";
 import ClinicScheduleCalendar from "../components/clinic/ClinicScheduleCalendar";
+import NotificationSettings from "../components/workspace/NotificationSettings";
 import { ChevronLeft, Plus, BookOpen, Star, CalendarDays, ClipboardList } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
