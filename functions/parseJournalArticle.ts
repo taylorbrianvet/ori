@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
 
     // Parse structured data + AI analysis from raw text
     const parseResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -32,18 +32,17 @@ Rules:
 - associated_services: ONLY choose from: ${SERVICES.join(', ')}
 - procedures: Specific veterinary procedures (e.g., gastropexy, TPLO, splenectomy, thoracotomy, cystotomy)
 - disease_processes: Specific diseases/diagnoses (e.g., gastric dilatation volvulus, osteosarcoma, BOAS, epilepsy)
-- ai_summary: A comprehensive, highly detailed HTML summary for journal club. I am preparing to present an in-depth summary of a veterinary research article for a journal club discussion. Produce a comprehensive, highly detailed, and professionally written summary that addresses each of the following criteria. Do not limit the length or level of detail; include all relevant information and supplement with external references or knowledge where the article lacks detail. Provide a copy-and-pasteable HTML output that starts with the < character (no leading or trailing spaces, no extra blank lines, and no indentation). Use emojis to organize sections. The HTML must be valid, with minimal line breaks and no additional whitespace. Structure: (1) 📖 Introduction and Study Context — focus, design, scope, objectives; (2) ✅ Inclusion and Exclusion Criteria — criteria, demographics with precise data; (3) 🧪 Methods and Interventions — thorough overview of methods, mechanisms, supplement gaps with external knowledge; (4) 📊 Results — major findings with percentages, survival rates, comparisons, unexpected findings; (5) 🔍 Detailed Explanation of Techniques — for surgical/procedural studies, describe in depth, reference external sources for gaps; (6) 🗣️ Discussion and Takeaways — key conclusions, clinical relevance, strengths, limitations, specific data points; (7) 🌍 Integration of External Information — additional context integrated, external sources noted; (8) ✍️ References Incorporation — distinguish article-sourced vs externally referenced details. Write in paragraph format with logical flow. Professional tone suitable for a veterinary journal club.
+- ai_summary: A comprehensive HTML summary for journal club. Use emojis to organize sections. The HTML must be valid with minimal line breaks. Include: (1) 📖 Introduction and Study Context; (2) ✅ Inclusion and Exclusion Criteria; (3) 🧪 Methods; (4) 📊 Results; (5) 🗣️ Discussion; (6) ✍️ References.
 - ai_clinical_takeaway: Exactly 1-2 sentences, the single most important clinical implication, specific and actionable
 - article_url: Format any DOI as https://doi.org/... if found, otherwise null
 - keywords: 5-10 key search terms most useful for finding this article`
         },
         {
           role: "user",
-          content: `Article text:\n\n${raw_text.slice(0, 12000)}\n\nReturn ONLY this JSON:\n{\n  "title": "",\n  "journal_name": "",\n  "journal_year": 0,\n  "authors": [],\n  "abstract": "",\n  "ai_summary": "",\n  "ai_clinical_takeaway": "",\n  "associated_services": [],\n  "procedures": [],\n  "disease_processes": [],\n  "keywords": [],\n  "article_url": null\n}`
+          content: `Article text:\n\n${raw_text.slice(0, 10000)}\n\nReturn ONLY valid JSON with these fields:\n{\n  "title": "string",\n  "journal_name": "string",\n  "journal_year": 0,\n  "authors": ["string"],\n  "abstract": "string",\n  "ai_summary": "string",\n  "ai_clinical_takeaway": "string",\n  "associated_services": ["string"],\n  "procedures": ["string"],\n  "disease_processes": ["string"],\n  "keywords": ["string"],\n  "article_url": null\n}`
         }
       ],
-      response_format: { type: "json_object" },
-      max_tokens: 4000
+      max_tokens: 3000
     });
 
     const parsed = JSON.parse(parseResponse.choices[0].message.content);
