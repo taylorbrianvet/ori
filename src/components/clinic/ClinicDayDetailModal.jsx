@@ -27,7 +27,7 @@ function PersonInput({ label, value, onChange, suggestions, placeholder, disable
         />
       </div>
       {open && filtered.length > 0 && !disabled && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 glass-panel rounded-xl overflow-hidden max-h-40 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-xl overflow-hidden max-h-40 overflow-y-auto" style={{ background: "rgba(30, 10, 18, 0.97)", border: "1px solid rgba(255,255,255,0.15)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
           {filtered.map(s => (
             <button key={s} onMouseDown={() => { onChange(s); setOpen(false); }}
               className="w-full text-left px-3 py-2 text-xs text-white/80 hover:bg-white/10 transition-colors">
