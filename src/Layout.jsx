@@ -9,6 +9,7 @@ const navItems = [
   { name: "Home", page: "Home", icon: Home },
   { name: "Services", page: "Services", icon: Stethoscope },
   { name: "On Call", page: "OnCall", icon: Phone },
+  { name: "Journal Club", page: "JournalClub", icon: GraduationCap },
   { name: "Resources", page: "Resources", icon: BookOpen },
 ];
 
