@@ -92,6 +92,11 @@ export default function ServiceDetail() {
     queryFn: () => base44.entities.Staff.list(),
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => base44.auth.me(),
+  });
+
   // Clinic schedules for this service
   const serviceName = service ? (SERVICE_NAME_MAP[service.service_name] || service.service_name) : null;
 
