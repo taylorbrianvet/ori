@@ -42,6 +42,7 @@ export default function Layout({ children, currentPageName }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [staffProfile, setStaffProfile] = useState(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     base44.auth.me().then((u) => {
@@ -58,7 +59,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen font-inter flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10">
+      <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center shadow-inner">
@@ -228,8 +229,17 @@ export default function Layout({ children, currentPageName }) {
         />
       )}
 
+      {/* Sidebar Toggle Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="hidden md:flex fixed left-64 top-6 z-30 w-5 h-5 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-all duration-300 items-center justify-center"
+        style={{ left: sidebarOpen ? "256px" : "80px" }}
+      >
+        {sidebarOpen ? "◄" : "►"}
+      </button>
+
       {/* Main Content */}
-      <main className="flex-1 md:ml-64">
+      <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? "md:ml-64" : "md:ml-20"}`}>
         <div className="pt-14 md:pt-0 min-h-screen">
           {children}
         </div>
