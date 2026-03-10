@@ -111,14 +111,14 @@ Deno.serve(async (req) => {
   </body>
 </html>`;
 
-    // Send emails to all recipients
-    for (const recipient of recipients) {
-      await base44.integrations.Core.SendEmail({
-        to: recipient.email,
-        subject: `[VetHub] ${pending.length} Pending Transfer${pending.length !== 1 ? 's' : ''}`,
-        body: emailBody
-      });
-    }
+    // Send email with all recipients BCC'd
+    const bccEmails = recipients.map(r => r.email);
+    await base44.integrations.Core.SendEmail({
+      to: recipients[0].email,
+      bcc: bccEmails,
+      subject: `[VetHub] ${pending.length} Pending Transfer${pending.length !== 1 ? 's' : ''}`,
+      body: emailBody
+    });
 
     return Response.json({
       success: true,
