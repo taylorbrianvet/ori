@@ -9,6 +9,7 @@ import { base44 } from "@/api/base44Client";
 const navItems = [
   { name: "Home", page: "Home", icon: Home },
   { name: "Services", page: "Services", icon: Stethoscope },
+  { name: "Service Board", page: "ServiceBoard", icon: BookOpen },
   { name: "On Call", page: "OnCall", icon: Phone },
   { name: "Journal Club", page: "JournalClub", icon: BookMarked },
   { name: "Ed. Rounds", page: "EducationalRounds", icon: GraduationCap },
