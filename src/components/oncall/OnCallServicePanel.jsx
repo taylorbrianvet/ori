@@ -58,6 +58,11 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
     queryFn: () => base44.entities.StudentOnCallSchedule.list(),
   });
 
+  const { data: staff = [] } = useQuery({
+    queryKey: ["staff"],
+    queryFn: () => base44.entities.Staff.list(),
+  });
+
   const currentRecord = allRecords.find((r) => r.service === service && r.date === shiftDate);
   const nextRecord = allRecords.find((r) => r.service === service && r.date === nextShiftDate);
 
@@ -66,10 +71,16 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
   const hasData = currentSlots.length > 0;
 
   // Get current student assignments (primary and secondary)
-  const currentStudents = studentSchedules.filter((s) => s.date === shiftDate && s.service === service).sort((a, b) => a.position === "primary" ? -1 : 1);
+  const currentStudents = studentSchedules.filter((s) => s.date === shiftDate && s.service === service).sort((a, b) => a.position === "primary" ? -1 : 1).map(s => {
+    const studentInfo = staff.find(st => st.email === s.student_email);
+    return { ...s, phone: studentInfo?.phone };
+  });
   
   // Get next shift student assignments
-  const nextStudents = studentSchedules.filter((s) => s.date === nextShiftDate && s.service === service).sort((a, b) => a.position === "primary" ? -1 : 1);
+  const nextStudents = studentSchedules.filter((s) => s.date === nextShiftDate && s.service === service).sort((a, b) => a.position === "primary" ? -1 : 1).map(s => {
+    const studentInfo = staff.find(st => st.email === s.student_email);
+    return { ...s, phone: studentInfo?.phone };
+  });
 
   return (
     <motion.div
@@ -127,10 +138,17 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
                     ))}
                     {/* Next shift students */}
                     {nextStudents.length > 0 && (
-                      <EntriesBlock 
-                        entries={nextStudents.map((s) => ({ slot: s.position, name: s.student_name }))} 
-                        label="Students On Call" 
-                      />
+                      <div className="mb-3">
+                        <p className="text-[10px] font-semibold text-white/35 uppercase tracking-wider mb-1">Students On Call</p>
+                        {nextStudents.map((s, i) => (
+                          <OnCallPersonRow
+                            key={i}
+                            slot={s.position}
+                            name={s.student_name}
+                            phone={s.phone}
+                          />
+                        ))}
+                      </div>
                     )}
                   </div>
                 ) : (
@@ -142,10 +160,17 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
                     )}
                     {/* Current shift students */}
                     {currentStudents.length > 0 && (
-                      <EntriesBlock 
-                        entries={currentStudents.map((s) => ({ slot: s.position, name: s.student_name }))} 
-                        label="Students On Call" 
-                      />
+                      <div className="mb-3">
+                        <p className="text-[10px] font-semibold text-white/35 uppercase tracking-wider mb-1">Students On Call</p>
+                        {currentStudents.map((s, i) => (
+                          <OnCallPersonRow
+                            key={i}
+                            slot={s.position}
+                            name={s.student_name}
+                            phone={s.phone}
+                          />
+                        ))}
+                      </div>
                     )}
                   </>
                 )}
