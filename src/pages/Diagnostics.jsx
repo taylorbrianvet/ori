@@ -20,6 +20,8 @@ const CLINICAL_SERVICES = [
   "Soft Tissue Surgery"
 ];
 
+const DIAGNOSTIC_TYPES = ["CBC", "Chemistry", "NOVA", "Histopathology", "Cytology", "Culture", "Urinalysis", "Radiology", "Ultrasound", "CT", "MRI", "X-Ray", "Other"];
+
 export default function Diagnostics() {
   const [showForm, setShowForm] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
