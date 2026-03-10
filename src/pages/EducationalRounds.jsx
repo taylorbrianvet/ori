@@ -57,6 +57,7 @@ export default function EducationalRounds() {
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedRound, setSelectedRound] = useState(null);
   const [activeDept, setActiveDept] = useState(null); // null = not yet loaded
+  const [showSeminarsPanel, setShowSeminarsPanel] = useState(false);
   const queryClient = useQueryClient();
 
   // Load user preference
