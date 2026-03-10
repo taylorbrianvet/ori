@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle, Sparkles } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -13,28 +14,44 @@ async function extractTextFromPdf(file) {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    // Join items, preserving line breaks between text chunks
-    const pageText = content.items
-      .map(item => item.str)
-      .join(" ");
+    const pageText = content.items.map(item => item.str).join(" ");
     fullText += `--- Page ${i} ---\n${pageText}\n\n`;
   }
   return fullText.trim();
 }
 
 export default function JournalProcessingScreen({ journal, pdfFile, onBack }) {
-  const [status, setStatus] = useState("extracting"); // extracting | done | error
+  const [status, setStatus] = useState("extracting"); // extracting | parsing | done | error
   const [extractedText, setExtractedText] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const run = async () => {
       try {
+        // Step 1: Extract text client-side
         const text = await extractTextFromPdf(pdfFile);
         setExtractedText(text);
+
+        if (!text || text.length < 50) {
+          throw new Error("Could not extract text from PDF. Make sure the PDF contains selectable text (not a scanned image).");
+        }
+
+        // Step 2: Send to OpenAI for parsing
+        setStatus("parsing");
+        await base44.functions.invoke("parseJournalArticle", {
+          raw_text: text,
+          journal_id: journal.id,
+        });
+
         setStatus("done");
+
+        // Navigate to the article after a brief success moment
+        setTimeout(() => {
+          window.location.href = createPageUrl(`JournalDetail?id=${journal.id}`);
+        }, 1200);
+
       } catch (err) {
-        setError(err.message || "Failed to extract text from PDF.");
+        setError(err.message || "Processing failed.");
         setStatus("error");
       }
     };
@@ -52,54 +69,87 @@ export default function JournalProcessingScreen({ journal, pdfFile, onBack }) {
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
-        <span className="text-sm text-white/60 font-medium">{journal?.title || "PDF Text Extraction"}</span>
+        <span className="text-sm text-white/60 font-medium truncate max-w-xs">{journal?.title || "Processing Article"}</span>
         <div className="w-16" />
       </div>
 
       {/* Body */}
       <div className="flex-1 overflow-hidden flex flex-col p-5 gap-4">
+
+        {/* Status bar */}
+        <div className="flex items-center gap-3 shrink-0">
+          <StepBadge label="Extract Text" active={status === "extracting"} done={["parsing","done"].includes(status)} />
+          <div className="flex-1 h-px bg-white/10" />
+          <StepBadge label="AI Parsing" active={status === "parsing"} done={status === "done"} />
+          <div className="flex-1 h-px bg-white/10" />
+          <StepBadge label="Done" active={false} done={status === "done"} />
+        </div>
+
+        {/* Content area */}
         {status === "extracting" && (
-          <div className="flex-1 flex flex-col items-center justify-center gap-4">
-            <Loader2 className="w-8 h-8 text-white/50 animate-spin" />
+          <div className="flex-1 flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-7 h-7 text-white/50 animate-spin" />
             <p className="text-white/60 text-sm">Extracting text from PDF…</p>
           </div>
         )}
 
-        {status === "error" && (
-          <div className="flex-1 flex flex-col items-center justify-center gap-3">
-            <p className="text-red-400 text-sm font-medium">Extraction Failed</p>
-            <p className="text-white/40 text-xs text-center max-w-sm">{error}</p>
-            <button onClick={onBack} className="text-xs text-white/40 hover:text-white underline mt-2">
-              Go back
-            </button>
+        {status === "parsing" && (
+          <div className="flex-1 flex flex-col gap-3 min-h-0">
+            <div className="flex items-center gap-2 shrink-0">
+              <CheckCircle className="w-4 h-4 text-green-400" />
+              <span className="text-sm text-white/80">Text extracted — {extractedText.length.toLocaleString()} characters</span>
+              <Loader2 className="w-3.5 h-3.5 text-white/40 animate-spin ml-auto" />
+              <span className="text-xs text-white/40">AI parsing…</span>
+            </div>
+            {/* Show extracted text while AI works */}
+            <div className="flex-1 rounded-xl border border-white/12 bg-white/4 overflow-auto p-4">
+              <pre className="text-xs text-white/50 whitespace-pre-wrap leading-relaxed font-mono">
+                {extractedText}
+              </pre>
+            </div>
           </div>
         )}
 
         {status === "done" && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex-1 flex flex-col gap-3 min-h-0"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex-1 flex flex-col items-center justify-center gap-4"
           >
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-sm text-white/80 font-medium">
-                Text extracted — {extractedText.length.toLocaleString()} characters
-              </span>
+            <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center">
+              <Sparkles className="w-7 h-7 text-white/80" />
             </div>
-
-            <div className="flex-1 rounded-xl border border-white/12 bg-white/4 overflow-auto p-4">
-              <pre className="text-xs text-white/70 whitespace-pre-wrap leading-relaxed font-mono">
-                {extractedText}
-              </pre>
-            </div>
-
-            <p className="text-xs text-white/35 text-center">
-              Review the extracted text above. If it looks correct, we can proceed to AI parsing.
-            </p>
+            <p className="text-white/80 text-sm font-medium">Article processed successfully</p>
+            <p className="text-white/35 text-xs">Redirecting to article…</p>
           </motion.div>
         )}
+
+        {status === "error" && (
+          <div className="flex-1 flex flex-col items-center justify-center gap-3">
+            <p className="text-red-400 text-sm font-medium">Processing Failed</p>
+            <p className="text-white/40 text-xs text-center max-w-sm leading-relaxed">{error}</p>
+            <button onClick={onBack} className="text-xs text-white/40 hover:text-white underline mt-2 transition-colors">
+              Go back
+            </button>
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
+
+function StepBadge({ label, active, done }) {
+  return (
+    <div className={`flex items-center gap-1.5 text-xs transition-colors ${
+      done ? "text-green-400" : active ? "text-white/80" : "text-white/25"
+    }`}>
+      {done
+        ? <CheckCircle className="w-3.5 h-3.5" />
+        : active
+        ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        : <div className="w-3.5 h-3.5 rounded-full border border-current opacity-40" />
+      }
+      {label}
     </div>
   );
 }
