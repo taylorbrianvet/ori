@@ -217,6 +217,15 @@ export default function Layout({ children, currentPageName }) {
         )}
       </AnimatePresence>
 
+      {/* Edit Profile Modal */}
+      {showEditProfile && staffProfile && (
+        <EditMyProfileModal
+          staffProfile={staffProfile}
+          onClose={() => setShowEditProfile(false)}
+          onSaved={(updated) => setStaffProfile(updated)}
+        />
+      )}
+
       {/* Main Content */}
       <main className="flex-1 md:ml-64">
         <div className="pt-14 md:pt-0 min-h-screen">
