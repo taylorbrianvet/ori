@@ -18,7 +18,7 @@ const DEFAULT_TILES = [
 { key: "services", title: "Services", subtext: "Browse all hospital departments.", page: "Services", icon: Stethoscope, defaultImage: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&q=80" },
 { key: "patient_care", title: "Patient Care", subtext: "Wound care and patient tools.", page: "PatientCare", icon: HeartPulse, defaultImage: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80" },
 { key: "transfers", title: "Transfers", subtext: "Manage inter-service transfers.", page: "Home", icon: ArrowRightLeft, defaultImage: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80" },
-{ key: "journal_club", title: "Journal Club", subtext: "Shared clinical literature from the hospital community.", page: "Home", icon: BookOpen, defaultImage: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&q=80" },
+{ key: "journal_club", title: "Journal Club", subtext: "Shared clinical literature from the hospital community.", page: "JournalClub", icon: BookOpen, defaultImage: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&q=80" },
 { key: "resources", title: "Resources", subtext: "Hospital guides and reference materials.", page: "Resources", icon: FolderOpen, defaultImage: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80" }];
 
 
