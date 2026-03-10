@@ -110,7 +110,7 @@ export default function JournalClub() {
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'url(https://images.unsplash.com/photo-1532676362226-8c38b5b5a4d9?w=1600&q=60)',
+          backgroundImage: 'url(https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1600&q=60)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(40px) brightness(0.3)',
@@ -131,7 +131,7 @@ export default function JournalClub() {
           {/* Hero Section */}
           <div className="mb-12">
             <div className="mb-6">
-              <h1 className="text-5xl font-bold text-white mb-4">Journal Club</h1>
+              <h1 className="text-4xl font-bold text-white mb-4">Journal Club</h1>
               <div className="space-y-3 max-w-2xl">
                 <p className="text-base text-white/80 leading-relaxed">
                   A curated library of <span className="font-semibold">AI-generated articles</span> for quick reference and easy access.
