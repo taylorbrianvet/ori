@@ -61,9 +61,7 @@ export default function Layout({ children, currentPageName }) {
       <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className={`border-b border-white/10 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
           <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
-            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center shadow-inner flex-shrink-0">
-              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-6 h-6" />
-            </div>
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) invert(1)" }} />
             {sidebarOpen && (
               <div>
                 <h1 className="text-base font-semibold text-white tracking-tight">SoL</h1>
@@ -170,9 +168,7 @@ export default function Layout({ children, currentPageName }) {
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/10">
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
-              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-5 h-5" />
-            </div>
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-7 h-7" style={{ filter: "brightness(0) invert(1)" }} />
             <span className="text-sm font-semibold text-white">SoL</span>
           </div>
           <div className="flex items-center gap-2">
@@ -210,9 +206,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
-                      <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-5 h-5" />
-                    </div>
+                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-7 h-7" style={{ filter: "brightness(0) invert(1)" }} />
                     <span className="text-sm font-semibold text-white">SoL</span>
                   </div>
                   <button onClick={() => setMobileOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/70">
