@@ -192,11 +192,18 @@ export default function ServiceDetail() {
         </div>
       )}
 
-      {/* Schedule (on-call type) */}
-      <div className="mb-8">
-        <SectionHeader title="On-Call Schedule" icon={CalendarDays} />
-        <ScheduleCalendar schedules={schedules} />
-      </div>
+      {/* Clinic Schedule Calendar */}
+      {serviceName && (
+        <div className="mb-8">
+          <SectionHeader title="Clinic Schedule" icon={CalendarDays} />
+          <ClinicScheduleSection
+            clinicSchedules={clinicSchedules}
+            serviceName={serviceName}
+            allStaff={allStaff}
+            currentUser={currentUser}
+          />
+        </div>
+      )}
 
       {/* Equipment */}
       <div className="mb-8">
