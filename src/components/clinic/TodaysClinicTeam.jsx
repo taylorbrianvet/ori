@@ -66,7 +66,7 @@ export default function TodaysClinicTeam({ clinicSchedules = [], serviceName }) 
 
   // Render teams side-by-side if there are splits (e.g. Team 1/Team 2, IM1/IM2, Small/Large Animal)
   return (
-    <div className="flex gap-3 flex-wrap">
+    <div className={`flex gap-3 ${todayEntries.length > 1 ? "flex-row" : "flex-col"}`}>
       {todayEntries.map((entry, i) => (
         <TeamBlock key={i} entry={entry} />
       ))}
