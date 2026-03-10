@@ -18,6 +18,42 @@ export default function StudentScheduleView({ service: initialService, blockStar
     queryFn: () => base44.entities.StudentOnCallSchedule.list(),
   });
 
+  const getCurrentShift = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentDate = format(now, "yyyy-MM-dd");
+    
+    // Determine which shift is currently active
+    let shiftInfo = null;
+    
+    // Check if it's a weekday (Mon-Fri: 1-5)
+    const dayOfWeek = now.getDay();
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+    
+    if (isWeekday) {
+      // Weekday: single shift 5pm-8am
+      if (currentHour >= 17 || currentHour < 8) {
+        shiftInfo = { dateStr: currentDate, shiftPeriod: "main", position: null };
+      } else if (currentHour >= 8 && currentHour < 17) {
+        // Find the date of the shift (it's yesterday's shift continuing)
+        const shiftStartDate = new Date(now);
+        shiftStartDate.setDate(shiftStartDate.getDate() - 1);
+        shiftInfo = { dateStr: format(shiftStartDate, "yyyy-MM-dd"), shiftPeriod: "main", position: null };
+      }
+    } else {
+      // Weekend: day (8am-8pm) or night (8pm-8am)
+      if (currentHour >= 8 && currentHour < 20) {
+        shiftInfo = { dateStr: currentDate, shiftPeriod: "day", position: null };
+      } else {
+        shiftInfo = { dateStr: currentDate, shiftPeriod: "night", position: null };
+      }
+    }
+    
+    return shiftInfo;
+  };
+
+  const currentShift = getCurrentShift();
+
   const weekData = useMemo(() => {
     const weeks = [];
     for (let weekNum = 0; weekNum < 2; weekNum++) {
@@ -89,6 +125,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
                         blockStartDate={blockStartDate}
                         onUpdate={() => refetch()}
                         canEdit={canEdit || currentUser?.role === "Student"}
+                        isCurrentShift={currentShift?.dateStr === day.dateStr && currentShift?.shiftPeriod === "main"}
                       />
                     ))}
                   </div>
@@ -123,6 +160,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
                             blockStartDate={blockStartDate}
                             onUpdate={() => refetch()}
                             canEdit={canEdit || currentUser?.role === "Student"}
+                            isCurrentShift={currentShift?.dateStr === day.dateStr && currentShift?.shiftPeriod === "day"}
                           />
                         ))}
                       </div>
@@ -142,6 +180,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
                             blockStartDate={blockStartDate}
                             onUpdate={() => refetch()}
                             canEdit={canEdit || currentUser?.role === "Student"}
+                            isCurrentShift={currentShift?.dateStr === day.dateStr && currentShift?.shiftPeriod === "night"}
                           />
                         ))}
                       </div>
