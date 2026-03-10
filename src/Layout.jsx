@@ -39,6 +39,7 @@ export default function Layout({ children, currentPageName }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [staffProfile, setStaffProfile] = useState(null);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then((u) => {
