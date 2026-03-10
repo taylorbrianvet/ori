@@ -62,7 +62,7 @@ export default function Layout({ children, currentPageName }) {
         <div className={`border-b border-white/10 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
           <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
             <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center shadow-inner flex-shrink-0">
-              <Stethoscope className="w-5 h-5 text-white" />
+              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-6 h-6" />
             </div>
             {sidebarOpen && (
               <div>
@@ -161,7 +161,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
           )}
           {sidebarOpen && (
-            <p className="text-[11px] text-white/30 text-center pt-1">© 2026 VetHub</p>
+            <p className="text-[11px] text-white/30 text-center pt-1">© 2026 Streamlined Operations Link</p>
           )}
         </div>
       </aside>
@@ -171,9 +171,9 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
-              <Stethoscope className="w-4 h-4 text-white" />
+              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-5 h-5" />
             </div>
-            <span className="text-sm font-semibold text-white">VetHub</span>
+            <span className="text-sm font-semibold text-white">SoL</span>
           </div>
           <div className="flex items-center gap-2">
             {currentUser && (
@@ -211,7 +211,7 @@ export default function Layout({ children, currentPageName }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
-                      <Stethoscope className="w-4 h-4 text-white" />
+                      <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-5 h-5" />
                     </div>
                     <span className="text-sm font-semibold text-white">SoL</span>
                   </div>
