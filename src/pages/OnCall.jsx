@@ -92,6 +92,15 @@ export default function OnCall() {
       {activeTab === "edit" && canEditSchedule && (
         <OnCallEditPanel staff={staff} currentUser={currentUser} />
       )}
+
+      {/* Student Schedule View */}
+      {activeTab === "student" && currentUser?.role === "student" && (
+        <StudentScheduleView
+          service="Neurosurgery"
+          blockStartDate={new Date(new Date().getTime() - 24 * 60 * 60 * 1000)}
+          currentUser={currentUser}
+        />
+      )}
     </PageContainer>
   );
 }
