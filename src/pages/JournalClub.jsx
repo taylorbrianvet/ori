@@ -95,7 +95,13 @@ export default function JournalClub() {
   const journalNames = [...new Set(journals.map(j => j.journal_name).filter(Boolean))].sort();
 
   if (processing) {
-    return <JournalProcessingScreen journal={processing.journal} pdfUrl={processing.pdfUrl} />;
+    return (
+      <JournalProcessingScreen
+        journal={processing.journal}
+        pdfFile={processing.pdfFile}
+        onBack={() => setProcessing(null)}
+      />
+    );
   }
 
   return (
