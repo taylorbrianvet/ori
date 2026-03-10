@@ -44,6 +44,11 @@ export default function ClinicDayDetailModal({ entries, date, serviceName, allSt
   const [forms, setForms] = useState(entries.map(e => ({ ...e })));
   const [saving, setSaving] = useState(false);
 
+  // Re-sync form when entries update (e.g. after save + query invalidation)
+  useEffect(() => {
+    setForms(entries.map(e => ({ ...e })));
+  }, [entries]);
+
   const userRole = currentUser?.role; // app role (admin/user)
   // Determine if user is faculty or house officer based on Staff record
   const staffRecord = allStaff.find(s => s.email === currentUser?.email);
