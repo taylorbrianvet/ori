@@ -4,11 +4,11 @@ import { toast } from "sonner";
 import { Plus, X, Loader2 } from "lucide-react";
 
 const SERVICES = [
-  "Anesthesia", "Cardiology", "Clinical Pathology", "Dermatology",
+  "Cardiology", "Dermatology",
   "Emergency", "Critical Care", "Internal Medicine", "Interventional Radiology",
-  "Neurology", "Nutrition", "Medical Oncology", "Radiation Oncology",
-  "Ophthalmology", "Orthopedic Surgery", "Primary Care", "General Surgery",
-  "Radiology", "Soft Tissue Surgery"
+  "Neurology", "Oncology",
+  "Ophthalmology", "Orthopedic Surgery", "Primary Care",
+  "Soft Tissue Surgery"
 ];
 
 const SPECIES = ["Canine", "Feline", "Equine", "Bovine", "Avian", "Exotic", "Other"];
