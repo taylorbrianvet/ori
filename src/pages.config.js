@@ -61,9 +61,10 @@ import Resources from './pages/Resources';
 import ServiceDetail from './pages/ServiceDetail';
 import Services from './pages/Services';
 import SurgicalLog from './pages/SurgicalLog';
+import Transfers from './pages/Transfers';
 import WoundCare from './pages/WoundCare';
 import WoundCaseDetail from './pages/WoundCaseDetail';
-import Transfers from './pages/Transfers';
+import ServiceBoard from './pages/ServiceBoard';
 import __Layout from './Layout.jsx';
 
 
@@ -82,9 +83,10 @@ export const PAGES = {
     "ServiceDetail": ServiceDetail,
     "Services": Services,
     "SurgicalLog": SurgicalLog,
+    "Transfers": Transfers,
     "WoundCare": WoundCare,
     "WoundCaseDetail": WoundCaseDetail,
-    "Transfers": Transfers,
+    "ServiceBoard": ServiceBoard,
 }
 
 export const pagesConfig = {
