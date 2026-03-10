@@ -19,7 +19,7 @@ export default function StudentShiftSlot({
   schedules,
   blockStartDate,
   onUpdate,
-  isStudent,
+  canEdit,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,9 +85,9 @@ export default function StudentShiftSlot({
             size="sm"
             onClick={() => setIsOpen(!isOpen)}
             className="w-full text-xs h-8"
-            disabled={!isStudent}
+            disabled={!canEdit}
           >
-            {isStudent ? "Add" : "—"}
+            {canEdit ? "Add" : "—"}
           </Button>
 
           {isOpen && (

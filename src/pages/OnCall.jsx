@@ -52,12 +52,12 @@ export default function OnCall() {
         subtitle={format(new Date(), "EEEE, MMMM d, yyyy") + " · Shifts 8:00 AM → 8:00 AM"}
       />
 
-      {/* Tabs — only show Edit tab if user has permission, Student tab if user is student */}
+      {/* Tabs — only show Edit tab if user has permission, Student tab if user is student/faculty/resident */}
       <div className="flex gap-1 p-1 bg-white/8 backdrop-blur rounded-2xl mb-6 w-fit border border-white/10">
         {TABS.filter(t => 
           t.id === "current" || 
           (t.id === "edit" && canEditSchedule) ||
-          (t.id === "student" && currentUser?.role === "student")
+          (t.id === "student" && (currentUser?.role === "student" || currentUser?.role === "Faculty" || currentUser?.role === "Resident"))
         ).map((tab) => (
           <button
             key={tab.id}
@@ -94,11 +94,12 @@ export default function OnCall() {
       )}
 
       {/* Student Schedule View */}
-      {activeTab === "student" && currentUser?.role === "student" && (
+      {activeTab === "student" && (currentUser?.role === "student" || currentUser?.role === "Faculty" || currentUser?.role === "Resident") && (
         <StudentScheduleView
           service="Neurosurgery"
           blockStartDate={new Date(new Date().getTime() - 24 * 60 * 60 * 1000)}
           currentUser={currentUser}
+          canEdit={currentUser?.role === "Faculty" || currentUser?.role === "Resident" || currentUser?.role === "admin"}
         />
       )}
     </PageContainer>

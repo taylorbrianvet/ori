@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import StudentShiftSlot from "./StudentShiftSlot";
 import { format, addDays } from "date-fns";
 
-export default function StudentScheduleView({ service, blockStartDate, currentUser }) {
+export default function StudentScheduleView({ service, blockStartDate, currentUser, canEdit = false }) {
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
     queryFn: () => base44.entities.Staff.filter({ role: "Student" }),
@@ -52,7 +52,7 @@ export default function StudentScheduleView({ service, blockStartDate, currentUs
                           schedules={schedules}
                           blockStartDate={blockStartDate}
                           onUpdate={() => refetch()}
-                          isStudent={currentUser?.role === "student"}
+                          canEdit={canEdit || currentUser?.role === "student"}
                         />
                       ))}
                     </div>
