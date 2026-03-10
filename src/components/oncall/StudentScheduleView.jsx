@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import StudentShiftSlot from "./StudentShiftSlot";
-import { format, addDays, startOfWeek, getDay } from "date-fns";
+import { format, addDays, startOfWeek, getDay, isToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 
 export default function StudentScheduleView({ service: initialService, blockStartDate, currentUser, canEdit = false }) {
@@ -71,10 +71,10 @@ export default function StudentScheduleView({ service: initialService, blockStar
             <div className="text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">Monday - Friday <span className="text-white/30">(5pm - 8am)</span></div>
             <div className="grid grid-cols-5 gap-4">
               {week.slice(0, 5).map((day) => (
-                <div key={day.dateStr} className="space-y-3">
-                  <div className="text-sm font-medium text-white">
+                <div key={day.dateStr} className={`space-y-3 p-3 rounded-lg transition-colors ${isToday(day.date) ? "bg-white/10 border border-white/20" : ""}`}>
+                  <div className={`text-sm font-medium ${isToday(day.date) ? "text-white" : "text-white"}`}>
                     <div>{day.dayName}</div>
-                    <div className="text-xs text-white/60">{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
+                    <div className={`text-xs ${isToday(day.date) ? "text-white/80 font-semibold" : "text-white/60"}`}>{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
                   </div>
                   <div className="space-y-1">
                     {["primary", "secondary"].map((position) => (
@@ -102,10 +102,10 @@ export default function StudentScheduleView({ service: initialService, blockStar
             <div className="text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">Saturday - Sunday</div>
             <div className="grid grid-cols-2 gap-4">
               {week.slice(5, 7).map((day) => (
-                <div key={day.dateStr} className="space-y-3">
-                  <div className="text-sm font-medium text-white">
+                <div key={day.dateStr} className={`space-y-3 p-3 rounded-lg transition-colors ${isToday(day.date) ? "bg-white/10 border border-white/20" : ""}`}>
+                  <div className={`text-sm font-medium ${isToday(day.date) ? "text-white" : "text-white"}`}>
                     <div>{day.dayName}</div>
-                    <div className="text-xs text-white/60">{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
+                    <div className={`text-xs ${isToday(day.date) ? "text-white/80 font-semibold" : "text-white/60"}`}>{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
                   </div>
                   <div className="space-y-3">
                     <div className="space-y-2">
