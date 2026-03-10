@@ -10,6 +10,7 @@ export default function StudentSchedule() {
   const [isStudent, setIsStudent] = useState(false);
   const [selectedService, setSelectedService] = useState("Neurosurgery");
   const [blockStartDate, setBlockStartDate] = useState(null);
+  const [anesthesiaStartDate, setAnesthesiaStartDate] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then((user) => {
@@ -17,10 +18,14 @@ export default function StudentSchedule() {
       setIsStudent(user?.role === "student");
     }).catch(() => {});
 
-    // Calculate block start date (yesterday, rounded to get the block start)
+    // For 2-week services (Neurosurgery, Surgery): yesterday
     const today = startOfDay(new Date());
     const yesterday = addDays(today, -1);
     setBlockStartDate(yesterday);
+
+    // For 3-week service (Anesthesia): fetch from admin config or use yesterday
+    // For now, default to yesterday; will be configurable in admin
+    setAnesthesiaStartDate(yesterday);
   }, []);
 
   if (!isStudent) {
@@ -50,7 +55,7 @@ export default function StudentSchedule() {
         
         {/* Service Selector */}
         <div className="flex gap-3 mb-6">
-          {["Neurosurgery", "Surgery"].map((service) => (
+          {["Neurosurgery", "Surgery", "Anesthesia"].map((service) => (
             <button
               key={service}
               onClick={() => setSelectedService(service)}
@@ -68,7 +73,8 @@ export default function StudentSchedule() {
         {/* Schedule View */}
         <StudentScheduleView
           service={selectedService}
-          blockStartDate={blockStartDate}
+          blockStartDate={selectedService === "Anesthesia" ? anesthesiaStartDate : blockStartDate}
+          blockType={selectedService === "Anesthesia" ? "3-week" : "2-week"}
           currentUser={currentUser}
         />
       </div>

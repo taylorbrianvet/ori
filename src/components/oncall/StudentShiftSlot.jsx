@@ -65,25 +65,33 @@ export default function StudentShiftSlot({
     }
   };
 
+  const getInitials = (fullName) => {
+    return fullName
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  const displayName = assignment ? getInitials(assignment.student_name) : null;
+
   return (
     <div className="relative">
       {assignment ? (
-        <div className={`rounded-lg p-2 text-xs text-white font-medium transition-colors ${
+        <div className={`rounded-lg p-2 text-xs text-white font-semibold transition-colors flex items-center justify-between gap-1 ${
           isCurrentShift 
             ? "bg-green-500/40 border border-green-400/60 shadow-lg shadow-green-500/20" 
             : "bg-primary/30 border border-primary/50"
         }`}>
-          <div className="flex items-center justify-between gap-1">
-            <span className="truncate">{assignment.student_name}</span>
-            {canEdit && (
-              <button
-                onClick={handleRemove}
-                className="text-white/40 hover:text-white/70 flex-shrink-0"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
+          <span className="truncate" title={assignment.student_name}>{displayName}</span>
+          {canEdit && (
+            <button
+              onClick={handleRemove}
+              className="text-white/40 hover:text-white/70 flex-shrink-0"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
         </div>
       ) : (
         <div className="relative">
