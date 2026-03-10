@@ -126,7 +126,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
                         <div className={`text-xs ${isToday(day.date) ? "text-white/80 font-semibold" : "text-white/60"}`}>{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
                       </div>
                       <div className="space-y-1">
-                        {selectedService === "Anesthesia" ? ["primary", "secondary", "tertiary"] : ["primary", "secondary"]).map((position) => (
+                        {(selectedService === "Anesthesia" ? ["primary", "secondary", "tertiary"] : ["primary", "secondary"]).map((position) => (
                           <StudentShiftSlot
                             key={`${day.dateStr}-${position}`}
                             date={day.dateStr}
