@@ -58,8 +58,10 @@ import Resources from './pages/Resources';
 import ServiceDetail from './pages/ServiceDetail';
 import Services from './pages/Services';
 import SurgicalLog from './pages/SurgicalLog';
-import WoundCaseDetail from './pages/WoundCaseDetail';
 import WoundCare from './pages/WoundCare';
+import WoundCaseDetail from './pages/WoundCaseDetail';
+import JournalClub from './pages/JournalClub';
+import JournalDetail from './pages/JournalDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -75,8 +77,10 @@ export const PAGES = {
     "ServiceDetail": ServiceDetail,
     "Services": Services,
     "SurgicalLog": SurgicalLog,
-    "WoundCaseDetail": WoundCaseDetail,
     "WoundCare": WoundCare,
+    "WoundCaseDetail": WoundCaseDetail,
+    "JournalClub": JournalClub,
+    "JournalDetail": JournalDetail,
 }
 
 export const pagesConfig = {
