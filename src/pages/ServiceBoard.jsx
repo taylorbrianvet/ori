@@ -1,14 +1,12 @@
-import React, { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ChevronLeft } from "lucide-react";
 import PageContainer from "../components/shared/PageContainer";
-import ServiceSelector from "../components/board/ServiceSelector";
 import InpatientSection from "../components/board/InpatientSection";
 import WoundPatientsSection from "../components/board/WoundPatientsSection";
-import OncologySection from "../components/board/OncologySection";
 import PendingTransfersSection from "../components/board/PendingTransfersSection";
 import DiagnosticsSection from "../components/board/DiagnosticsSection";
 import ClinicTeamSection from "../components/board/ClinicTeamSection";
@@ -28,8 +26,10 @@ const CLINICAL_SERVICES = [
 ];
 
 export default function ServiceBoard() {
-  const [selectedService, setSelectedService] = useState(CLINICAL_SERVICES[0] || "");
-  const queryClient = useQueryClient();
+  const [selectedService, setSelectedService] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("service") || CLINICAL_SERVICES[0];
+  });
 
   const { data: patients = [] } = useQuery({
     queryKey: ["patients"],
@@ -61,12 +61,6 @@ export default function ServiceBoard() {
     p => p.service === selectedService && p.patient_type === "Inpatient"
   );
 
-  const oncologyPatients = selectedService === "Oncology" || selectedService === "Medical Oncology"
-    ? patients.filter(
-        p => (p.service === "Medical Oncology" || p.service === "Radiation Oncology") && p.patient_type === "Outpatient"
-      )
-    : [];
-
   const woundPatients = woundCases.filter(w => w.service === selectedService);
 
   const pendingTransfers = transfers.filter(
@@ -84,57 +78,36 @@ export default function ServiceBoard() {
 
   return (
     <PageContainer>
-      <div className="mb-5">
-        <Link to={createPageUrl("Home")} className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 transition-colors">
-          <ChevronLeft className="w-3.5 h-3.5" /> Home
-        </Link>
-      </div>
-
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-white tracking-tight mb-4">Service Board</h1>
-        <ServiceSelector
-          services={CLINICAL_SERVICES}
-          selectedService={selectedService}
-          onSelectService={setSelectedService}
-        />
+      <div className="mb-4">
+        <h1 className="text-3xl font-bold text-white tracking-tight mb-1">{selectedService}</h1>
+        <p className="text-sm text-white/50">Board</p>
       </div>
 
       {/* Clinic Team Section */}
-      {selectedService && (
-        <ClinicTeamSection schedules={todaySchedules} />
-      )}
+      <ClinicTeamSection schedules={todaySchedules} />
 
-      {/* Inpatients Section */}
-      {inpatients.length > 0 && (
-        <InpatientSection patients={inpatients} />
-      )}
+      {/* Three Column Layout */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        {/* Left: Inpatients */}
+        <div>
+          <InpatientSection patients={inpatients} compact />
+        </div>
 
-      {/* Oncology Patients Section */}
-      {oncologyPatients.length > 0 && (
-        <OncologySection patients={oncologyPatients} />
-      )}
+        {/* Center: Diagnostics */}
+        <div>
+          <DiagnosticsSection diagnostics={pendingDiagnostics} compact />
+        </div>
 
-      {/* Wound Patients Section */}
-      {woundPatients.length > 0 && (
-        <WoundPatientsSection woundCases={woundPatients} />
-      )}
+        {/* Right: Wound Patients */}
+        <div>
+          <WoundPatientsSection woundCases={woundPatients} compact />
+        </div>
+      </div>
 
-      {/* Pending Transfers Section */}
+      {/* Bottom: Pending Transfers */}
       {pendingTransfers.length > 0 && (
         <PendingTransfersSection transfers={pendingTransfers} />
-      )}
-
-      {/* Diagnostics Section */}
-      {pendingDiagnostics.length > 0 && (
-        <DiagnosticsSection diagnostics={pendingDiagnostics} />
-      )}
-
-      {/* Empty state */}
-      {inpatients.length === 0 && woundPatients.length === 0 && pendingTransfers.length === 0 && pendingDiagnostics.length === 0 && (
-        <div className="text-center py-12 text-white/25">
-          <p>No active patients or diagnostics for {selectedService}</p>
-        </div>
       )}
     </PageContainer>
   );
