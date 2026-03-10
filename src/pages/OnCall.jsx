@@ -6,7 +6,10 @@ import PageContainer from "../components/shared/PageContainer";
 import PageHeader from "../components/shared/PageHeader";
 import OnCallServicePanel from "../components/oncall/OnCallServicePanel";
 import OnCallEditPanel from "../components/oncall/OnCallEditPanel";
-import { Phone, Edit3 } from "lucide-react";
+import StudentScheduleView from "../components/oncall/StudentScheduleView";
+import { Phone, Edit3, Users } from "lucide-react";
+import { createPageUrl } from "@/utils";
+import { useNavigate } from "react-router-dom";
 
 const ON_CALL_SERVICES = [
   "Emergency","Critical Care","HP TPE","Internal Medicine","Interventional Radiology",
@@ -17,6 +20,7 @@ const ON_CALL_SERVICES = [
 const TABS = [
   { id: "current", label: "On Call", icon: Phone },
   { id: "edit", label: "Edit Schedule", icon: Edit3 },
+  { id: "student", label: "Student Schedule", icon: Users },
 ];
 
 export default function OnCall() {
