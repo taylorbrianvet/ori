@@ -230,6 +230,62 @@ export default function EducationalRounds() {
         </div>
       )}
 
+      {/* Upcoming Seminars Panel */}
+      <AnimatePresence>
+        {showSeminarsPanel && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+              onClick={() => setShowSeminarsPanel(false)}
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 280 }}
+              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm glass-panel border-l border-white/10 flex flex-col"
+            >
+              <div className="flex items-center justify-between p-5 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="w-4 h-4 text-emerald-300/70" />
+                  <h2 className="text-sm font-semibold text-white">Upcoming Seminars</h2>
+                </div>
+                <button onClick={() => setShowSeminarsPanel(false)} className="text-white/40 hover:text-white/80 text-lg leading-none">✕</button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                {rounds
+                  .filter(r => (r.is_seminar || r.event_type === "Seminar") && (isToday(parseISO(r.date)) || isFuture(parseISO(r.date))))
+                  .sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date)))
+                  .map(r => (
+                    <button
+                      key={r.id}
+                      onClick={() => { setSelectedRound(r); setShowSeminarsPanel(false); }}
+                      className="w-full text-left rounded-xl border border-emerald-400/20 bg-emerald-500/8 hover:bg-emerald-500/14 transition-all p-3 flex items-center gap-3"
+                    >
+                      <div className="flex-shrink-0 w-12 text-center rounded-lg py-1.5 bg-emerald-500/20">
+                        <p className="text-[10px] text-emerald-300/70 font-medium uppercase">{format(parseISO(r.date), "MMM")}</p>
+                        <p className="text-sm font-bold text-emerald-200 leading-none mt-0.5">{format(parseISO(r.date), "d")}</p>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] text-white/30 mb-0.5">{format(parseISO(r.date), "EEEE, MMMM d, yyyy")}</p>
+                        <p className="text-xs text-white/75 font-medium truncate">{r.topic || "Topic TBD"}</p>
+                        {r.clinician && <p className="text-[10px] text-white/35 mt-0.5">{r.clinician}</p>}
+                      </div>
+                    </button>
+                  ))
+                }
+                {rounds.filter(r => (r.is_seminar || r.event_type === "Seminar") && (isToday(parseISO(r.date)) || isFuture(parseISO(r.date)))).length === 0 && (
+                  <p className="text-center text-white/25 text-sm py-12">No upcoming seminars scheduled.</p>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Detail modal */}
       <AnimatePresence>
         {selectedRound && (
