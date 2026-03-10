@@ -119,7 +119,6 @@ export default function ClinicScheduleSection({ clinicSchedules = [], serviceNam
             onClose={() => setSelectedDay(null)}
             onSaved={() => {
               queryClient.invalidateQueries({ queryKey: ["clinic-schedules", serviceName] });
-              setSelectedDay(null);
             }}
           />
         )}
