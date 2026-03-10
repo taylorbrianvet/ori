@@ -10,6 +10,7 @@ const navItems = [
   { name: "Services", page: "Services", icon: Stethoscope },
   { name: "On Call", page: "OnCall", icon: Phone },
   { name: "Journal Club", page: "JournalClub", icon: BookMarked },
+  { name: "Ed. Rounds", page: "EducationalRounds", icon: GraduationCap },
   { name: "Resources", page: "Resources", icon: BookOpen },
 ];
 
