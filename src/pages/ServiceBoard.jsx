@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ChevronLeft } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import PageContainer from "../components/shared/PageContainer";
 import InpatientSection from "../components/board/InpatientSection";
 import WoundPatientsSection from "../components/board/WoundPatientsSection";
@@ -30,6 +30,13 @@ export default function ServiceBoard() {
     const params = new URLSearchParams(window.location.search);
     return params.get("service") || CLINICAL_SERVICES[0];
   });
+  const [showServiceMenu, setShowServiceMenu] = useState(false);
+
+  const handleServiceChange = (service) => {
+    setSelectedService(service);
+    window.history.replaceState({}, "", `${createPageUrl("ServiceBoard")}?service=${service}`);
+    setShowServiceMenu(false);
+  };
 
   const { data: patients = [] } = useQuery({
     queryKey: ["patients"],
@@ -78,10 +85,40 @@ export default function ServiceBoard() {
 
   return (
     <PageContainer>
-      {/* Header */}
-      <div className="mb-4">
-        <h1 className="text-3xl font-bold text-white tracking-tight mb-1">{selectedService}</h1>
-        <p className="text-sm text-white/50">Board</p>
+      {/* Header with Service Switcher */}
+      <div className="mb-4 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white tracking-tight mb-1">{selectedService}</h1>
+          <p className="text-sm text-white/50">Board</p>
+        </div>
+        <div className="relative">
+          <button
+            onClick={() => setShowServiceMenu(!showServiceMenu)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/8 border border-white/12 hover:bg-white/12 text-white/70 hover:text-white text-xs font-medium transition-colors"
+            title="Switch service"
+          >
+            Switch
+            <ChevronDown className="w-3 h-3" />
+          </button>
+
+          {showServiceMenu && (
+            <div className="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur border border-white/20 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
+              {CLINICAL_SERVICES.map(service => (
+                <button
+                  key={service}
+                  onClick={() => handleServiceChange(service)}
+                  className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                    selectedService === service
+                      ? "bg-white/20 text-white border-l-2 border-white"
+                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {service}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Clinic Team Section */}
