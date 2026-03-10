@@ -30,11 +30,15 @@ export default function JournalUploadModal({ onClose, onProcessing }) {
     try {
       const user = await base44.auth.me();
 
-      // Create a placeholder journal record (no upload yet - just to have an ID)
+      // Upload the PDF and get a public URL
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+
+      // Create a journal record with the PDF URL saved
       const journal = await base44.entities.Journal.create({
         title: file.name.replace(".pdf", ""),
         uploaded_by: user.email,
         uploaded_by_name: user.full_name,
+        pdf_url: file_url,
         favorited_by: [],
         ai_processed: false,
       });
