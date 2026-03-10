@@ -192,9 +192,9 @@ export default function JournalClub() {
         {showUpload && (
           <JournalUploadModal
             onClose={() => setShowUpload(false)}
-            onProcessing={(journal, pdfUrl) => {
+            onProcessing={(journal, pdfFile) => {
               setShowUpload(false);
-              setProcessing({ journal, pdfUrl });
+              setProcessing({ journal, pdfFile });
             }}
           />
         )}
