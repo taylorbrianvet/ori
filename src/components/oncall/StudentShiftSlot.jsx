@@ -67,15 +67,17 @@ export default function StudentShiftSlot({
   return (
     <div className="relative">
       {assignment ? (
-        <div className="bg-white/10 border border-white/20 rounded-lg p-2 text-xs text-white/70">
+        <div className="bg-primary/30 border border-primary/50 rounded-lg p-2 text-xs text-white font-medium">
           <div className="flex items-center justify-between gap-1">
             <span className="truncate">{assignment.student_name}</span>
-            <button
-              onClick={handleRemove}
-              className="text-white/40 hover:text-white/70 flex-shrink-0"
-            >
-              <X className="w-3 h-3" />
-            </button>
+            {canEdit && (
+              <button
+                onClick={handleRemove}
+                className="text-white/40 hover:text-white/70 flex-shrink-0"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
           </div>
         </div>
       ) : (

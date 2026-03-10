@@ -2,9 +2,12 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import StudentShiftSlot from "./StudentShiftSlot";
-import { format, addDays } from "date-fns";
+import { format, addDays, startOfWeek, getDay } from "date-fns";
+import { Button } from "@/components/ui/button";
 
-export default function StudentScheduleView({ service, blockStartDate, currentUser, canEdit = false }) {
+export default function StudentScheduleView({ service: initialService, blockStartDate, currentUser, canEdit = false }) {
+  const [selectedService, setSelectedService] = useState(initialService);
+  
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
     queryFn: () => base44.entities.Staff.filter({ role: "Student" }),
@@ -15,54 +18,163 @@ export default function StudentScheduleView({ service, blockStartDate, currentUs
     queryFn: () => base44.entities.StudentOnCallSchedule.list(),
   });
 
-  const shifts = useMemo(() => {
-    const grouped = {};
-    for (let i = 0; i < 14; i++) {
-      const date = addDays(blockStartDate, i);
-      const dateStr = format(date, "yyyy-MM-dd");
-      grouped[dateStr] = [
-        { period: "day", positions: ["primary", "secondary"] },
-        { period: "night", positions: ["primary", "secondary"] },
-      ];
+  const weekData = useMemo(() => {
+    const weeks = [];
+    for (let weekNum = 0; weekNum < 2; weekNum++) {
+      const week = [];
+      // Start from Monday of the block
+      const weekStart = addDays(blockStartDate, weekNum * 7);
+      
+      // Get all 7 days
+      for (let dayNum = 0; dayNum < 7; dayNum++) {
+        const date = addDays(weekStart, dayNum);
+        const dateStr = format(date, "yyyy-MM-dd");
+        week.push({
+          dateStr,
+          date,
+          dayName: format(date, "EEE"),
+          dayNum: getDay(date),
+        });
+      }
+      weeks.push(week);
     }
-    return grouped;
+    return weeks;
   }, [blockStartDate]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold text-white mb-4">{service} Schedule</h2>
-        <div className="grid gap-2">
-          {Object.entries(shifts).map(([date, dayShifts]) => (
-            <div key={date} className="space-y-2">
-              <div className="text-sm font-medium text-white/70">{format(new Date(date + "T00:00:00"), "EEE, MMM d")}</div>
-              <div className="grid grid-cols-4 gap-2">
-                {dayShifts.map((shift, idx) => (
-                  <div key={`${date}-${shift.period}`}>
-                    <div className="text-xs text-white/50 mb-1 capitalize">{shift.period}</div>
+    <div className="space-y-8">
+      {/* Service Selector */}
+      <div className="flex gap-3">
+        <Button
+          variant={selectedService === "Neurosurgery" ? "default" : "outline"}
+          onClick={() => setSelectedService("Neurosurgery")}
+          className="text-sm"
+        >
+          Neurosurgery
+        </Button>
+        <Button
+          variant={selectedService === "Surgery" ? "default" : "outline"}
+          onClick={() => setSelectedService("Surgery")}
+          className="text-sm"
+        >
+          Surgery
+        </Button>
+      </div>
+
+      {/* Two-week calendar */}
+      {weekData.map((week, weekIdx) => (
+        <div key={weekIdx} className="space-y-6">
+          <h3 className="text-lg font-semibold text-white">Week {weekIdx + 1}</h3>
+
+          {/* Monday-Friday */}
+          <div>
+            <div className="text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">Monday - Friday</div>
+            <div className="grid grid-cols-5 gap-4">
+              {week.slice(0, 5).map((day) => (
+                <div key={day.dateStr} className="space-y-3">
+                  <div className="text-sm font-medium text-white">
+                    <div>{day.dayName}</div>
+                    <div className="text-xs text-white/60">{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
+                  </div>
+                  {/* Day and Night shifts */}
+                  <div className="space-y-2">
+                    <div className="text-xs text-white/50 font-medium">Day</div>
                     <div className="space-y-1">
-                      {shift.positions.map((position) => (
+                      {["primary", "secondary"].map((position) => (
                         <StudentShiftSlot
-                          key={`${date}-${shift.period}-${position}`}
-                          date={date}
-                          service={service}
-                          shiftPeriod={shift.period}
+                          key={`${day.dateStr}-day-${position}`}
+                          date={day.dateStr}
+                          service={selectedService}
+                          shiftPeriod="day"
                           position={position}
                           students={students}
                           schedules={schedules}
                           blockStartDate={blockStartDate}
                           onUpdate={() => refetch()}
-                          canEdit={canEdit || currentUser?.role === "student"}
+                          canEdit={canEdit || currentUser?.role === "Student"}
                         />
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="space-y-2">
+                    <div className="text-xs text-white/50 font-medium">Night</div>
+                    <div className="space-y-1">
+                      {["primary", "secondary"].map((position) => (
+                        <StudentShiftSlot
+                          key={`${day.dateStr}-night-${position}`}
+                          date={day.dateStr}
+                          service={selectedService}
+                          shiftPeriod="night"
+                          position={position}
+                          students={students}
+                          schedules={schedules}
+                          blockStartDate={blockStartDate}
+                          onUpdate={() => refetch()}
+                          canEdit={canEdit || currentUser?.role === "Student"}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Saturday-Sunday */}
+          <div>
+            <div className="text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">Saturday - Sunday</div>
+            <div className="grid grid-cols-2 gap-4">
+              {week.slice(5, 7).map((day) => (
+                <div key={day.dateStr} className="space-y-3">
+                  <div className="text-sm font-medium text-white">
+                    <div>{day.dayName}</div>
+                    <div className="text-xs text-white/60">{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
+                  </div>
+                  {/* Day and Night shifts */}
+                  <div className="space-y-2">
+                    <div className="text-xs text-white/50 font-medium">Day</div>
+                    <div className="space-y-1">
+                      {["primary", "secondary"].map((position) => (
+                        <StudentShiftSlot
+                          key={`${day.dateStr}-day-${position}`}
+                          date={day.dateStr}
+                          service={selectedService}
+                          shiftPeriod="day"
+                          position={position}
+                          students={students}
+                          schedules={schedules}
+                          blockStartDate={blockStartDate}
+                          onUpdate={() => refetch()}
+                          canEdit={canEdit || currentUser?.role === "Student"}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-xs text-white/50 font-medium">Night</div>
+                    <div className="space-y-1">
+                      {["primary", "secondary"].map((position) => (
+                        <StudentShiftSlot
+                          key={`${day.dateStr}-night-${position}`}
+                          date={day.dateStr}
+                          service={selectedService}
+                          shiftPeriod="night"
+                          position={position}
+                          students={students}
+                          schedules={schedules}
+                          blockStartDate={blockStartDate}
+                          onUpdate={() => refetch()}
+                          canEdit={canEdit || currentUser?.role === "Student"}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
