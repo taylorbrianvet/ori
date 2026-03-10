@@ -16,16 +16,19 @@ export default function StudentSchedule() {
     base44.auth.me().then((user) => {
       setCurrentUser(user);
       setIsStudent(user?.role === "student");
+      
+      // For 2-week services (Neurosurgery, Surgery): yesterday
+      const today = startOfDay(new Date());
+      const yesterday = addDays(today, -1);
+      setBlockStartDate(yesterday);
+
+      // For 3-week service (Anesthesia): fetch from admin config or use yesterday
+      if (user?.anesthesia_block_start_date) {
+        setAnesthesiaStartDate(new Date(user.anesthesia_block_start_date));
+      } else {
+        setAnesthesiaStartDate(yesterday);
+      }
     }).catch(() => {});
-
-    // For 2-week services (Neurosurgery, Surgery): yesterday
-    const today = startOfDay(new Date());
-    const yesterday = addDays(today, -1);
-    setBlockStartDate(yesterday);
-
-    // For 3-week service (Anesthesia): fetch from admin config or use yesterday
-    // For now, default to yesterday; will be configurable in admin
-    setAnesthesiaStartDate(yesterday);
   }, []);
 
   if (!isStudent) {
