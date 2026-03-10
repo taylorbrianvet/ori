@@ -191,6 +191,22 @@ export default function JournalDetail() {
         </Section>
       )}
 
+      {/* AI Summary */}
+      {journal.ai_summary && (
+        <div className="mb-4">
+          <Section title="Journal Club Summary" defaultOpen={true}>
+            {journal.ai_summary.trim().startsWith("<") ? (
+              <div
+                className="journal-club-summary text-sm text-white/75 leading-relaxed prose prose-invert prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: journal.ai_summary }}
+              />
+            ) : (
+              <p className="text-sm text-white/70 leading-relaxed">{journal.ai_summary}</p>
+            )}
+          </Section>
+        </div>
+      )}
+
       {/* PDF Viewer */}
       {journal.pdf_url && (
         <div className="glass-card overflow-hidden mb-4">
@@ -209,20 +225,6 @@ export default function JournalDetail() {
             </div>
           )}
         </div>
-      )}
-
-      {/* AI Summary */}
-      {journal.ai_summary && (
-        <Section title="Journal Club Summary" defaultOpen={true}>
-          {journal.ai_summary.trim().startsWith("<") ? (
-            <div
-              className="journal-club-summary text-sm text-white/75 leading-relaxed prose prose-invert prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: journal.ai_summary }}
-            />
-          ) : (
-            <p className="text-sm text-white/70 leading-relaxed">{journal.ai_summary}</p>
-          )}
-        </Section>
       )}
 
       {/* Abstract */}
