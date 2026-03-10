@@ -13,13 +13,40 @@ const navItems = [
   { name: "Resources", page: "Resources", icon: BookOpen },
 ];
 
+function UserAvatar({ user, staffProfile }) {
+  const imageUrl = staffProfile?.profile_image_url;
+  const name = user?.full_name || "";
+  const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+
+  return (
+    <div className="flex items-center gap-2.5">
+      <div className="w-8 h-8 rounded-full overflow-hidden bg-white/15 flex items-center justify-center flex-shrink-0 border border-white/20">
+        {imageUrl ? (
+          <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-xs font-semibold text-white/80">{initials}</span>
+        )}
+      </div>
+      {name && <span className="text-xs text-white/65 font-medium truncate max-w-[110px]">{name}</span>}
+    </div>
+  );
+}
+
 export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [staffProfile, setStaffProfile] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then((u) => {
       if (u?.role === "admin") setIsAdmin(true);
+      setCurrentUser(u);
+      if (u?.email) {
+        base44.entities.Staff.filter({ email: u.email }).then(results => {
+          if (results?.length > 0) setStaffProfile(results[0]);
+        }).catch(() => {});
+      }
     }).catch(() => {});
   }, []);
 
@@ -82,6 +109,12 @@ export default function Layout({ children, currentPageName }) {
               Admin
             </Link>
           )}
+          {/* User profile at bottom of sidebar */}
+          {currentUser && (
+            <div className="pt-2 px-1">
+              <UserAvatar user={currentUser} staffProfile={staffProfile} />
+            </div>
+          )}
           <p className="text-[11px] text-white/30 text-center pt-1">© 2026 VetHub</p>
         </div>
       </aside>
@@ -96,13 +129,9 @@ export default function Layout({ children, currentPageName }) {
             <span className="text-sm font-semibold text-white">VetHub</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link
-              to={createPageUrl("Directory")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/18 transition-colors text-white/75 text-xs font-medium"
-            >
-              <Users className="w-3.5 h-3.5" />
-              <span>Directory</span>
-            </Link>
+            {currentUser && (
+              <UserAvatar user={currentUser} staffProfile={staffProfile} />
+            )}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors text-white/70"
