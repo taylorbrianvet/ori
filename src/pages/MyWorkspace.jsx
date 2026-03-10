@@ -151,6 +151,14 @@ export default function MyWorkspace() {
             </div>
           </section>
 
+          {/* ── Notification Settings ── */}
+          {staffRecord && (
+            <NotificationSettings
+              staffRecord={staffRecord}
+              onUpdated={() => queryClient.invalidateQueries({ queryKey: ["staff-all"] })}
+            />
+          )}
+
           {/* ── Journal Club ── */}
           {(myUploads.length > 0 || myFavorites.length > 0) && (
             <section>
