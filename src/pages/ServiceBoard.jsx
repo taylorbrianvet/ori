@@ -28,12 +28,14 @@ const CLINICAL_SERVICES = [
 export default function ServiceBoard() {
   const [selectedService, setSelectedService] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get("service") || CLINICAL_SERVICES[0];
+    const saved = localStorage.getItem("lastServiceBoard");
+    return params.get("service") || saved || CLINICAL_SERVICES[0];
   });
   const [showServiceMenu, setShowServiceMenu] = useState(false);
 
   const handleServiceChange = (service) => {
     setSelectedService(service);
+    localStorage.setItem("lastServiceBoard", service);
     window.history.replaceState({}, "", `${createPageUrl("ServiceBoard")}?service=${service}`);
     setShowServiceMenu(false);
   };

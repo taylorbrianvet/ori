@@ -26,12 +26,12 @@ export default function InpatientSection({ patients, compact = false }) {
               <button
                 key={p.id}
                 onClick={() => setSelectedPatient(p)}
-                className="w-full text-left p-2 rounded-lg bg-white/6 border border-white/12 hover:bg-white/10 transition-colors text-[11px]"
+                className="w-full text-left p-2.5 rounded-lg bg-gradient-to-br from-white/15 to-white/10 border border-white/20 hover:from-white/20 hover:to-white/15 transition-colors text-[11px]"
               >
                 <div className="font-semibold text-white">{p.name}</div>
-                <div className="text-white/50">{signalment(p)}</div>
+                <div className="text-white/70 text-[10px]">{signalment(p)}</div>
                 {p.problem_list?.length > 0 && (
-                  <div className="text-[9px] text-white/40 mt-0.5">
+                  <div className="text-[9px] text-white/50 mt-0.5">
                     {p.problem_list.slice(0, 1).map((prob, i) => prob).join(", ")}
                     {p.problem_list.length > 1 && ` +${p.problem_list.length - 1}`}
                   </div>
