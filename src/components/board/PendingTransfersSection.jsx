@@ -21,7 +21,13 @@ export default function PendingTransfersSection({ transfers }) {
               </span>
             </div>
             <p className="text-xs text-white/50 mb-1">{t.age || "?"} • {t.sex || "?"} • {t.species} • {t.breed}</p>
-            <p className="text-xs text-white/70">{t.requesting_service} → {t.receiving_service}</p>
+            <p className="text-xs text-white/70 mb-1">{t.requesting_service} → {t.receiving_service}</p>
+            {t.problem_list?.length > 0 && (
+              <p className="text-[11px] text-white/60 mb-1">
+                {t.problem_list.slice(0, 2).join(", ")}
+                {t.problem_list.length > 2 && ` +${t.problem_list.length - 2}`}
+              </p>
+            )}
             {t.estimate && <p className="text-xs text-white/60 mt-1">Est: ${t.estimate.toLocaleString()}</p>}
           </div>
         ))}
