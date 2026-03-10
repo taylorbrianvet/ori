@@ -35,6 +35,7 @@ export default function JournalDetail() {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [toggling, setToggling] = useState(false);
+  const [showPdf, setShowPdf] = useState(false);
 
   const { data: journal, isLoading } = useQuery({
     queryKey: ["journal", journalId],
