@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -10,19 +10,37 @@ import StaffList from "../components/service-detail/StaffList";
 import ScheduleCalendar from "../components/service-detail/ScheduleCalendar";
 import EquipmentList from "../components/service-detail/EquipmentList";
 import EstimateList from "../components/service-detail/EstimateList";
+import TodaysClinicTeam from "../components/clinic/TodaysClinicTeam";
+import ConsultBoard from "../components/clinic/ConsultBoard";
+import ConsultRequestForm from "../components/clinic/ConsultRequestForm";
+import { AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ArrowLeft,
-  Megaphone,
-  Users,
-  CalendarDays,
-  Wrench,
-  DollarSign,
+  ArrowLeft, Megaphone, Users, CalendarDays, Wrench, DollarSign,
+  ClipboardPlus, MessageSquare,
 } from "lucide-react";
+
+// Map service entity name to ClinicSchedule service name
+const SERVICE_NAME_MAP = {
+  "Soft Tissue Surgery": "Soft Tissue Surgery",
+  "Orthopedic Surgery": "Orthopedic Surgery",
+  "Internal Medicine": "Internal Medicine",
+  "Anesthesia": "Anesthesia",
+  "Neurology": "Neurology",
+  "Emergency": "Emergency",
+  "Critical Care": "Critical Care",
+  "Cardiology": "Cardiology",
+  "Dermatology": "Dermatology",
+  "Medical Oncology": "Medical Oncology",
+  "Radiation Oncology": "Radiation Oncology",
+  "Ophthalmology": "Ophthalmology",
+  "Radiology": "Radiology",
+};
 
 export default function ServiceDetail() {
   const urlParams = new URLSearchParams(window.location.search);
   const serviceId = urlParams.get("id");
+  const [showConsultForm, setShowConsultForm] = useState(false);
 
   const { data: service, isLoading: loadingService } = useQuery({
     queryKey: ["service", serviceId],
@@ -68,6 +86,25 @@ export default function ServiceDetail() {
     initialData: [],
   });
 
+  const { data: allStaff = [] } = useQuery({
+    queryKey: ["staff-all-for-consult"],
+    queryFn: () => base44.entities.Staff.list(),
+  });
+
+  // Clinic schedules for this service
+  const serviceName = service ? (SERVICE_NAME_MAP[service.service_name] || service.service_name) : null;
+
+  const { data: clinicSchedules = [] } = useQuery({
+    queryKey: ["clinic-schedules", serviceName],
+    queryFn: () => base44.entities.ClinicSchedule.filter({ service: serviceName }, "date"),
+    enabled: !!serviceName,
+  });
+
+  // Find on_consults entry for today
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const consultEntry = clinicSchedules.find(e => e.date === todayStr && e.on_consults);
+  const onConsultsServiceName = consultEntry ? serviceName : null;
+
   if (loadingService) {
     return (
       <PageContainer>
@@ -95,12 +132,9 @@ export default function ServiceDetail() {
     <PageContainer>
       {/* Header */}
       <div className="mb-8">
-        <Link
-          to={createPageUrl("Services")}
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Services
+        <Link to={createPageUrl("Services")}
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+          <ArrowLeft className="w-4 h-4" /> Back to Services
         </Link>
         <div className="flex items-center gap-4">
           {service.service_image_url ? (
@@ -129,15 +163,32 @@ export default function ServiceDetail() {
         </div>
       )}
 
-      {/* Staff */}
-      <div className="mb-8">
-        <SectionHeader title="Who's On Clinic" icon={Users} subtitle={`${staff.length} staff members`} />
-        <StaffList staff={staff} />
-      </div>
+      {/* Who's On Clinic Today */}
+      {serviceName && (
+        <div className="mb-8">
+          <SectionHeader title="Who's On Clinic Today" icon={Users} />
+          <TodaysClinicTeam clinicSchedules={clinicSchedules} serviceName={serviceName} />
+        </div>
+      )}
 
-      {/* Schedule */}
+      {/* Consult Board */}
+      {serviceName && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <SectionHeader title="Consult Board" icon={MessageSquare} />
+            <button onClick={() => setShowConsultForm(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/18 border border-white/15 text-xs text-white/70 hover:text-white transition-colors">
+              <ClipboardPlus className="w-3.5 h-3.5" />
+              Request Consult
+            </button>
+          </div>
+          <ConsultBoard serviceName={serviceName} />
+        </div>
+      )}
+
+      {/* Schedule (on-call type) */}
       <div className="mb-8">
-        <SectionHeader title="Schedule" icon={CalendarDays} />
+        <SectionHeader title="On-Call Schedule" icon={CalendarDays} />
         <ScheduleCalendar schedules={schedules} />
       </div>
 
@@ -152,6 +203,18 @@ export default function ServiceDetail() {
         <SectionHeader title="Procedure Estimates" icon={DollarSign} subtitle={`${estimates.length} procedures`} />
         <EstimateList estimates={estimates} />
       </div>
+
+      {/* Consult Request Form */}
+      <AnimatePresence>
+        {showConsultForm && (
+          <ConsultRequestForm
+            onClose={() => setShowConsultForm(false)}
+            onSuccess={() => {}}
+            consultingService={serviceName}
+            staffList={allStaff}
+          />
+        )}
+      </AnimatePresence>
     </PageContainer>
   );
 }
