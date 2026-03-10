@@ -20,6 +20,7 @@ export default function StudentShiftSlot({
   blockStartDate,
   onUpdate,
   canEdit,
+  isCurrentShift,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +68,11 @@ export default function StudentShiftSlot({
   return (
     <div className="relative">
       {assignment ? (
-        <div className="bg-primary/30 border border-primary/50 rounded-lg p-2 text-xs text-white font-medium">
+        <div className={`rounded-lg p-2 text-xs text-white font-medium transition-colors ${
+          isCurrentShift 
+            ? "bg-green-500/40 border border-green-400/60 shadow-lg shadow-green-500/20" 
+            : "bg-primary/30 border border-primary/50"
+        }`}>
           <div className="flex items-center justify-between gap-1">
             <span className="truncate">{assignment.student_name}</span>
             {canEdit && (
