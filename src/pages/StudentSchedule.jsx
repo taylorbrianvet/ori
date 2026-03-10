@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import PageContainer from "@/components/shared/PageContainer";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, startOfDay, addDays, startOfWeek, isWithinInterval } from "date-fns";
-import StudentScheduleView from "@/components/oncall/StudentScheduleView";
+import StudentScheduleView from "@/components/oncall/StudentScheduleView.js";
 
 export default function StudentSchedule() {
   const [currentUser, setCurrentUser] = useState(null);
