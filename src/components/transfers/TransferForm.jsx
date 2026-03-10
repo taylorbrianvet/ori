@@ -18,7 +18,7 @@ const LOCATIONS = ["ICU", "PCW", "ER", "Ward", "Recovery", "Imaging", "OR", "Oth
 
 const EMPTY = {
   patient_name: "", patient_id: "", age: "", sex: "", species: "", breed: "",
-  location: "", problem_list: [], requesting_service: "", receiving_service: "",
+  location: "", problem_list: [], requesting_service: "", receiving_services: [],
   requesting_clinician: "", notes: "", already_transferred: false,
 };
 
@@ -39,8 +39,8 @@ export default function TransferForm({ staffList = [], onSaved }) {
   const removeProblem = (i) => set("problem_list", form.problem_list.filter((_, idx) => idx !== i));
 
   const handleSubmit = async () => {
-    if (!form.patient_name || !form.patient_id || !form.breed || !form.requesting_service || !form.receiving_service || !form.requesting_clinician) {
-      toast.error("Please fill in all required fields.");
+    if (!form.patient_name || !form.patient_id || !form.breed || !form.requesting_service || form.receiving_services.length === 0 || !form.requesting_clinician) {
+      toast.error("Please fill in all required fields and select at least one receiving service.");
       return;
     }
     setSaving(true);
@@ -58,12 +58,26 @@ export default function TransferForm({ staffList = [], onSaved }) {
         patient_type: "Inpatient",
       });
     }
-    await base44.entities.InterserviceTransfer.create(form);
+    // Create a transfer for each receiving service
+    for (const service of form.receiving_services) {
+      await base44.entities.InterserviceTransfer.create({
+        ...form,
+        receiving_service: service,
+      });
+    }
     toast.success("Transfer submitted.");
     setForm(EMPTY);
     setProblemInput("");
     setSaving(false);
     onSaved?.();
+  };
+
+  const toggleReceivingService = (service) => {
+    set("receiving_services", 
+      form.receiving_services.includes(service)
+        ? form.receiving_services.filter(s => s !== service)
+        : [...form.receiving_services, service]
+    );
   };
 
   const eligibleClinicians = staffList
@@ -158,22 +172,30 @@ export default function TransferForm({ staffList = [], onSaved }) {
       </div>
 
       {/* Services */}
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Requesting Service <span className="text-red-400">*</span></label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.requesting_service} onChange={e => set("requesting_service", e.target.value)}>
-            <option value="">Select…</option>
-            {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Receiving Service <span className="text-red-400">*</span></label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.receiving_service} onChange={e => set("receiving_service", e.target.value)}>
-            <option value="">Select…</option>
-            {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+      <div>
+        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Requesting Service <span className="text-red-400">*</span></label>
+        <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+          value={form.requesting_service} onChange={e => set("requesting_service", e.target.value)}>
+          <option value="">Select…</option>
+          {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Receiving Services <span className="text-red-400">*</span></label>
+        <p className="text-xs text-white/40 mb-2">Select one or more services (double transfer)</p>
+        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 rounded-xl bg-black/30 border border-white/20">
+          {SERVICES.map(s => (
+            <label key={s} className="flex items-center gap-2 cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={form.receiving_services.includes(s)}
+                onChange={() => toggleReceivingService(s)}
+                className="rounded w-4 h-4 accent-white/60"
+              />
+              <span className="text-xs text-white/75">{s}</span>
+            </label>
+          ))}
         </div>
       </div>
 
