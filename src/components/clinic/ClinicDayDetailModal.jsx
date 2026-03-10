@@ -54,12 +54,12 @@ function PersonInput({ label, value, onChange, suggestions, placeholder, disable
 }
 
 export default function ClinicDayDetailModal({ entries, date, serviceName, allStaff = [], currentUser, onClose, onSaved }) {
-  const [forms, setForms] = useState(entries.map(e => ({ ...e })));
+  const [forms, setForms] = useState(sortEntries(entries).map(e => ({ ...e })));
   const [saving, setSaving] = useState(false);
 
   // Re-sync form when entries update (e.g. after save + query invalidation)
   useEffect(() => {
-    setForms(entries.map(e => ({ ...e })));
+    setForms(sortEntries(entries).map(e => ({ ...e })));
   }, [entries]);
 
   const userRole = currentUser?.role; // app role (admin/user)
