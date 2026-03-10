@@ -49,6 +49,7 @@
  */
 import Admin from './pages/Admin';
 import Directory from './pages/Directory';
+import EducationalRounds from './pages/EducationalRounds';
 import Home from './pages/Home';
 import JournalClub from './pages/JournalClub';
 import JournalDetail from './pages/JournalDetail';
@@ -62,13 +63,13 @@ import Services from './pages/Services';
 import SurgicalLog from './pages/SurgicalLog';
 import WoundCare from './pages/WoundCare';
 import WoundCaseDetail from './pages/WoundCaseDetail';
-import EducationalRounds from './pages/EducationalRounds';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Admin": Admin,
     "Directory": Directory,
+    "EducationalRounds": EducationalRounds,
     "Home": Home,
     "JournalClub": JournalClub,
     "JournalDetail": JournalDetail,
@@ -82,7 +83,6 @@ export const PAGES = {
     "SurgicalLog": SurgicalLog,
     "WoundCare": WoundCare,
     "WoundCaseDetail": WoundCaseDetail,
-    "EducationalRounds": EducationalRounds,
 }
 
 export const pagesConfig = {

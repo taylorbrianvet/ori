@@ -88,17 +88,20 @@ export default function EducationalRounds() {
     await base44.auth.updateMe({ default_rounds_department: dept });
   };
 
-  // Filter rounds for current week + active department
-  const weekRounds = rounds.filter(r => {
-    const d = parseISO(r.date);
-    if (!isWithinInterval(d, { start: weekStart, end: weekEnd })) return false;
-    // Match if department (legacy) or departments array includes the active dept
+  const inCurrentWeek = (r) => isWithinInterval(parseISO(r.date), { start: weekStart, end: weekEnd });
+
+  // Seminars are NOT department-specific — always show all seminars for the week
+  const seminars = rounds.filter(r => inCurrentWeek(r) && (r.is_seminar || r.event_type === "Seminar"));
+
+  // Regular rounds filtered by active department
+  const regularRounds = rounds.filter(r => {
+    if (!inCurrentWeek(r)) return false;
+    if (r.is_seminar || r.event_type === "Seminar") return false;
     const depts = r.departments?.length > 0 ? r.departments : (r.department ? [r.department] : []);
     return !activeDept || depts.includes(activeDept) || depts.length === 0;
   });
 
-  const seminars = weekRounds.filter(r => r.is_seminar || r.event_type === "Seminar");
-  const regularRounds = weekRounds.filter(r => !r.is_seminar && r.event_type !== "Seminar");
+  const weekRounds = [...regularRounds, ...seminars];
 
   // Group Mon–Fri (skip Saturday/Sunday for display)
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd }).filter(d => {
