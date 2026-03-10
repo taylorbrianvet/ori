@@ -63,11 +63,11 @@ import Resources from './pages/Resources';
 import ServiceBoard from './pages/ServiceBoard';
 import ServiceDetail from './pages/ServiceDetail';
 import Services from './pages/Services';
+import StudentSchedule from './pages/StudentSchedule';
 import SurgicalLog from './pages/SurgicalLog';
 import Transfers from './pages/Transfers';
 import WoundCare from './pages/WoundCare';
 import WoundCaseDetail from './pages/WoundCaseDetail';
-import StudentSchedule from './pages/StudentSchedule';
 import __Layout from './Layout.jsx';
 
 
@@ -88,11 +88,11 @@ export const PAGES = {
     "ServiceBoard": ServiceBoard,
     "ServiceDetail": ServiceDetail,
     "Services": Services,
+    "StudentSchedule": StudentSchedule,
     "SurgicalLog": SurgicalLog,
     "Transfers": Transfers,
     "WoundCare": WoundCare,
     "WoundCaseDetail": WoundCaseDetail,
-    "StudentSchedule": StudentSchedule,
 }
 
 export const pagesConfig = {

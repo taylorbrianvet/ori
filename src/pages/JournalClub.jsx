@@ -105,24 +105,67 @@ export default function JournalClub() {
   }
 
   return (
-    <PageContainer>
-      <div className="mb-5">
-        <Link to={createPageUrl("Home")}
-          className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 transition-colors">
-          <ChevronLeft className="w-3.5 h-3.5" /> Home
-        </Link>
-      </div>
+    <div className="min-h-screen">
+      {/* Hero background with blur */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1532676362226-8c38b5b5a4d9?w=1600&q=60)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(40px) brightness(0.3)',
+          opacity: 0.4,
+        }}
+      />
+      
+      {/* Content */}
+      <div className="relative z-10">
+        <PageContainer className="pt-8">
+          <div className="mb-8">
+            <Link to={createPageUrl("Home")}
+              className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5" /> Home
+            </Link>
+          </div>
 
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-xl font-semibold text-white">Journal Club</h1>
-          <p className="text-xs text-white/45 mt-0.5">{journals.length} article{journals.length !== 1 ? "s" : ""}</p>
-        </div>
-        <button onClick={() => setShowUpload(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/12 hover:bg-white/20 text-white text-sm font-medium transition-colors">
-          <Plus className="w-4 h-4" /> Upload Article
-        </button>
-      </div>
+          {/* Hero Section */}
+          <div className="mb-12">
+            <div className="mb-6">
+              <h1 className="text-5xl font-bold text-white mb-4">Journal Club</h1>
+              <div className="space-y-3 max-w-2xl">
+                <p className="text-base text-white/80 leading-relaxed">
+                  A curated library of <span className="font-semibold">AI-generated articles</span> for quick reference and easy access.
+                </p>
+                <ul className="space-y-2 text-sm text-white/70">
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-amber-300 font-bold mt-0.5">✓</span>
+                    <span><strong>Save articles</strong> — Build your personal collection of essential reads</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-amber-300 font-bold mt-0.5">✓</span>
+                    <span><strong>Manage your library</strong> — No need to continuously download—everything is here</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-amber-300 font-bold mt-0.5">✓</span>
+                    <span><strong>Share with your community</strong> — Make knowledge accessible across the hospital</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Upload button */}
+            <button onClick={() => setShowUpload(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/20 hover:bg-white/28 text-white text-sm font-semibold transition-colors border border-white/25">
+              <Plus className="w-4 h-4" /> Upload Article
+            </button>
+          </div>
+
+          {/* Articles section */}
+          <div className="mb-6">
+            <div className="flex items-baseline gap-2 mb-6">
+              <h2 className="text-2xl font-semibold text-white">Articles</h2>
+              <span className="text-sm text-white/50">({journals.length} total)</span>
+            </div>
 
       {/* Search + Filter */}
       <div className="flex gap-2 mb-5">
@@ -187,6 +230,9 @@ export default function JournalClub() {
           ))}
         </div>
       )}
+      </div>
+      </PageContainer>
+      </div>
 
       <AnimatePresence>
         {showUpload && (
