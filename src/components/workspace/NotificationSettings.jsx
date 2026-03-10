@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Bell, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 
 export default function NotificationSettings({ staffRecord, onUpdated }) {
   const [loading, setLoading] = useState(false);
