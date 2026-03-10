@@ -11,7 +11,6 @@ const navItems = [
   { name: "Services", page: "Services", icon: Stethoscope },
   { name: "Service Board", page: "ServiceBoard", icon: BookOpen },
   { name: "On Call", page: "OnCall", icon: Phone },
-  { name: "Journal Club", page: "JournalClub", icon: BookMarked },
   { name: "Ed. Rounds", page: "EducationalRounds", icon: GraduationCap },
   { name: "Transfers", page: "Transfers", icon: ArrowLeftRight },
   { name: "Resources", page: "Resources", icon: BookOpen },
@@ -113,20 +112,7 @@ export default function Layout({ children, currentPageName }) {
             <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-white" : "text-white/50"}`} />
             {sidebarOpen && <span>Pharmacy</span>}
           </Link>
-          <Link
-            to={createPageUrl("Diagnostics")}
-            title={!sidebarOpen ? "Diagnostics" : ""}
-            className={`flex items-center transition-all duration-200 group rounded-xl ${
-              sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
-            } text-sm font-medium ${
-              currentPageName === "Diagnostics"
-                ? "bg-white/15 text-white shadow-sm"
-                : "text-white/55 hover:bg-white/10 hover:text-white/90"
-            }`}
-          >
-            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Diagnostics" ? "text-white" : "text-white/50"}`} />
-            {sidebarOpen && <span>Diagnostics</span>}
-          </Link>
+
           <Link
             to={createPageUrl("Directory")}
             title={!sidebarOpen ? "Directory" : ""}
