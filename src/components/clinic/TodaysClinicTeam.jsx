@@ -39,15 +39,29 @@ function TeamBlock({ entry }) {
   );
 }
 
+// Labels that should sort to the LEFT (Team 1, IM1, Small Animal, etc.)
+const LEFT_SPLITS = ["team 1", "team a", "im1", "1", "small animal", "large animal a"];
+
+function sortEntries(entries) {
+  if (entries.length <= 1) return entries;
+  return [...entries].sort((a, b) => {
+    const aLabel = (a.team_split || "").toLowerCase();
+    const bLabel = (b.team_split || "").toLowerCase();
+    const aIsLeft = LEFT_SPLITS.some(l => aLabel.includes(l));
+    const bIsLeft = LEFT_SPLITS.some(l => bLabel.includes(l));
+    if (aIsLeft && !bIsLeft) return -1;
+    if (!aIsLeft && bIsLeft) return 1;
+    return aLabel.localeCompare(bLabel);
+  });
+}
+
 export default function TodaysClinicTeam({ clinicSchedules = [], serviceName }) {
   const todayStr = format(new Date(), "yyyy-MM-dd");
   const todayEntries = clinicSchedules.filter(e => {
-    // Normalize date: strip time component, handle slash-formatted dates (MM/DD/YYYY → yyyy-MM-dd)
     let entryDate = e.date || "";
     if (entryDate.includes("/")) {
       const parts = entryDate.split("/");
       if (parts.length === 3) {
-        // Could be MM/DD/YYYY or DD/MM/YYYY — try both, prefer MM/DD/YYYY (US standard)
         entryDate = `${parts[2]}-${parts[0].padStart(2,"0")}-${parts[1].padStart(2,"0")}`;
       }
     } else {
@@ -64,10 +78,12 @@ export default function TodaysClinicTeam({ clinicSchedules = [], serviceName }) 
     );
   }
 
-  // Render teams side-by-side if there are splits (e.g. Team 1/Team 2, IM1/IM2, Small/Large Animal)
+  const sorted = sortEntries(todayEntries);
+  const isSplit = sorted.length > 1;
+
   return (
-    <div className={`flex gap-3 ${todayEntries.length > 1 ? "flex-row" : "flex-col"}`}>
-      {todayEntries.map((entry, i) => (
+    <div className={`flex gap-3 ${isSplit ? "flex-row" : "flex-col"}`}>
+      {sorted.map((entry, i) => (
         <TeamBlock key={i} entry={entry} />
       ))}
     </div>
