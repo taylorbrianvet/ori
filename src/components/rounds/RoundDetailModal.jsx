@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { format, parseISO, isToday, isFuture } from "date-fns";
 
 const EVENT_TYPES = ["Journal Club", "Textbook Review", "Morbidity & Mortality", "Formal Case Presentation", "Seminar", "Other"];
+const ALL_DEPARTMENTS = ["Surgery", "Internal Medicine", "Emergency & Critical Care", "Neurology", "Oncology", "Dermatology", "Cardiology", "Ophthalmology", "Radiology", "Anesthesia"];
 
 const SURGERY_RESIDENTS = [
   "Sarah Mitchell", "James Okoye", "Priya Nair", "Derek Chang", "Leila Hassan",
