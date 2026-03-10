@@ -62,6 +62,7 @@ import Services from './pages/Services';
 import SurgicalLog from './pages/SurgicalLog';
 import WoundCare from './pages/WoundCare';
 import WoundCaseDetail from './pages/WoundCaseDetail';
+import EducationalRounds from './pages/EducationalRounds';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "SurgicalLog": SurgicalLog,
     "WoundCare": WoundCare,
     "WoundCaseDetail": WoundCaseDetail,
+    "EducationalRounds": EducationalRounds,
 }
 
 export const pagesConfig = {
