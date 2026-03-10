@@ -6,7 +6,7 @@ import { format, addDays, startOfWeek, getDay, isToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 
 export default function StudentScheduleView({ service: initialService, blockStartDate, currentUser, canEdit = false }) {
-  const [selectedService, setSelectedService] = useState(initialService);
+  const [selectedService, setSelectedService] = useState(null);
   
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
@@ -97,10 +97,15 @@ export default function StudentScheduleView({ service: initialService, blockStar
         </Button>
       </div>
 
-      {/* Two-week calendar */}
-      {weekData.map((week, weekIdx) => (
-        <div key={weekIdx} className="space-y-6">
-          <h3 className="text-lg font-semibold text-white">Week {weekIdx + 1}</h3>
+      {/* Selected service title */}
+      {selectedService && (
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-6">{selectedService}</h2>
+
+          {/* Two-week calendar */}
+          {weekData.map((week, weekIdx) => (
+            <div key={weekIdx} className="glass-card p-6 mb-6">
+              <h3 className="text-lg font-semibold text-white mb-6">Week {weekIdx + 1}</h3>
 
           {/* Monday-Friday */}
           <div>
@@ -190,8 +195,17 @@ export default function StudentScheduleView({ service: initialService, blockStar
               ))}
             </div>
           </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+            </div>
+            </div>
+          ))}
+          </div>
+          )}
+
+          {!selectedService && (
+          <div className="text-center py-12">
+          <p className="text-white/50 text-sm">Select a service to view the schedule</p>
+          </div>
+          )}
+          </div>
+          );
+          }
