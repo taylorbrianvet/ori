@@ -21,22 +21,23 @@ Deno.serve(async (req) => {
     }
 
     // Format the email body
-    let emailBody = `<h2>Daily Inter-Service Transfer Report</h2>\n`;
-    emailBody += `<p>You have <strong>${pending.length}</strong> pending patient transfer${pending.length !== 1 ? 's' : ''}:</p>\n`;
-    emailBody += `<ul>\n`;
+    let emailBody = `Daily Inter-Service Transfer Report\n`;
+    emailBody += `\nYou have ${pending.length} pending patient transfer${pending.length !== 1 ? 's' : ''}:\n\n`;
 
     pending.forEach(t => {
-      emailBody += `<li>
-        <strong>${t.patient_name}</strong> (ID: ${t.patient_id}) - ${t.species} ${t.breed}
-        <br />From: ${t.requesting_service} → To: ${t.receiving_service}
-        <br />Location: ${t.location || 'N/A'} | Requested by: ${t.requesting_clinician}
-        ${t.problem_list && t.problem_list.length > 0 ? `<br />Problems: ${t.problem_list.join(', ')}` : ''}
-        ${t.notes ? `<br />Notes: ${t.notes}` : ''}
-      </li>\n`;
+      emailBody += `• ${t.patient_name} (ID: ${t.patient_id}) - ${t.species} ${t.breed}\n`;
+      emailBody += `  From: ${t.requesting_service} → To: ${t.receiving_service}\n`;
+      emailBody += `  Location: ${t.location || 'N/A'} | Requested by: ${t.requesting_clinician}\n`;
+      if (t.problem_list && t.problem_list.length > 0) {
+        emailBody += `  Problems: ${t.problem_list.join(', ')}\n`;
+      }
+      if (t.notes) {
+        emailBody += `  Notes: ${t.notes}\n`;
+      }
+      emailBody += `\n`;
     });
 
-    emailBody += `</ul>\n`;
-    emailBody += `<p>Log in to the app to view full details and mark transfers as complete.</p>\n`;
+    emailBody += `Log in to the app to view full details and mark transfers as complete.\n`;
 
     // Send emails to all recipients
     for (const recipient of recipients) {
