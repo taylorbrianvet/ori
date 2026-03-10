@@ -144,11 +144,19 @@ export default function EducationalRounds() {
       <div className="mb-5">
         <div className="flex items-center justify-between mb-2">
           <p className="text-[10px] text-white/35 uppercase tracking-wider font-semibold">Service</p>
-          {activeDept && (
-            <p className="text-[10px] text-white/25">
-              Default: <span className="text-white/45">{activeDept}</span> · tap to change
-            </p>
-          )}
+          <div className="flex items-center gap-3">
+            {activeDept && (
+              <p className="text-[10px] text-white/25">
+                Default: <span className="text-white/45">{activeDept}</span> · tap to change
+              </p>
+            )}
+            <button
+              onClick={() => setShowSeminarsPanel(true)}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-emerald-400/25 bg-emerald-500/10 text-emerald-200/70 hover:bg-emerald-500/20 hover:text-emerald-200 transition-colors font-medium"
+            >
+              <List className="w-3 h-3" /> All Seminars
+            </button>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           {DEPARTMENTS.map(dept => (
