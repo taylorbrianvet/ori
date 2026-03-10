@@ -5,7 +5,7 @@ import StudentShiftSlot from "./StudentShiftSlot";
 import { format, addDays, startOfWeek, getDay, isToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 
-export default function StudentScheduleView({ service: initialService, blockStartDate, currentUser, canEdit = false }) {
+export default function StudentScheduleView({ service: initialService, blockStartDate, blockType = "2-week", currentUser, canEdit = false }) {
   const [selectedService, setSelectedService] = useState(null);
   
   const { data: students = [] } = useQuery({
@@ -56,7 +56,8 @@ export default function StudentScheduleView({ service: initialService, blockStar
 
   const weekData = useMemo(() => {
     const weeks = [];
-    for (let weekNum = 0; weekNum < 2; weekNum++) {
+    const numWeeks = blockType === "3-week" ? 3 : 2;
+    for (let weekNum = 0; weekNum < numWeeks; weekNum++) {
       const week = [];
       // Start from Monday of the block
       const weekStart = addDays(blockStartDate, weekNum * 7);
@@ -75,7 +76,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
       weeks.push(week);
     }
     return weeks;
-  }, [blockStartDate]);
+  }, [blockStartDate, blockType]);
 
   return (
     <div className="space-y-8">
@@ -94,6 +95,13 @@ export default function StudentScheduleView({ service: initialService, blockStar
           className="text-sm"
         >
           Surgery
+        </Button>
+        <Button
+          variant={selectedService === "Anesthesia" ? "default" : "outline"}
+          onClick={() => setSelectedService("Anesthesia")}
+          className="text-sm"
+        >
+          Anesthesia
         </Button>
       </div>
 
@@ -118,7 +126,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
                         <div className={`text-xs ${isToday(day.date) ? "text-white/80 font-semibold" : "text-white/60"}`}>{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
                       </div>
                       <div className="space-y-1">
-                        {["primary", "secondary"].map((position) => (
+                        {selectedService === "Anesthesia" ? ["primary", "secondary", "tertiary"] : ["primary", "secondary"]).map((position) => (
                           <StudentShiftSlot
                             key={`${day.dateStr}-${position}`}
                             date={day.dateStr}
@@ -153,7 +161,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
                         <div className="space-y-2">
                           <div className="text-xs text-white/50 font-medium">Day <span className="text-white/30">(8am - 8pm)</span></div>
                           <div className="space-y-1">
-                            {["primary", "secondary"].map((position) => (
+                            {(selectedService === "Anesthesia" ? ["primary", "secondary", "tertiary"] : ["primary", "secondary"]).map((position) => (
                               <StudentShiftSlot
                                 key={`${day.dateStr}-day-${position}`}
                                 date={day.dateStr}
@@ -173,7 +181,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
                         <div className="space-y-2">
                           <div className="text-xs text-white/50 font-medium">Night <span className="text-white/30">(8pm - 8am)</span></div>
                           <div className="space-y-1">
-                            {["primary", "secondary"].map((position) => (
+                            {(selectedService === "Anesthesia" ? ["primary", "secondary", "tertiary"] : ["primary", "secondary"]).map((position) => (
                               <StudentShiftSlot
                                 key={`${day.dateStr}-night-${position}`}
                                 date={day.dateStr}
