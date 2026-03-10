@@ -19,8 +19,48 @@ Deno.serve(async (req) => {
     const { pdf_url, journal_id } = await req.json();
     if (!pdf_url) return Response.json({ error: 'pdf_url required' }, { status: 400 });
 
-    // Step 1: Extract text from PDF via OpenAI vision
+    // Step 1: Download PDF and upload to OpenAI Files API
+    const pdfResponse = await fetch(pdf_url);
+    if (!pdfResponse.ok) throw new Error(`Failed to fetch PDF: ${pdfResponse.status}`);
+    const pdfBuffer = await pdfResponse.arrayBuffer();
+    const pdfBlob = new Blob([pdfBuffer], { type: 'application/pdf' });
+    const pdfFile = new File([pdfBlob], 'article.pdf', { type: 'application/pdf' });
+
+    // Upload file to OpenAI
+    const uploadedFile = await openai.files.create({
+      file: pdfFile,
+      purpose: 'assistants',
+    });
+
+    // Step 2: Extract text using GPT-4o with file search / direct prompt
+    // Use the file content via a vector store or direct text extraction
+    // Since PDFs can be sent as file attachments in newer API, use that approach
     const extractionResponse = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: `You are a veterinary medical article parser. I am providing a veterinary journal article PDF. Please extract ALL text content from it, including: title, authors, journal name, year, abstract, introduction, methods, results, discussion, conclusions, and references. Return the complete extracted text preserving the document structure. Output only the raw text with no extra commentary.
+
+The PDF file ID is: ${uploadedFile.id}
+
+Since you cannot directly read the file by ID in this context, please respond with what you know about processing veterinary journal articles and I will provide the text separately.`
+        }
+      ],
+      max_tokens: 100
+    });
+
+    // Delete the uploaded file as we'll use a different approach
+    await openai.files.del(uploadedFile.id).catch(() => {});
+
+    // Step 2 (revised): Convert PDF to text using base64 encoding approach
+    // Re-fetch and convert to base64 for the vision-capable model
+    const pdfResponse2 = await fetch(pdf_url);
+    const pdfBytes = await pdfResponse2.arrayBuffer();
+    const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
+
+    // Use GPT-4o with PDF as base64 data URL — newer models support this
+    const extractResponse = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -28,11 +68,14 @@ Deno.serve(async (req) => {
           content: [
             {
               type: "text",
-              text: `You are a veterinary medical article parser. Extract all text content from this PDF article. Return the complete text as-is, preserving the structure (title, authors, abstract, body, references). Output only the raw extracted text with no extra commentary.`
+              text: "Extract all text from this veterinary journal article PDF. Return title, authors, journal name and year, abstract, and full body text. Output only the extracted text with no commentary."
             },
             {
               type: "image_url",
-              image_url: { url: pdf_url, detail: "high" }
+              image_url: {
+                url: `data:application/pdf;base64,${base64Pdf}`,
+                detail: "high"
+              }
             }
           ]
         }
@@ -40,33 +83,29 @@ Deno.serve(async (req) => {
       max_tokens: 4000
     });
 
-    const full_text = extractionResponse.choices[0].message.content;
+    const full_text = extractResponse.choices[0].message.content;
 
-    // Step 2: Parse structured data + AI analysis
+    // Step 3: Parse structured data + AI analysis from extracted text
     const parseResponse = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are a veterinary clinical librarian and AI assistant. Analyze the provided veterinary article text and extract structured information. Be precise and concise.
+          content: `You are a veterinary clinical librarian. Analyze the provided veterinary article text and return structured JSON.
 
-For journal_name: Use the standard abbreviation (e.g., JAVMA, VCOT, JVIM, JAVS, AJVR, JVCS, VetSurg, Front Vet Sci). Be consistent — do not spell out names that have common abbreviations.
-
-For associated_services: Only select from this exact list: ${SERVICES.join(', ')}.
-
-For procedures: List specific veterinary procedures mentioned (e.g., gastropexy, TPLO, thoracotomy, cystotomy).
-
-For disease_processes: List specific diseases, conditions, or diagnoses discussed (e.g., gastric dilatation volvulus, osteosarcoma, epilepsy).
-
-For ai_summary: Write a thorough 3-5 sentence summary of the article, covering the study design, key findings, and conclusions. Write for a veterinary resident audience.
-
-For ai_clinical_takeaway: Write exactly 1-2 sentences capturing the single most important clinical implication of this article. Be specific and actionable.
-
-For article_url: Extract any DOI (format as https://doi.org/...) or URL mentioned in the article. If none found, return null.`
+Rules:
+- journal_name: Use standard abbreviation (JAVMA, VCOT, JVIM, AJVR, VetSurg, JVCS, Front Vet Sci, JSAP, JFMS, etc.). Never spell out full names.
+- associated_services: Only pick from: ${SERVICES.join(', ')}
+- procedures: Specific vet procedures (e.g., gastropexy, TPLO, splenectomy)
+- disease_processes: Specific diseases/diagnoses (e.g., GDV, osteosarcoma, BOAS)
+- ai_summary: 3-5 sentences covering study design, key findings, conclusions — written for a vet resident
+- ai_clinical_takeaway: Exactly 1-2 sentences, the single most important clinical implication, specific and actionable
+- article_url: Format DOI as https://doi.org/... if found, otherwise null
+- keywords: 5-10 key search terms`
         },
         {
           role: "user",
-          content: `Here is the article text:\n\n${full_text}\n\nReturn a JSON object with these exact fields:\n{\n  "title": string,\n  "journal_name": string,\n  "journal_year": number,\n  "authors": string[],\n  "abstract": string,\n  "ai_summary": string,\n  "ai_clinical_takeaway": string,\n  "associated_services": string[],\n  "procedures": string[],\n  "disease_processes": string[],\n  "keywords": string[],\n  "article_url": string | null\n}`
+          content: `Article text:\n\n${full_text}\n\nReturn only this JSON:\n{\n  "title": "",\n  "journal_name": "",\n  "journal_year": 0,\n  "authors": [],\n  "abstract": "",\n  "ai_summary": "",\n  "ai_clinical_takeaway": "",\n  "associated_services": [],\n  "procedures": [],\n  "disease_processes": [],\n  "keywords": [],\n  "article_url": null\n}`
         }
       ],
       response_format: { type: "json_object" },
@@ -75,7 +114,6 @@ For article_url: Extract any DOI (format as https://doi.org/...) or URL mentione
 
     const parsed = JSON.parse(parseResponse.choices[0].message.content);
 
-    // Update the journal record
     const updateData = {
       title: parsed.title || "Untitled Article",
       journal_name: parsed.journal_name || null,
