@@ -68,7 +68,6 @@ export default function ClinicDayDetailModal({ entries, date, serviceName, allSt
     toast.success("Schedule updated.");
     setSaving(false);
     onSaved?.();
-    onClose();
   };
 
   const parsedDate = typeof date === "string" ? parseISO(date) : date;
