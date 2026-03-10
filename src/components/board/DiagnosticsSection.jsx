@@ -15,14 +15,12 @@ export default function DiagnosticsSection({ diagnostics, compact = false }) {
 
         <div className="space-y-1.5 flex-1 overflow-y-auto">
           {diagnostics.map(d => (
-            <div key={d.id} className="p-2 rounded-lg bg-white/6 border border-white/12 text-[10px]">
-              <div className="font-semibold text-white">{d.patient_id}</div>
-              <div className="text-white/50">{d.diagnostic_type}</div>
-              <div className="text-white/40 mt-0.5">
+            <div key={d.id} className="p-2.5 rounded-lg bg-gradient-to-br from-white/15 to-white/10 border border-white/20 text-[11px]">
+              <div className="font-semibold text-white">{d.patient_name}</div>
+              <div className="text-white/70 text-[10px]">{d.diagnostic_type}</div>
+              <div className="text-[9px] text-white/50 mt-0.5">
                 {d.sample_collected ? <span className="text-green-300">✓</span> : <span className="text-red-300">✗</span>} Collected
-              </div>
-              <div className="text-white/40">
-                {d.diagnostic_complete ? <span className="text-green-300">✓</span> : <span className="text-amber-300">⏳</span>} Complete
+                {d.diagnostic_complete ? <span className="text-green-300 ml-1">✓</span> : <span className="text-amber-300 ml-1">⏳</span>} Complete
               </div>
             </div>
           ))}
