@@ -53,7 +53,10 @@ function JournalAssignmentRow({ assignment, index, surgeryResidents, onUpdate, o
 }
 
 export default function RoundDetailModal({ round, onClose, onSaved, staffList = [] }) {
-  const [form, setForm] = useState({ ...round });
+  const [form, setForm] = useState({
+    ...round,
+    departments: round.departments?.length > 0 ? round.departments : (round.department ? [round.department] : []),
+  });
   const [saving, setSaving] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [pendingPDFUploads, setPendingPDFUploads] = useState([]); // {index, file, resident}
