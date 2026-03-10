@@ -8,6 +8,22 @@ const SERVICES = [
   "Orthopedic Surgery","Primary Care","General Surgery","Radiology","Soft Tissue Surgery"
 ];
 
+// Simple string similarity check (Levenshtein-inspired)
+function similarity(a, b) {
+  const s1 = a.toLowerCase().trim();
+  const s2 = b.toLowerCase().trim();
+  if (s1 === s2) return 1;
+  
+  const len = Math.max(s1.length, s2.length);
+  if (len === 0) return 1;
+  
+  let matches = 0;
+  for (let i = 0; i < Math.min(s1.length, s2.length); i++) {
+    if (s1[i] === s2[i]) matches++;
+  }
+  return matches / len;
+}
+
 Deno.serve(async (req) => {
   try {
     const openai = new OpenAI({ apiKey: Deno.env.get("OPENAI_API_KEY") });
@@ -41,14 +57,37 @@ Deno.serve(async (req) => {
     const initialData = JSON.parse(initialContent);
     const { title = "", authors = [], journal_year = null } = initialData;
 
-    // Check for duplicate article
-    if (title && authors.length > 0) {
+    // Check for duplicate article with multiple strategies
+    if (title) {
       const existingArticles = await base44.entities.Journal.list();
-      const duplicate = existingArticles.find(a => 
-        a.title?.toLowerCase() === title.toLowerCase() &&
-        a.journal_year === journal_year &&
-        (a.authors || []).some(author => authors.includes(author))
+      
+      // Strategy 1: Exact title match (most reliable)
+      let duplicate = existingArticles.find(a => 
+        a.title?.toLowerCase().trim() === title.toLowerCase().trim()
       );
+      
+      // Strategy 2: Fuzzy title match + author overlap
+      if (!duplicate && authors.length > 0) {
+        duplicate = existingArticles.find(a => {
+          const titleSim = similarity(a.title || "", title);
+          const hasAuthorOverlap = (a.authors || []).some(author => 
+            authors.some(auth => similarity(author, auth) > 0.8)
+          );
+          const yearMatch = !a.journal_year || !journal_year || a.journal_year === journal_year;
+          return titleSim > 0.85 && hasAuthorOverlap && yearMatch;
+        });
+      }
+      
+      // Strategy 3: Year + author combo (if year is present)
+      if (!duplicate && journal_year && authors.length > 0) {
+        duplicate = existingArticles.find(a => 
+          a.journal_year === journal_year &&
+          (a.authors || []).some(author => 
+            authors.some(auth => auth.toLowerCase().includes(author.toLowerCase()) || author.toLowerCase().includes(auth.toLowerCase()))
+          )
+        );
+      }
+      
       if (duplicate) {
         return Response.json({ 
           success: false, 
