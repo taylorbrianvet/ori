@@ -54,7 +54,7 @@ Rules:
       journal_year: parsed.journal_year || null,
       authors: parsed.authors || [],
       abstract: parsed.abstract || null,
-      full_text: raw_text.slice(0, 50000),
+      full_text: raw_text.slice(0, 8000),
       ai_summary: parsed.ai_summary || null,
       ai_clinical_takeaway: parsed.ai_clinical_takeaway || null,
       associated_services: (parsed.associated_services || []).filter(s => SERVICES.includes(s)),
