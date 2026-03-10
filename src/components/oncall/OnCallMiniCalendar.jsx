@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, isToday, addMonths, subMonths } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import OnCallPersonRow from "./OnCallPersonRow";
 
 function buildSlots(record) {
@@ -16,6 +18,16 @@ export default function OnCallMiniCalendar({ service, records }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
 
+  const { data: studentSchedules = [] } = useQuery({
+    queryKey: ["student-on-call-schedules"],
+    queryFn: () => base44.entities.StudentOnCallSchedule.list(),
+  });
+
+  const { data: staff = [] } = useQuery({
+    queryKey: ["staff"],
+    queryFn: () => base44.entities.Staff.list(),
+  });
+
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const calStart = startOfWeek(monthStart);
@@ -29,6 +41,15 @@ export default function OnCallMiniCalendar({ service, records }) {
 
   const selectedRecord = selectedDay ? recordMap[format(selectedDay, "yyyy-MM-dd")] : null;
   const selectedSlots = buildSlots(selectedRecord);
+  
+  const selectedStudents = selectedDay 
+    ? studentSchedules.filter((s) => s.date === format(selectedDay, "yyyy-MM-dd") && s.service === service)
+      .sort((a, b) => a.position === "primary" ? -1 : 1)
+      .map(s => {
+        const studentInfo = staff.find(st => st.email === s.student_email);
+        return { ...s, phone: studentInfo?.phone };
+      })
+    : [];
 
   return (
     <div className="rounded-xl bg-white/5 border border-white/8 p-3">
@@ -82,6 +103,19 @@ export default function OnCallMiniCalendar({ service, records }) {
           ) : selectedSlots.map((s, i) => (
             <OnCallPersonRow key={i} {...s} />
           ))}
+          {selectedStudents.length > 0 && (
+            <div className="mt-2 pt-2 border-t border-white/8">
+              <p className="text-[10px] font-semibold text-white/35 uppercase tracking-wider mb-1">Students On Call</p>
+              {selectedStudents.map((s, i) => (
+                <OnCallPersonRow
+                  key={i}
+                  slot={s.position}
+                  name={s.student_name}
+                  phone={s.phone}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
