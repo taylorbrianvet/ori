@@ -26,6 +26,21 @@ export default function Transfers() {
   const pending = transfers.filter(t => !t.already_transferred);
   const complete = transfers.filter(t => t.already_transferred);
 
+  // Group transfers by patient ID to detect double transfers
+  const groupTransfersByPatient = (transferList) => {
+    const grouped = {};
+    transferList.forEach(t => {
+      if (!grouped[t.patient_id]) {
+        grouped[t.patient_id] = [];
+      }
+      grouped[t.patient_id].push(t);
+    });
+    return Object.values(grouped);
+  };
+
+  const pendingGrouped = groupTransfersByPatient(pending);
+  const completeGrouped = groupTransfersByPatient(complete);
+
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["interservice-transfers"] });
 
   return (
@@ -87,8 +102,12 @@ export default function Transfers() {
           </div>
         ) : (
           <div className="space-y-3">
-            {pending.map(t => (
-              <TransferCard key={t.id} transfer={t} onUpdated={refresh} />
+            {pendingGrouped.map(group => (
+              <TransferCard 
+                key={group[0].patient_id} 
+                transfers={group} 
+                onUpdated={refresh} 
+              />
             ))}
           </div>
         )}
@@ -99,8 +118,12 @@ export default function Transfers() {
         <div>
           <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mb-3">Complete</p>
           <div className="space-y-3">
-            {complete.map(t => (
-              <TransferCard key={t.id} transfer={t} onUpdated={refresh} />
+            {completeGrouped.map(group => (
+              <TransferCard 
+                key={group[0].patient_id} 
+                transfers={group} 
+                onUpdated={refresh} 
+              />
             ))}
           </div>
         </div>
