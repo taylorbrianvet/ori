@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import StudentShiftSlot from "./StudentShiftSlot";
@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 
 export default function StudentScheduleView({ service: initialService, blockStartDate, blockType = "2-week", currentUser, canEdit = false }) {
   const [selectedService, setSelectedService] = useState(initialService);
+  
+  useEffect(() => {
+    if (initialService) {
+      setSelectedService(initialService);
+    }
+  }, [initialService]);
   
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
