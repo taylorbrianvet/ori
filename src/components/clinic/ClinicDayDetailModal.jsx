@@ -5,9 +5,22 @@ import { base44 } from "@/api/base44Client";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 
-// Slot labels for display
 const HO_FIELDS = ["house_officer_1","house_officer_2","house_officer_3","house_officer_4","house_officer_5","house_officer_6"];
 const FAC_FIELDS = ["faculty_1","faculty_2"];
+
+const LEFT_SPLITS = ["team 1", "team a", "im1", "1", "small animal", "large animal a"];
+function sortEntries(entries) {
+  if (entries.length <= 1) return entries;
+  return [...entries].sort((a, b) => {
+    const aLabel = (a.team_split || "").toLowerCase();
+    const bLabel = (b.team_split || "").toLowerCase();
+    const aIsLeft = LEFT_SPLITS.some(l => aLabel.includes(l));
+    const bIsLeft = LEFT_SPLITS.some(l => bLabel.includes(l));
+    if (aIsLeft && !bIsLeft) return -1;
+    if (!aIsLeft && bIsLeft) return 1;
+    return aLabel.localeCompare(bLabel);
+  });
+}
 
 function PersonInput({ label, value, onChange, suggestions, placeholder, disabled }) {
   const [open, setOpen] = useState(false);
