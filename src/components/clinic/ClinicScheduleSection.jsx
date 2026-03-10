@@ -29,9 +29,20 @@ export default function ClinicScheduleSection({ clinicSchedules = [], serviceNam
 
   const startDow = startOfMonth(currentMonth).getDay();
 
+  function normalizeDate(raw) {
+    if (!raw) return "";
+    if (raw.includes("/")) {
+      const parts = raw.split("/");
+      if (parts.length === 3) {
+        return `${parts[2]}-${parts[0].padStart(2,"0")}-${parts[1].padStart(2,"0")}`;
+      }
+    }
+    return raw.slice(0, 10);
+  }
+
   function getEntriesForDay(day) {
     const dayStr = format(day, "yyyy-MM-dd");
-    return clinicSchedules.filter(e => e.date?.slice(0, 10) === dayStr);
+    return clinicSchedules.filter(e => normalizeDate(e.date) === dayStr);
   }
 
   const selectedEntries = selectedDay ? getEntriesForDay(selectedDay) : [];
