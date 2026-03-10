@@ -52,9 +52,13 @@ export default function OnCall() {
         subtitle={format(new Date(), "EEEE, MMMM d, yyyy") + " · Shifts 8:00 AM → 8:00 AM"}
       />
 
-      {/* Tabs — only show Edit tab if user has permission */}
+      {/* Tabs — only show Edit tab if user has permission, Student tab if user is student */}
       <div className="flex gap-1 p-1 bg-white/8 backdrop-blur rounded-2xl mb-6 w-fit border border-white/10">
-        {TABS.filter(t => t.id === "current" || canEditSchedule).map((tab) => (
+        {TABS.filter(t => 
+          t.id === "current" || 
+          (t.id === "edit" && canEditSchedule) ||
+          (t.id === "student" && currentUser?.role === "student")
+        ).map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
