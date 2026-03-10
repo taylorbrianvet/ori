@@ -195,8 +195,9 @@ export default function StudentScheduleView({ service: initialService, blockStar
               ))}
             </div>
           </div>
-            </div>
-            </div>
+          </div>
+          </div>
+          </div>
           ))}
           </div>
           )}
