@@ -93,7 +93,6 @@ export default function ServiceBoard() {
         <p className="text-sm text-white/50">Board</p>
       </div>
       <div className="mb-4 flex items-start justify-end">
-        <div>
         <div className="relative">
           <button
             onClick={() => setShowServiceMenu(!showServiceMenu)}
