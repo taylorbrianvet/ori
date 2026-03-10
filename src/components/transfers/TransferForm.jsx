@@ -19,7 +19,7 @@ const LOCATIONS = ["ICU", "PCW", "ER", "Ward", "Recovery", "Imaging", "OR", "Oth
 const EMPTY = {
   patient_name: "", patient_id: "", age: "", sex: "", species: "", breed: "",
   location: "", problem_list: [], requesting_service: "", receiving_services: [],
-  requesting_clinician: "", notes: "", already_transferred: false,
+  requesting_clinician: "", estimate: "", notes: "", already_transferred: false,
 };
 
 export default function TransferForm({ staffList = [], onSaved }) {
@@ -73,11 +73,12 @@ export default function TransferForm({ staffList = [], onSaved }) {
   };
 
   const toggleReceivingService = (service) => {
-    set("receiving_services", 
-      form.receiving_services.includes(service)
-        ? form.receiving_services.filter(s => s !== service)
-        : [...form.receiving_services, service]
-    );
+    const current = form.receiving_services;
+    if (current.includes(service)) {
+      set("receiving_services", current.filter(s => s !== service));
+    } else if (current.length < 2) {
+      set("receiving_services", [...current, service]);
+    }
   };
 
   const eligibleClinicians = staffList
@@ -172,18 +173,18 @@ export default function TransferForm({ staffList = [], onSaved }) {
       </div>
 
       {/* Services */}
-      <div>
-        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Requesting Service <span className="text-red-400">*</span></label>
-        <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-          value={form.requesting_service} onChange={e => set("requesting_service", e.target.value)}>
-          <option value="">Select…</option>
-          {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-      </div>
+       <div>
+         <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Transferring Service <span className="text-red-400">*</span></label>
+         <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+           value={form.requesting_service} onChange={e => set("requesting_service", e.target.value)}>
+           <option value="">Select…</option>
+           {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
+         </select>
+       </div>
 
       <div>
         <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Receiving Services <span className="text-red-400">*</span></label>
-        <p className="text-xs text-white/40 mb-2">Select one or more services (double transfer)</p>
+        <p className="text-xs text-white/40 mb-2">Select up to 2 services</p>
         <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 rounded-xl bg-black/30 border border-white/20">
           {SERVICES.map(s => (
             <label key={s} className="flex items-center gap-2 cursor-pointer">
@@ -191,7 +192,8 @@ export default function TransferForm({ staffList = [], onSaved }) {
                 type="checkbox" 
                 checked={form.receiving_services.includes(s)}
                 onChange={() => toggleReceivingService(s)}
-                className="rounded w-4 h-4 accent-white/60"
+                disabled={form.receiving_services.length >= 2 && !form.receiving_services.includes(s)}
+                className="rounded w-4 h-4 accent-white/60 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <span className="text-xs text-white/75">{s}</span>
             </label>
@@ -201,7 +203,7 @@ export default function TransferForm({ staffList = [], onSaved }) {
 
       {/* Clinician */}
       <div>
-        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Requesting Clinician <span className="text-red-400">*</span></label>
+        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Transferring Clinician <span className="text-red-400">*</span></label>
         <input
           list="clinician-list"
           className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
@@ -212,6 +214,21 @@ export default function TransferForm({ staffList = [], onSaved }) {
         <datalist id="clinician-list">
           {eligibleClinicians.map(n => <option key={n} value={n} />)}
         </datalist>
+      </div>
+
+      {/* Estimate */}
+      <div>
+        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Financial Estimate</label>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-white/50">$</span>
+          <input
+            type="number"
+            className="flex-1 px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+            placeholder="e.g. 4000"
+            value={form.estimate}
+            onChange={e => set("estimate", e.target.value ? parseFloat(e.target.value) : "")}
+          />
+        </div>
       </div>
 
       {/* Notes */}
