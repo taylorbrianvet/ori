@@ -29,13 +29,28 @@ export default function JournalUploadModal({ onClose, onProcessing }) {
     setUploading(true);
     try {
       const user = await base44.auth.me();
+      const fileName = file.name.replace(".pdf", "");
+
+      // Check for duplicate title early
+      const existingArticles = await base44.entities.Journal.list();
+      const duplicate = existingArticles.find(a => 
+        a.title?.toLowerCase().trim() === fileName.toLowerCase().trim()
+      );
+
+      if (duplicate) {
+        toast.error("This article has already been uploaded.");
+        setTimeout(() => {
+          window.location.href = `${window.location.href.split('?')[0]}?id=${duplicate.id}`;
+        }, 500);
+        return;
+      }
 
       // Upload the PDF and get a public URL
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
       // Create a journal record with the PDF URL saved
       const journal = await base44.entities.Journal.create({
-        title: file.name.replace(".pdf", ""),
+        title: fileName,
         uploaded_by: user.email,
         uploaded_by_name: user.full_name,
         pdf_url: file_url,
