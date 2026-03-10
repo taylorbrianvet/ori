@@ -78,6 +78,27 @@
   }
 }
 
+@layer components {
+  .journal-club-summary h2 {
+    @apply text-sm font-semibold text-white/85 mt-5 mb-2;
+  }
+  .journal-club-summary p {
+    @apply text-sm text-white/70 leading-relaxed mb-3;
+  }
+  .journal-club-summary ul, .journal-club-summary ol {
+    @apply pl-5 mb-3 space-y-1;
+  }
+  .journal-club-summary li {
+    @apply text-sm text-white/65 leading-relaxed;
+  }
+  .journal-club-summary strong {
+    @apply text-white/85 font-semibold;
+  }
+  .journal-club-summary article {
+    @apply block;
+  }
+}
+
 @layer utilities {
   .glass-panel {
     background: rgba(255, 255, 255, 0.08);
