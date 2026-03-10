@@ -57,7 +57,7 @@ export default function OnCall() {
         {TABS.filter(t => 
           t.id === "current" || 
           (t.id === "edit" && canEditSchedule) ||
-          (t.id === "student" && (currentUser?.role === "student" || currentUser?.role === "Faculty" || currentUser?.role === "Resident"))
+          (t.id === "student" && (currentUser?.role === "Student" || currentUser?.role === "Faculty" || currentUser?.role === "Resident"))
         ).map((tab) => (
           <button
             key={tab.id}
@@ -94,7 +94,7 @@ export default function OnCall() {
       )}
 
       {/* Student Schedule View */}
-      {activeTab === "student" && (currentUser?.role === "student" || currentUser?.role === "Faculty" || currentUser?.role === "Resident") && (
+      {activeTab === "student" && (currentUser?.role === "Student" || currentUser?.role === "Faculty" || currentUser?.role === "Resident") && (
         <StudentScheduleView
           service="Neurosurgery"
           blockStartDate={new Date(new Date().getTime() - 24 * 60 * 60 * 1000)}
