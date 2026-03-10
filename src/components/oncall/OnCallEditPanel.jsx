@@ -69,6 +69,11 @@ export default function OnCallEditPanel({ staff, currentUser }) {
     queryFn: () => base44.entities.OnCallSchedule.list("-date", 2000)
   });
 
+  const { data: studentSchedules = [] } = useQuery({
+    queryKey: ["student-on-call-schedules"],
+    queryFn: () => base44.entities.StudentOnCallSchedule.list()
+  });
+
   const upsertMutation = useMutation({
     mutationFn: async ({ record, existingId }) => {
       if (existingId) return base44.entities.OnCallSchedule.update(existingId, record);
@@ -252,6 +257,7 @@ export default function OnCallEditPanel({ staff, currentUser }) {
             const rec = recordMap[key];
             const isEditing = editingDay === key;
             const today = isToday(day);
+            const dayStudents = studentSchedules.filter(s => s.date === key && s.service === selectedService);
             return (
               <button
                 key={key}
@@ -264,6 +270,11 @@ export default function OnCallEditPanel({ staff, currentUser }) {
                 }
                   {rec?.secondary_name && inMonth &&
                 <div className="text-[8px] px-1 py-0.5 rounded-md bg-blue-500/15 text-blue-300 truncate leading-tight mt-0.5">{rec.secondary_name.split(" ").slice(-1)[0]}</div>
+                }
+                  {dayStudents.length > 0 && inMonth &&
+                <div className="text-[7px] px-1 py-0.5 rounded-md bg-purple-500/15 text-purple-300 truncate leading-tight mt-0.5">
+                  {dayStudents.map(s => s.student_name.split(" ").slice(-1)[0]).join(", ")}
+                </div>
                 }
                 </button>);
 
