@@ -115,7 +115,9 @@ export default function Layout({ children, currentPageName }) {
           {/* User profile at bottom of sidebar */}
           {currentUser && (
             <div className="pt-2 px-1">
-              <UserAvatar user={currentUser} staffProfile={staffProfile} />
+              <button onClick={() => setShowEditProfile(true)} className="w-full text-left hover:bg-white/8 rounded-xl px-1 py-1 transition-colors">
+                <UserAvatar user={currentUser} staffProfile={staffProfile} />
+              </button>
             </div>
           )}
           <p className="text-[11px] text-white/30 text-center pt-1">© 2026 VetHub</p>
