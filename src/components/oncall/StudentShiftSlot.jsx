@@ -89,7 +89,7 @@ export default function StudentShiftSlot({
             className="w-full text-xs h-8"
             disabled={!canEdit}
           >
-            {canEdit ? "Add" : "—"}
+            {canEdit ? `+ ${position.charAt(0).toUpperCase() + position.slice(1)}` : "—"}
           </Button>
 
           {isOpen && (

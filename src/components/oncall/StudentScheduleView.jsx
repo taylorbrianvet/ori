@@ -68,7 +68,7 @@ export default function StudentScheduleView({ service: initialService, blockStar
 
           {/* Monday-Friday */}
           <div>
-            <div className="text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">Monday - Friday</div>
+            <div className="text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">Monday - Friday <span className="text-white/30">(5pm - 8am)</span></div>
             <div className="grid grid-cols-5 gap-4">
               {week.slice(0, 5).map((day) => (
                 <div key={day.dateStr} className="space-y-3">
@@ -76,44 +76,21 @@ export default function StudentScheduleView({ service: initialService, blockStar
                     <div>{day.dayName}</div>
                     <div className="text-xs text-white/60">{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
                   </div>
-                  {/* Day and Night shifts */}
-                  <div className="space-y-2">
-                    <div className="text-xs text-white/50 font-medium">Day</div>
-                    <div className="space-y-1">
-                      {["primary", "secondary"].map((position) => (
-                        <StudentShiftSlot
-                          key={`${day.dateStr}-day-${position}`}
-                          date={day.dateStr}
-                          service={selectedService}
-                          shiftPeriod="day"
-                          position={position}
-                          students={students}
-                          schedules={schedules}
-                          blockStartDate={blockStartDate}
-                          onUpdate={() => refetch()}
-                          canEdit={canEdit || currentUser?.role === "Student"}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-xs text-white/50 font-medium">Night</div>
-                    <div className="space-y-1">
-                      {["primary", "secondary"].map((position) => (
-                        <StudentShiftSlot
-                          key={`${day.dateStr}-night-${position}`}
-                          date={day.dateStr}
-                          service={selectedService}
-                          shiftPeriod="night"
-                          position={position}
-                          students={students}
-                          schedules={schedules}
-                          blockStartDate={blockStartDate}
-                          onUpdate={() => refetch()}
-                          canEdit={canEdit || currentUser?.role === "Student"}
-                        />
-                      ))}
-                    </div>
+                  <div className="space-y-1">
+                    {["primary", "secondary"].map((position) => (
+                      <StudentShiftSlot
+                        key={`${day.dateStr}-${position}`}
+                        date={day.dateStr}
+                        service={selectedService}
+                        shiftPeriod="main"
+                        position={position}
+                        students={students}
+                        schedules={schedules}
+                        blockStartDate={blockStartDate}
+                        onUpdate={() => refetch()}
+                        canEdit={canEdit || currentUser?.role === "Student"}
+                      />
+                    ))}
                   </div>
                 </div>
               ))}
@@ -130,43 +107,44 @@ export default function StudentScheduleView({ service: initialService, blockStar
                     <div>{day.dayName}</div>
                     <div className="text-xs text-white/60">{format(new Date(day.dateStr + "T00:00:00"), "MMM d")}</div>
                   </div>
-                  {/* Day and Night shifts */}
-                  <div className="space-y-2">
-                    <div className="text-xs text-white/50 font-medium">Day</div>
-                    <div className="space-y-1">
-                      {["primary", "secondary"].map((position) => (
-                        <StudentShiftSlot
-                          key={`${day.dateStr}-day-${position}`}
-                          date={day.dateStr}
-                          service={selectedService}
-                          shiftPeriod="day"
-                          position={position}
-                          students={students}
-                          schedules={schedules}
-                          blockStartDate={blockStartDate}
-                          onUpdate={() => refetch()}
-                          canEdit={canEdit || currentUser?.role === "Student"}
-                        />
-                      ))}
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="text-xs text-white/50 font-medium">Day <span className="text-white/30">(8am - 8pm)</span></div>
+                      <div className="space-y-1">
+                        {["primary", "secondary"].map((position) => (
+                          <StudentShiftSlot
+                            key={`${day.dateStr}-day-${position}`}
+                            date={day.dateStr}
+                            service={selectedService}
+                            shiftPeriod="day"
+                            position={position}
+                            students={students}
+                            schedules={schedules}
+                            blockStartDate={blockStartDate}
+                            onUpdate={() => refetch()}
+                            canEdit={canEdit || currentUser?.role === "Student"}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-xs text-white/50 font-medium">Night</div>
-                    <div className="space-y-1">
-                      {["primary", "secondary"].map((position) => (
-                        <StudentShiftSlot
-                          key={`${day.dateStr}-night-${position}`}
-                          date={day.dateStr}
-                          service={selectedService}
-                          shiftPeriod="night"
-                          position={position}
-                          students={students}
-                          schedules={schedules}
-                          blockStartDate={blockStartDate}
-                          onUpdate={() => refetch()}
-                          canEdit={canEdit || currentUser?.role === "Student"}
-                        />
-                      ))}
+                    <div className="space-y-2">
+                      <div className="text-xs text-white/50 font-medium">Night <span className="text-white/30">(8pm - 8am)</span></div>
+                      <div className="space-y-1">
+                        {["primary", "secondary"].map((position) => (
+                          <StudentShiftSlot
+                            key={`${day.dateStr}-night-${position}`}
+                            date={day.dateStr}
+                            service={selectedService}
+                            shiftPeriod="night"
+                            position={position}
+                            students={students}
+                            schedules={schedules}
+                            blockStartDate={blockStartDate}
+                            onUpdate={() => refetch()}
+                            canEdit={canEdit || currentUser?.role === "Student"}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
