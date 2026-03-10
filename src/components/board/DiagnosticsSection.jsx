@@ -2,8 +2,35 @@ import React from "react";
 import { Beaker } from "lucide-react";
 import { format, parseISO } from "date-fns";
 
-export default function DiagnosticsSection({ diagnostics }) {
-  // Separate histopathology from other diagnostics
+export default function DiagnosticsSection({ diagnostics, compact = false }) {
+  if (compact) {
+    return (
+      <div className="glass-card p-3 h-full flex flex-col">
+        <div className="flex items-center gap-2 mb-3">
+          <Beaker className="w-4 h-4 text-white/70" />
+          <h3 className="text-xs font-semibold text-white">
+            Diagnostics ({diagnostics.length})
+          </h3>
+        </div>
+
+        <div className="space-y-1.5 flex-1 overflow-y-auto">
+          {diagnostics.map(d => (
+            <div key={d.id} className="p-2 rounded-lg bg-white/6 border border-white/12 text-[10px]">
+              <div className="font-semibold text-white">{d.patient_id}</div>
+              <div className="text-white/50">{d.diagnostic_type}</div>
+              <div className="text-white/40 mt-0.5">
+                {d.sample_collected ? <span className="text-green-300">✓</span> : <span className="text-red-300">✗</span>} Collected
+              </div>
+              <div className="text-white/40">
+                {d.diagnostic_complete ? <span className="text-green-300">✓</span> : <span className="text-amber-300">⏳</span>} Complete
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   const histopath = diagnostics.filter(d => d.diagnostic_type === "Histopathology");
   const others = diagnostics.filter(d => d.diagnostic_type !== "Histopathology");
 
@@ -17,7 +44,6 @@ export default function DiagnosticsSection({ diagnostics }) {
               <th className="text-left px-2 py-1 text-white/60 font-semibold">Patient ID</th>
               <th className="text-left px-2 py-1 text-white/60 font-semibold">Type</th>
               <th className="text-left px-2 py-1 text-white/60 font-semibold">Sample</th>
-              {title === "Histopathology" && <th className="text-left px-2 py-1 text-white/60 font-semibold">Location</th>}
               <th className="text-left px-2 py-1 text-white/60 font-semibold">Clinician</th>
               <th className="text-left px-2 py-1 text-white/60 font-semibold">Collected</th>
               <th className="text-left px-2 py-1 text-white/60 font-semibold">Complete</th>
@@ -29,7 +55,6 @@ export default function DiagnosticsSection({ diagnostics }) {
                 <td className="px-2 py-1.5">{d.patient_id}</td>
                 <td className="px-2 py-1.5">{d.diagnostic_type}</td>
                 <td className="px-2 py-1.5">{d.sample_type}</td>
-                {title === "Histopathology" && <td className="px-2 py-1.5">{d.location || "—"}</td>}
                 <td className="px-2 py-1.5">{d.requesting_clinician}</td>
                 <td className="px-2 py-1.5">
                   <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
