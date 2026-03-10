@@ -235,16 +235,16 @@ export default function JournalClub() {
       </div>
 
       <AnimatePresence>
-        {showUpload && (
-          <JournalUploadModal
-            onClose={() => setShowUpload(false)}
-            onProcessing={(journal, pdfFile) => {
-              setShowUpload(false);
-              setProcessing({ journal, pdfFile });
-            }}
-          />
-        )}
+      {showUpload && (
+      <JournalUploadModal
+      onClose={() => setShowUpload(false)}
+      onProcessing={(journal, pdfFile) => {
+        setShowUpload(false);
+        setProcessing({ journal, pdfFile });
+      }}
+      />
+      )}
       </AnimatePresence>
-    </PageContainer>
+      </div>
   );
 }
