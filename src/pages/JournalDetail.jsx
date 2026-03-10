@@ -193,7 +193,7 @@ export default function JournalDetail() {
 
       {/* AI Summary */}
       {journal.ai_summary && (
-        <div className="mb-4">
+        <div className="mb-8">
           <Section title="Journal Club Summary" defaultOpen={true}>
             {journal.ai_summary.trim().startsWith("<") ? (
               <div

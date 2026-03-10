@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Loader2, ArrowLeft, CheckCircle, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -45,6 +46,7 @@ export default function JournalProcessingScreen({ journal, pdfFile, onBack }) {
 
         // Check if this is a duplicate
         if (result.data?.isDuplicate) {
+          toast.info("This article was previously uploaded. Redirecting...");
           setError(`This article has already been uploaded. Redirecting to the existing article...`);
           setStatus("duplicate");
           setTimeout(() => {
