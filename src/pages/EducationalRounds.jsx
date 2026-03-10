@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import PageContainer from "../components/shared/PageContainer";
 import WeekNav from "../components/rounds/WeekNav";
 import RoundRow from "../components/rounds/RoundRow";
