@@ -11,6 +11,7 @@ const SERVICES = [
 ];
 
 Deno.serve(async (req) => {
+  let uploadedFileId = null;
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -19,73 +20,43 @@ Deno.serve(async (req) => {
     const { pdf_url, journal_id } = await req.json();
     if (!pdf_url) return Response.json({ error: 'pdf_url required' }, { status: 400 });
 
-    // Step 1: Download PDF and upload to OpenAI Files API
+    // Step 1: Download PDF
     const pdfResponse = await fetch(pdf_url);
     if (!pdfResponse.ok) throw new Error(`Failed to fetch PDF: ${pdfResponse.status}`);
     const pdfBuffer = await pdfResponse.arrayBuffer();
-    const pdfBlob = new Blob([pdfBuffer], { type: 'application/pdf' });
-    const pdfFile = new File([pdfBlob], 'article.pdf', { type: 'application/pdf' });
+    const pdfFile = new File([pdfBuffer], 'article.pdf', { type: 'application/pdf' });
 
-    // Upload file to OpenAI
-    const uploadedFile = await openai.files.create({
+    // Step 2: Upload PDF to OpenAI Files API (purpose: assistants supports PDF)
+    const uploaded = await openai.files.create({
       file: pdfFile,
-      purpose: 'assistants',
+      purpose: 'user_data',
     });
+    uploadedFileId = uploaded.id;
 
-    // Step 2: Extract text using GPT-4o with file search / direct prompt
-    // Use the file content via a vector store or direct text extraction
-    // Since PDFs can be sent as file attachments in newer API, use that approach
-    const extractionResponse = await openai.chat.completions.create({
+    // Step 3: Use Responses API with file input to extract text
+    const extractionResponse = await openai.responses.create({
       model: "gpt-4o",
-      messages: [
-        {
-          role: "user",
-          content: `You are a veterinary medical article parser. I am providing a veterinary journal article PDF. Please extract ALL text content from it, including: title, authors, journal name, year, abstract, introduction, methods, results, discussion, conclusions, and references. Return the complete extracted text preserving the document structure. Output only the raw text with no extra commentary.
-
-The PDF file ID is: ${uploadedFile.id}
-
-Since you cannot directly read the file by ID in this context, please respond with what you know about processing veterinary journal articles and I will provide the text separately.`
-        }
-      ],
-      max_tokens: 100
-    });
-
-    // Delete the uploaded file as we'll use a different approach
-    await openai.files.del(uploadedFile.id).catch(() => {});
-
-    // Step 2 (revised): Convert PDF to text using base64 encoding approach
-    // Re-fetch and convert to base64 for the vision-capable model
-    const pdfResponse2 = await fetch(pdf_url);
-    const pdfBytes = await pdfResponse2.arrayBuffer();
-    const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
-
-    // Use GPT-4o with PDF as base64 data URL — newer models support this
-    const extractResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
+      input: [
         {
           role: "user",
           content: [
             {
-              type: "text",
-              text: "Extract all text from this veterinary journal article PDF. Return title, authors, journal name and year, abstract, and full body text. Output only the extracted text with no commentary."
+              type: "input_file",
+              file_id: uploadedFileId,
             },
             {
-              type: "image_url",
-              image_url: {
-                url: `data:application/pdf;base64,${base64Pdf}`,
-                detail: "high"
-              }
+              type: "input_text",
+              text: "Extract ALL text from this veterinary journal article. Include title, authors, journal name, year, abstract, and complete body text. Return only the raw extracted text with no commentary."
             }
           ]
         }
       ],
-      max_tokens: 4000
+      max_output_tokens: 4000
     });
 
-    const full_text = extractResponse.choices[0].message.content;
+    const full_text = extractionResponse.output_text || extractionResponse.output?.[0]?.content?.[0]?.text || "";
 
-    // Step 3: Parse structured data + AI analysis from extracted text
+    // Step 4: Parse structured data + AI analysis
     const parseResponse = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -94,7 +65,7 @@ Since you cannot directly read the file by ID in this context, please respond wi
           content: `You are a veterinary clinical librarian. Analyze the provided veterinary article text and return structured JSON.
 
 Rules:
-- journal_name: Use standard abbreviation (JAVMA, VCOT, JVIM, AJVR, VetSurg, JVCS, Front Vet Sci, JSAP, JFMS, etc.). Never spell out full names.
+- journal_name: Use standard abbreviation (JAVMA, VCOT, JVIM, AJVR, VetSurg, JVCS, Front Vet Sci, JSAP, JFMS, etc.)
 - associated_services: Only pick from: ${SERVICES.join(', ')}
 - procedures: Specific vet procedures (e.g., gastropexy, TPLO, splenectomy)
 - disease_processes: Specific diseases/diagnoses (e.g., GDV, osteosarcoma, BOAS)
@@ -105,7 +76,7 @@ Rules:
         },
         {
           role: "user",
-          content: `Article text:\n\n${full_text}\n\nReturn only this JSON:\n{\n  "title": "",\n  "journal_name": "",\n  "journal_year": 0,\n  "authors": [],\n  "abstract": "",\n  "ai_summary": "",\n  "ai_clinical_takeaway": "",\n  "associated_services": [],\n  "procedures": [],\n  "disease_processes": [],\n  "keywords": [],\n  "article_url": null\n}`
+          content: `Article text:\n\n${full_text}\n\nReturn only valid JSON:\n{\n  "title": "",\n  "journal_name": "",\n  "journal_year": 0,\n  "authors": [],\n  "abstract": "",\n  "ai_summary": "",\n  "ai_clinical_takeaway": "",\n  "associated_services": [],\n  "procedures": [],\n  "disease_processes": [],\n  "keywords": [],\n  "article_url": null\n}`
         }
       ],
       response_format: { type: "json_object" },
@@ -135,8 +106,12 @@ Rules:
       await base44.entities.Journal.update(journal_id, updateData);
     }
 
+    // Cleanup uploaded file
+    await openai.files.del(uploadedFileId).catch(() => {});
+
     return Response.json({ success: true, data: updateData });
   } catch (error) {
+    if (uploadedFileId) await openai.files.del(uploadedFileId).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
