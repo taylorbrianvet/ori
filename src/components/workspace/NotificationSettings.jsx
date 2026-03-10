@@ -13,7 +13,7 @@ export default function NotificationSettings({ staffRecord, onUpdated }) {
     if (!staffRecord?.id) return;
     setLoading(true);
     try {
-      await window.base44.entities.Staff.update(staffRecord.id, {
+      await base44.entities.Staff.update(staffRecord.id, {
         receive_transfer_emails: !receiveEmails,
       });
       setReceiveEmails(!receiveEmails);
