@@ -38,10 +38,20 @@ export default function JournalProcessingScreen({ journal, pdfFile, onBack }) {
 
         // Step 2: Send to OpenAI for parsing
         setStatus("parsing");
-        await base44.functions.invoke("parseJournalArticle", {
+        const result = await base44.functions.invoke("parseJournalArticle", {
           raw_text: text,
           journal_id: journal.id,
         });
+
+        // Check if this is a duplicate
+        if (result.data?.isDuplicate) {
+          setError(`This article has already been uploaded. Redirecting to the existing article...`);
+          setStatus("duplicate");
+          setTimeout(() => {
+            window.location.href = createPageUrl(`JournalDetail?id=${result.data.existingId}`);
+          }, 1500);
+          return;
+        }
 
         setStatus("done");
 
@@ -122,6 +132,20 @@ export default function JournalProcessingScreen({ journal, pdfFile, onBack }) {
               Go back
             </button>
           </div>
+        )}
+
+        {status === "duplicate" && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex-1 flex flex-col items-center justify-center gap-4"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/20 flex items-center justify-center">
+              <span className="text-2xl">⚠️</span>
+            </div>
+            <p className="text-amber-400 text-sm font-medium">Article Already Uploaded</p>
+            <p className="text-white/35 text-xs text-center max-w-sm">{error}</p>
+          </motion.div>
         )}
       </div>
     </div>
