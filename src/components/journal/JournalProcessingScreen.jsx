@@ -94,19 +94,9 @@ export default function JournalProcessingScreen({ journal, pdfFile, onBack }) {
         )}
 
         {status === "parsing" && (
-          <div className="flex-1 flex flex-col gap-3 min-h-0">
-            <div className="flex items-center gap-2 shrink-0">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-sm text-white/80">Text extracted — {extractedText.length.toLocaleString()} characters</span>
-              <Loader2 className="w-3.5 h-3.5 text-white/40 animate-spin ml-auto" />
-              <span className="text-xs text-white/40">AI parsing…</span>
-            </div>
-            {/* Show extracted text while AI works */}
-            <div className="flex-1 rounded-xl border border-white/12 bg-white/4 overflow-auto p-4">
-              <pre className="text-xs text-white/50 whitespace-pre-wrap leading-relaxed font-mono">
-                {extractedText}
-              </pre>
-            </div>
+          <div className="flex-1 flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-7 h-7 text-white/50 animate-spin" />
+            <p className="text-white/60 text-sm">Analyzing article with AI…</p>
           </div>
         )}
 
