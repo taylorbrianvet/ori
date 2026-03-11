@@ -17,6 +17,7 @@ import { createPageUrl } from "@/utils";
 export default function MyWorkspace() {
   const [showForm, setShowForm] = useState(false);
   const [showLog, setShowLog] = useState(false);
+  const [showEducationalLog, setShowEducationalLog] = useState(false);
   const [activeTab, setActiveTab] = useState("schedule");
   const queryClient = useQueryClient();
 
