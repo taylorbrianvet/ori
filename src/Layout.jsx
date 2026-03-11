@@ -255,7 +255,7 @@ export default function Layout({ children, currentPageName }) {
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png"
               alt="ORI"
               className="w-7 h-7 cursor-pointer"
-              onClick={() => { logoBaseRotation.current += 120; }}
+              onClick={() => { logoBaseRotation.current += 120; window.location.href = createPageUrl("Home"); }}
               style={{ filter: "brightness(0) invert(1)", transform: `rotate(${logoRotation}deg)` }}
             />
             <span className="text-sm font-semibold text-white">ORI</span>
