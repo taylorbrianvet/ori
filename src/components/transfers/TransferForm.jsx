@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import { Plus, X, Loader2 } from "lucide-react";
 
 const SERVICES = [
-  "Cardiology", "Dermatology",
-  "Emergency", "Critical Care", "Internal Medicine", "Interventional Radiology",
+  "Emergency",
+  "Cardiology", "Critical Care", "Dermatology", "Internal Medicine", "Interventional Radiology",
   "Neurology", "Oncology",
   "Ophthalmology", "Orthopedic Surgery", "Primary Care",
   "Soft Tissue Surgery"
