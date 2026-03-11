@@ -226,23 +226,9 @@ export default function Transfers() {
         {activeTab === "today" && (
           <div>
             <p className="text-xs text-white/35 mb-4">
-              Transfers submitted between 6 am yesterday and 6 am today. These patients appeared on this morning's transfer email.
+              Transfers submitted between 6 am yesterday and 6 am today — these appeared on this morning's email.
             </p>
-            {todayGrouped.length === 0
-              ? renderEmptyState("No transfers for today's list yet.")
-              : (
-                <div className="space-y-3">
-                  {todayGrouped.map(group => (
-                    <TransferCard
-                      key={group[0].patient_id || group[0].id}
-                      transfers={group}
-                      onUpdated={refresh}
-                      bucket="today"
-                    />
-                  ))}
-                </div>
-              )
-            }
+            <ServiceGroupedList serviceGroups={todayByService} bucket="today" onUpdated={refresh} emptyMessage="No transfers for today's list yet." />
           </div>
         )}
 
@@ -252,21 +238,7 @@ export default function Transfers() {
             <p className="text-xs text-white/35 mb-4">
               Transfers submitted since 6 am today — these will be included in tomorrow morning's 6 am email.
             </p>
-            {upcomingGrouped.length === 0
-              ? renderEmptyState("No upcoming transfers submitted yet today.")
-              : (
-                <div className="space-y-3">
-                  {upcomingGrouped.map(group => (
-                    <TransferCard
-                      key={group[0].patient_id || group[0].id}
-                      transfers={group}
-                      onUpdated={refresh}
-                      bucket="upcoming"
-                    />
-                  ))}
-                </div>
-              )
-            }
+            <ServiceGroupedList serviceGroups={upcomingByService} bucket="upcoming" onUpdated={refresh} emptyMessage="No upcoming transfers submitted yet today." />
           </div>
         )}
 
@@ -285,21 +257,7 @@ export default function Transfers() {
                 />
               </div>
             </div>
-            {previousGrouped.length === 0
-              ? renderEmptyState(searchQuery ? "No transfers match your search." : "No previous transfers on record.")
-              : (
-                <div className="space-y-3">
-                  {previousGrouped.map(group => (
-                    <TransferCard
-                      key={group[0].patient_id || group[0].id}
-                      transfers={group}
-                      onUpdated={refresh}
-                      bucket="previous"
-                    />
-                  ))}
-                </div>
-              )
-            }
+            <ServiceGroupedList serviceGroups={previousByService} bucket="previous" onUpdated={refresh} emptyMessage={searchQuery ? "No transfers match your search." : "No previous transfers on record."} />
           </div>
         )}
       </PageContainer>
