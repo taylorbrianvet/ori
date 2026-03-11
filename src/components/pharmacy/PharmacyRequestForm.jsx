@@ -8,8 +8,6 @@ const CLINICAL_SERVICES = [
   "Neurology", "Oncology", "Ophthalmology", "Orthopedic Surgery", "Primary Care", "Soft Tissue Surgery"
 ];
 
-const ROLES = ["Faculty", "Resident", "Intern"];
-
 export default function PharmacyRequestForm({ staffList, onSaved, onCancel }) {
   const [form, setForm] = useState({
     clinician_name: "",
@@ -24,19 +22,25 @@ export default function PharmacyRequestForm({ staffList, onSaved, onCancel }) {
   });
   const [saving, setSaving] = useState(false);
 
+  const clinicians = (staffList || []).filter(s =>
+    ["Faculty", "Resident", "Intern"].includes(s.role)
+  ).sort((a, b) => `${a.last_name}${a.first_name}`.localeCompare(`${b.last_name}${b.first_name}`));
+
+  const handleClinicianChange = (e) => {
+    const name = e.target.value;
+    const matched = clinicians.find(s => `${s.first_name} ${s.last_name}` === name);
+    setForm({ ...form, clinician_name: name, clinician_role: matched?.role || "" });
+  };
+
   const handleSubmit = async () => {
     if (!form.clinician_name || !form.patient_id || !form.patient_name || !form.medication || !form.instructions || !form.quantity || !form.service) {
       toast.error("Please fill in all required fields");
       return;
     }
     setSaving(true);
-    try {
-      await base44.entities.PharmacyRefillRequest.create(form);
-      toast.success("Refill request submitted");
-      onSaved();
-    } catch (e) {
-      toast.error("Failed to submit request");
-    }
+    await base44.entities.PharmacyRefillRequest.create(form);
+    toast.success("Refill request submitted");
+    onSaved();
     setSaving(false);
   };
 
@@ -44,27 +48,19 @@ export default function PharmacyRequestForm({ staffList, onSaved, onCancel }) {
     <div className="glass-card p-5 mb-6 space-y-4">
       <h2 className="text-sm font-semibold text-white mb-1">New Refill Request</h2>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Clinician Name <span className="text-red-400">*</span></label>
-          <input
-            className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="e.g. Dr. Smith"
-            value={form.clinician_name}
-            onChange={e => setForm({ ...form, clinician_name: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Role <span className="text-red-400">*</span></label>
-          <select
-            className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.clinician_role}
-            onChange={e => setForm({ ...form, clinician_role: e.target.value })}
-          >
-            <option value="">Select</option>
-            {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
-        </div>
+      <div>
+        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Clinician <span className="text-red-400">*</span></label>
+        <select
+          className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+          value={form.clinician_name}
+          onChange={handleClinicianChange}
+        >
+          <option value="">Select clinician</option>
+          {clinicians.map(s => {
+            const name = `${s.first_name} ${s.last_name}`;
+            return <option key={s.id} value={name}>{name} ({s.role})</option>;
+          })}
+        </select>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
