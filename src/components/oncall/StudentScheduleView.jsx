@@ -62,9 +62,9 @@ export default function StudentScheduleView({ service: initialService, blockStar
 
   const weekData = useMemo(() => {
     const weeks = [];
-    const effectiveBlockType = selectedService === "Anesthesia" ? "3-week" : blockType;
-    const numWeeks = effectiveBlockType === "3-week" ? 3 : 2;
-    for (let weekNum = 0; weekNum < numWeeks; weekNum++) {
+    // Use numWeeks prop if provided, otherwise fall back to blockType for legacy usage
+    const effectiveNumWeeks = numWeeks ?? (blockType === "3-week" ? 3 : 2);
+    for (let weekNum = 0; weekNum < effectiveNumWeeks; weekNum++) {
       const week = [];
       // Start from Monday of the block
       const weekStart = addDays(blockStartDate, weekNum * 7);
