@@ -17,6 +17,62 @@ const ON_CALL_SERVICES = [
   "Oncology","Ophthalmology","Radiology","Dermatology","Anesthesia","Pharmacy","Clinical Pathology"
 ];
 
+const SERVICE_DEFAULTS = { Anesthesia: 3, Surgery: 2, Neurosurgery: 2 };
+
+function getActiveBlock(blocks, service) {
+  const now = new Date();
+  const relevant = blocks
+    .filter((b) => b.service === service)
+    .map((b) => ({ ...b, startMs: new Date(b.start_date + "T08:00:00").getTime() }))
+    .filter((b) => b.startMs <= now.getTime())
+    .sort((a, b) => b.startMs - a.startMs);
+  if (relevant.length === 0) return null;
+  const current = relevant[0];
+  const allSorted = blocks
+    .filter((b) => b.service === service)
+    .map((b) => ({ ...b, startMs: new Date(b.start_date + "T08:00:00").getTime() }))
+    .sort((a, b) => a.startMs - b.startMs);
+  const currentIdx = allSorted.findIndex((b) => b.start_date === current.start_date);
+  const nextBlock = allSorted[currentIdx + 1];
+  const numWeeks = nextBlock
+    ? Math.max(1, Math.round((nextBlock.startMs - current.startMs) / (1000 * 60 * 60 * 24 * 7)))
+    : SERVICE_DEFAULTS[service];
+  return { startDate: new Date(current.start_date + "T08:00:00"), numWeeks };
+}
+
+function StudentScheduleTab({ rotationBlocks, currentUser }) {
+  const [studentService, setStudentService] = useState("Neurosurgery");
+  const block = getActiveBlock(rotationBlocks, studentService);
+  const blockStartDate = block?.startDate ?? startOfDay(new Date());
+  const numWeeks = block?.numWeeks ?? SERVICE_DEFAULTS[studentService];
+  return (
+    <div>
+      <div className="flex gap-3 mb-6">
+        {["Neurosurgery", "Surgery", "Anesthesia"].map((svc) => (
+          <button
+            key={svc}
+            onClick={() => setStudentService(svc)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
+              studentService === svc
+                ? "bg-white/20 text-white border border-white/40"
+                : "bg-white/8 text-white/70 border border-white/12 hover:bg-white/12 hover:text-white"
+            }`}
+          >
+            {svc}
+          </button>
+        ))}
+      </div>
+      <StudentScheduleView
+        service={studentService}
+        blockStartDate={blockStartDate}
+        numWeeks={numWeeks}
+        currentUser={currentUser}
+        canEdit={currentUser?.role === "Faculty" || currentUser?.role === "Resident" || currentUser?.role === "admin"}
+      />
+    </div>
+  );
+}
+
 const TABS = [
   { id: "current", label: "On Call", icon: Phone },
   { id: "edit", label: "Edit Schedule", icon: Edit3 },
