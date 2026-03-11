@@ -52,9 +52,9 @@ export default function ProcedureLogView({ myEntries, userEmail, onClose }) {
       </div>
 
       {/* 3-column layout */}
-      <div className="flex flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden w-full">
         {/* LEFT: Detail panel */}
-        <div className="w-80 flex-shrink-0 border-r border-white/10 p-4 overflow-y-auto bg-white/3">
+        <div className="w-64 sm:w-80 flex-shrink-0 border-r border-white/10 p-4 overflow-y-auto bg-white/3 min-w-0">
           {selectedEntry ? (
             <SurgeryDetailPanel
               entry={selectedEntry}
