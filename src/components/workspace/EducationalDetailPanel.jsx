@@ -1,4 +1,5 @@
 import { X, Calendar, BookOpen, Users } from "lucide-react";
+import EducationalAttendancePanel from "./EducationalAttendancePanel";
 
 function formatDate(dateStr) {
   if (!dateStr) return "—";
@@ -10,7 +11,7 @@ function formatDate(dateStr) {
   }
 }
 
-export default function EducationalDetailPanel({ round, onClose }) {
+export default function EducationalDetailPanel({ round, onClose, currentUserEmail, onToggleLog }) {
   const residents = round.residents_present || [];
   const faculty = round.faculty_present || [];
   const presenters = round.presenters || [];
