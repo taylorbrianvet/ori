@@ -80,6 +80,7 @@ export default function MyWorkspace() {
 
   const pendingDiagnostics = diagnostics.filter(d => !d.diagnostic_complete);
   const pendingRefills = pharmacyRequests.filter(r => r.status === "pending");
+  const visibleRefills = pharmacyRequests.filter(r => r.status === "pending" || r.status === "approved");
   const pendingTransfers = transfers.filter(t => !t.already_transferred);
 
   const staffRecord = staffList.find((s) => s.email === userEmail);
