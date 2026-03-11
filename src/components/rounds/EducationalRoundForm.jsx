@@ -317,7 +317,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Faculty Present */}
-        {selectedDeptFaculty.length > 0 && (
+        {formData.departments.length > 0 && selectedDeptFaculty.length > 0 && (
           <div className="border-t border-white/10 pt-4">
             <h3 className="text-xs font-semibold text-white mb-2">Faculty Present</h3>
             <div className="space-y-1 bg-white/5 p-3 rounded-lg mb-2 max-h-32 overflow-y-auto">
