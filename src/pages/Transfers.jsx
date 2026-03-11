@@ -121,7 +121,7 @@ export default function Transfers() {
       {/* Hero Header */}
       <div className="relative h-52 md:h-64 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1551076805-e1869033e561?w=1600&q=80"
+          src={heroImage}
           alt="Interservice Transfers"
           className="w-full h-full object-cover object-center"
         />
