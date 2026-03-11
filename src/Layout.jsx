@@ -95,7 +95,7 @@ export default function Layout({ children, currentPageName }) {
         }}
       />
       {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
+      <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-black/8 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className={`border-b border-white/10 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
           <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) invert(1)" }} />
