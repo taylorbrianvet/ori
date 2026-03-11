@@ -39,7 +39,7 @@ export default function ProcedureLogView({ myEntries, userEmail, onClose }) {
   };
 
   return (
-    <div className="fixed top-0 right-0 bottom-0 left-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col md:left-64">
+    <div className="fixed top-0 right-0 bottom-0 left-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col" style={{ marginLeft: "var(--sidebar-width, 0px)" }}>
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-white/5 flex-shrink-0">
         <h2 className="text-sm font-semibold text-white">My Procedure Log</h2>
