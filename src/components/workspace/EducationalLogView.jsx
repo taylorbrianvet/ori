@@ -58,6 +58,18 @@ export default function EducationalLogView({ myRounds, userEmail, onClose }) {
             <EducationalDetailPanel
               round={selectedRound}
               onClose={() => setSelectedRound(null)}
+              currentUserEmail={userEmail}
+              onToggleLog={(roundId) => {
+                const round = selectedRound;
+                const loggedBy = round.logged_by || [];
+                const newLoggedBy = loggedBy.includes(userEmail)
+                  ? loggedBy.filter(e => e !== userEmail)
+                  : [...loggedBy, userEmail];
+                base44.entities.EducationalRound.update(round.id, { logged_by: newLoggedBy }).then(() => {
+                  queryClient.invalidateQueries({ queryKey: ["educational-rounds-all"] });
+                  setSelectedRound({ ...round, logged_by: newLoggedBy });
+                });
+              }}
             />
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center">
