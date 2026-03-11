@@ -44,14 +44,14 @@ function UserAvatar({ user, staffProfile }) {
 
   return (
     <div className="flex items-center gap-2.5">
-      <div className="w-8 h-8 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center flex-shrink-0 border border-orange-300/50">
+      <div className="w-8 h-8 rounded-full overflow-hidden bg-white/15 flex items-center justify-center flex-shrink-0 border border-white/25">
         {imageUrl ? (
           <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
         ) : (
-          <span className="text-xs font-semibold text-orange-800">{initials}</span>
+          <span className="text-xs font-semibold text-white/90">{initials}</span>
         )}
       </div>
-      {name && <span className="text-xs text-orange-900/65 font-medium truncate max-w-[110px]">{name}</span>}
+      {name && <span className="text-xs text-white/60 font-medium truncate max-w-[110px]">{name}</span>}
     </div>
   );
 }
