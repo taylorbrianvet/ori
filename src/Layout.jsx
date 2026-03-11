@@ -64,7 +64,7 @@ export default function Layout({ children, currentPageName }) {
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) invert(1)" }} />
             {sidebarOpen && (
               <div>
-                <h1 className="text-base font-semibold text-white tracking-tight">SoL</h1>
+                <h1 className="text-base font-semibold text-white tracking-tight">ORI</h1>
                 <p className="text-[11px] text-white/50 font-medium">Hospital Management</p>
               </div>
             )}
