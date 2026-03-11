@@ -1,30 +1,15 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { CheckCircle2, Trash2 } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { CheckCircle2, RotateCcw } from "lucide-react";
+
+async function setStatus(id, newStatus, label, onRefetch) {
+  await base44.entities.PharmacyRefillRequest.update(id, { status: newStatus });
+  toast.success(label);
+  onRefetch();
+}
 
 export default function PharmacyRequestList({ requests, title, status, onRefetch }) {
-  const handleComplete = async (id) => {
-    try {
-      await base44.entities.PharmacyRefillRequest.update(id, { status: "completed" });
-      toast.success("Request marked as completed");
-      onRefetch();
-    } catch (e) {
-      toast.error("Failed to update request");
-    }
-  };
-
-  const handleApprove = async (id) => {
-    try {
-      await base44.entities.PharmacyRefillRequest.update(id, { status: "approved" });
-      toast.success("Request approved");
-      onRefetch();
-    } catch (e) {
-      toast.error("Failed to approve request");
-    }
-  };
-
   return (
     <div className="glass-card p-4 mb-6">
       <h3 className="text-sm font-semibold text-white mb-4">{title}</h3>
@@ -41,10 +26,11 @@ export default function PharmacyRequestList({ requests, title, status, onRefetch
                 <p className="text-xs text-white/70">{req.medication}</p>
                 <p className="text-[11px] text-white/50 mt-1">{req.clinician_name} ({req.clinician_role}) • {req.service}</p>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 flex-wrap justify-end">
+                {/* Forward actions */}
                 {status === "pending" && (
                   <button
-                    onClick={() => handleApprove(req.id)}
+                    onClick={() => setStatus(req.id, "approved", "Request approved", onRefetch)}
                     className="px-2 py-1 rounded-lg bg-blue-500/20 border border-blue-400/30 hover:bg-blue-500/30 text-blue-300 text-[11px] font-medium transition-colors"
                   >
                     Approve
@@ -52,10 +38,27 @@ export default function PharmacyRequestList({ requests, title, status, onRefetch
                 )}
                 {status === "approved" && (
                   <button
-                    onClick={() => handleComplete(req.id)}
+                    onClick={() => setStatus(req.id, "completed", "Marked as completed", onRefetch)}
                     className="px-2 py-1 rounded-lg bg-green-500/20 border border-green-400/30 hover:bg-green-500/30 text-green-300 text-[11px] font-medium transition-colors flex items-center gap-1"
                   >
                     <CheckCircle2 className="w-3 h-3" /> Complete
+                  </button>
+                )}
+                {/* Reverse actions */}
+                {status === "approved" && (
+                  <button
+                    onClick={() => setStatus(req.id, "pending", "Moved back to pending", onRefetch)}
+                    className="px-2 py-1 rounded-lg bg-white/8 border border-white/15 hover:bg-white/15 text-white/50 text-[11px] font-medium transition-colors flex items-center gap-1"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Unapprove
+                  </button>
+                )}
+                {status === "completed" && (
+                  <button
+                    onClick={() => setStatus(req.id, "approved", "Moved back to approved", onRefetch)}
+                    className="px-2 py-1 rounded-lg bg-white/8 border border-white/15 hover:bg-white/15 text-white/50 text-[11px] font-medium transition-colors flex items-center gap-1"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Uncomplete
                   </button>
                 )}
               </div>
