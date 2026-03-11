@@ -8,8 +8,6 @@ import OnCallServicePanel from "../components/oncall/OnCallServicePanel";
 import OnCallEditPanel from "../components/oncall/OnCallEditPanel";
 import StudentScheduleView from "../components/oncall/StudentScheduleView";
 import { Phone, Edit3, Users } from "lucide-react";
-import { createPageUrl } from "@/utils";
-import { useNavigate } from "react-router-dom";
 
 const ON_CALL_SERVICES = [
   "Emergency","Critical Care","HP TPE","Internal Medicine","Interventional Radiology",
