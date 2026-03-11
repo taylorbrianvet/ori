@@ -249,21 +249,10 @@ export default function MyWorkspace() {
                   </div>
                 )}
 
-                {pendingRefills.length > 0 && (
-                  <div className="glass-card p-3">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-xs font-semibold text-white">Pending Refills ({pendingRefills.length})</h3>
-                    </div>
-                    <div className="space-y-2 max-h-48 overflow-y-auto">
-                      {pendingRefills.map(r => (
-                        <div key={r.id} className="bg-white/6 p-2 rounded-lg border border-white/10 text-[11px]">
-                          <div className="font-semibold text-white">{r.medication}</div>
-                          <div className="text-white/60 text-[10px]">{r.patient_name} • {r.quantity} qty</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <WorkspaceRefillsPanel 
+                  refills={pharmacyRequests} 
+                  onRefetch={() => queryClient.invalidateQueries({ queryKey: ["pharmacy-requests-all"] })}
+                />
 
                 {pendingDiagnostics.length === 0 && pendingRefills.length === 0 && (
                   <div className="text-center py-6 text-white/30 text-xs">
