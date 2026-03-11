@@ -8,6 +8,7 @@ import WorkspaceProfile from "../components/workspace/WorkspaceProfile";
 import ProcedureLogView from "../components/workspace/ProcedureLogView";
 import ClinicScheduleCalendar from "../components/clinic/ClinicScheduleCalendar";
 import NotificationSettings from "../components/workspace/NotificationSettings";
+import WorkspaceRefillsPanel from "../components/workspace/WorkspaceRefillsPanel";
 import { ChevronLeft, Plus, BookOpen, Star, CalendarDays, ClipboardList, Bell, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
