@@ -64,15 +64,9 @@
     padding: 0;
   }
   body {
-    @apply text-foreground font-inter antialiased;
-    background-color: #0d2228;
-    background-image:
-      linear-gradient(to bottom, rgba(13, 34, 40, 0.92) 0%, rgba(30, 70, 75, 0.75) 30%, rgba(160, 80, 20, 0.7) 65%, rgba(200, 90, 10, 0.85) 85%, rgba(220, 110, 0, 0.9) 100%),
-      radial-gradient(ellipse at 50% 0%, rgba(80, 140, 150, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse at 20% 60%, rgba(200, 100, 20, 0.35) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(220, 120, 0, 0.4) 0%, transparent 50%);
-    background-attachment: fixed;
-    background-size: cover;
+    @apply font-inter antialiased;
+    color: #1a1208;
+    background-color: #f5f0eb;
     min-height: 100vh;
   }
 }
