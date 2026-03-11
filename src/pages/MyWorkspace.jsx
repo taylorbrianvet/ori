@@ -255,11 +255,11 @@ export default function MyWorkspace() {
                   onRefetch={() => queryClient.invalidateQueries({ queryKey: ["pharmacy-requests-all"] })}
                 />
 
-                {pendingDiagnostics.length === 0 && pendingRefills.length === 0 && (
-                  <div className="text-center py-6 text-white/30 text-xs">
-                    No pending notifications
-                  </div>
-                )}
+                {pendingDiagnostics.length === 0 && visibleRefills.length === 0 && (
+                   <div className="text-center py-6 text-white/30 text-xs">
+                     No pending notifications
+                   </div>
+                 )}
               </section>
             )}
 
