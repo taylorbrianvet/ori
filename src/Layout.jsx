@@ -261,11 +261,11 @@ export default function Layout({ children, currentPageName }) {
                       onClick={() => setMobileOpen(false)}
                       className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-white/15 text-white"
-                          : "text-white/55 hover:bg-white/10 hover:text-white/90"
+                          ? "bg-orange-500/15 text-orange-900"
+                          : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
                       }`}
                     >
-                      <item.icon className={`w-[17px] h-[17px] ${isActive ? "text-white" : "text-white/50"}`} />
+                      <item.icon className={`w-[17px] h-[17px] ${isActive ? "text-orange-700" : "text-orange-800/40"}`} />
                       {item.name}
                     </Link>
                   );
