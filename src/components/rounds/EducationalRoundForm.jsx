@@ -391,7 +391,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Actions */}
-        <div className="flex gap-3 pt-4 border-t border-white/10 sticky bottom-0 bg-inherit">
+        <div className="flex gap-3 pt-4 border-t border-white/10">
           <button onClick={onClose} className="flex-1 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-colors">
             Cancel
           </button>
