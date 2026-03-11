@@ -140,7 +140,13 @@ export default function Layout({ children, currentPageName }) {
       <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className={`border-b border-white/10 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
           <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) invert(1)", transform: `rotate(${logoRotation}deg)` }} />
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png"
+              alt="ORI"
+              className="w-10 h-10 flex-shrink-0 cursor-pointer"
+              onClick={() => { logoBaseRotation.current += 120; }}
+              style={{ filter: "brightness(0) invert(1)", transform: `rotate(${logoRotation}deg)` }}
+            />
             {sidebarOpen && (
              <div>
                <h1 className="text-base font-semibold text-white tracking-tight">ORI</h1>
@@ -247,7 +253,7 @@ export default function Layout({ children, currentPageName }) {
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/10">
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2.5">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-7 h-7" style={{ filter: "brightness(0) invert(1)", transform: `rotate(${logoRotation}deg)` }} />
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-7 h-7" style={{ filter: "brightness(0) invert(1)", transform: `rotate(${logoRotation}deg)`, transition: "transform 0.6s cubic-bezier(0.34,1.56,0.64,1)" }} />
             <span className="text-sm font-semibold text-white">ORI</span>
           </div>
           <div className="flex items-center gap-2">
