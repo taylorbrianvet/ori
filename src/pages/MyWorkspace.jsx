@@ -99,8 +99,11 @@ export default function MyWorkspace() {
     // Only show approved rounds
     if (r.approval_status !== "approved") return false;
     
-    // Check if user should be in attendance
-    if (r.attendance_everyone && r.department === staffRecord?.department) return true;
+    // Check if user is in any of the departments and should attend
+    const userDeptMatches = r.departments?.some(dept => dept === staffRecord?.department);
+    if (!userDeptMatches) return false;
+    
+    if (r.attendance_everyone) return true;
     if ((r.attendance || []).some(name => name.toLowerCase().includes(firstName))) return true;
     return false;
   });
