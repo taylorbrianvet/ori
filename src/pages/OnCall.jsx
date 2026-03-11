@@ -31,6 +31,11 @@ export default function OnCall() {
     queryFn: () => base44.entities.OnCallSchedule.list("-date", 2000),
   });
 
+  const { data: rotationBlocks = [] } = useQuery({
+    queryKey: ["rotation-blocks-all"],
+    queryFn: () => base44.entities.RotationBlock.list(),
+  });
+
   const { data: staff = [] } = useQuery({
     queryKey: ["staff"],
     queryFn: () => base44.entities.Staff.list("-created_date", 200),
