@@ -96,13 +96,13 @@ export default function MyWorkspace() {
   const procedurePendingCount = myEntries.length - loggedCount;
 
   const myRounds = educationalRounds.filter(r => {
-    const inResidents = (r.residents_present || []).some(resident => 
-      resident.toLowerCase().includes(firstName)
-    );
-    const inFaculty = (r.faculty_present || []).some(faculty => 
-      faculty.toLowerCase().includes(firstName)
-    );
-    return inResidents || inFaculty;
+    // Only show approved rounds
+    if (r.approval_status !== "approved") return false;
+    
+    // Check if user should be in attendance
+    if (r.attendance_everyone && r.department === staffRecord?.department) return true;
+    if ((r.attendance || []).some(name => name.toLowerCase().includes(firstName))) return true;
+    return false;
   });
 
   const myRoundsLogged = myRounds.filter(r => (r.logged_by || []).includes(userEmail)).length;
