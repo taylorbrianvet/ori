@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Plus, Trash2 } from "lucide-react";
+import { X, Plus, Trash2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 const DEPARTMENTS = ["Surgery", "Internal Medicine", "Emergency & Critical Care", "Neurology", "Oncology", "Dermatology", "Cardiology", "Ophthalmology", "Radiology", "Anesthesia"];
@@ -9,7 +9,7 @@ const EVENT_TYPES = ["Journal Club", "Textbook Review", "Morbidity & Mortality",
 export default function EducationalRoundForm({ round, onClose, onSaved, staffList = [] }) {
   const [formData, setFormData] = useState(round || {
     date: "",
-    department: "",
+    departments: [],
     event_type: "",
     topic: "",
     start_time: "",
@@ -19,16 +19,34 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     presenters: [],
     attendance_everyone: false,
     attendance: [],
+    faculty_present: [],
     journal_assignments: [],
     approval_status: "scheduled"
   });
   const [saving, setSaving] = useState(false);
+  const [deptDropdown, setDeptDropdown] = useState(false);
 
-  // Get residents for current department
-  const deptResidents = staffList.filter(s => s.department === formData.department && s.role === "Resident").map(s => s.first_name + " " + s.last_name);
+  // Get residents for selected departments
+  const selectedDeptResidents = staffList
+    .filter(s => formData.departments.includes(s.department) && s.role === "Resident")
+    .map(s => s.first_name + " " + s.last_name);
+
+  // Get faculty for selected departments
+  const selectedDeptFaculty = staffList
+    .filter(s => formData.departments.includes(s.department) && s.role === "Faculty")
+    .map(s => s.first_name + " " + s.last_name);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const toggleDepartment = (dept) => {
+    setFormData(prev => ({
+      ...prev,
+      departments: prev.departments.includes(dept)
+        ? prev.departments.filter(d => d !== dept)
+        : [...prev.departments, dept]
+    }));
   };
 
   const toggleAttendee = (name, isPresenter = false) => {
@@ -38,6 +56,32 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
       [field]: prev[field].includes(name)
         ? prev[field].filter(n => n !== name)
         : [...prev[field], name]
+    }));
+  };
+
+  const toggleFacultyPresent = (name) => {
+    setFormData(prev => ({
+      ...prev,
+      faculty_present: prev.faculty_present.includes(name)
+        ? prev.faculty_present.filter(n => n !== name)
+        : [...prev.faculty_present, name]
+    }));
+  };
+
+  const addOtherFaculty = () => {
+    const name = prompt("Enter faculty name:");
+    if (name) {
+      setFormData(prev => ({
+        ...prev,
+        faculty_present: [...prev.faculty_present, name]
+      }));
+    }
+  };
+
+  const removeOtherFaculty = (name) => {
+    setFormData(prev => ({
+      ...prev,
+      faculty_present: prev.faculty_present.filter(n => n !== name)
     }));
   };
 
@@ -62,9 +106,11 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     }));
   };
 
+  const canApproveForLogging = formData.faculty_present && formData.faculty_present.length > 0;
+
   const handleSave = async () => {
-    if (!formData.date || !formData.event_type || !formData.department) {
-      toast.error("Date, event type, and department are required");
+    if (!formData.date || !formData.event_type || formData.departments.length === 0) {
+      toast.error("Date, event type, and at least one department are required");
       return;
     }
 
@@ -87,9 +133,23 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     }
   };
 
+  const handleCompleteOrApprove = async (action) => {
+    setSaving(true);
+    try {
+      await base44.entities.EducationalRound.update(round.id, { approval_status: action });
+      toast.success(action === "approved" ? "Round approved for logging" : "Round completed");
+      onSaved?.();
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update round");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="glass-card w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-4">
+    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <div className="glass-card w-full max-w-2xl my-8 p-6 space-y-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">{round?.id ? "Edit Round" : "Add New Round"}</h2>
           <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/50">
@@ -97,7 +157,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           </button>
         </div>
 
-        {/* Basic Info */}
+        {/* Date */}
         <div className="space-y-3">
           <label className="block text-xs font-medium text-white/70">Date *</label>
           <input
@@ -108,18 +168,37 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <label className="block text-xs font-medium text-white/70">Department *</label>
-            <select
-              value={formData.department}
-              onChange={(e) => handleChange("department", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
+        {/* Departments Multi-Select */}
+        <div className="space-y-3">
+          <label className="block text-xs font-medium text-white/70">Departments * (select one or more)</label>
+          <div className="relative">
+            <button
+              onClick={() => setDeptDropdown(!deptDropdown)}
+              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm text-left flex items-center justify-between hover:bg-white/15 transition-colors"
             >
-              <option value="">Select department</option>
-              {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
+              <span>{formData.departments.length > 0 ? formData.departments.join(", ") : "Select departments..."}</span>
+              <ChevronDown className={`w-4 h-4 text-white/50 transition-transform ${deptDropdown ? "rotate-180" : ""}`} />
+            </button>
+            {deptDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm z-50 max-h-48 overflow-y-auto">
+                {DEPARTMENTS.map(d => (
+                  <label key={d} className="flex items-center gap-2 px-3 py-2 hover:bg-white/10 cursor-pointer text-sm text-white/70">
+                    <input
+                      type="checkbox"
+                      checked={formData.departments.includes(d)}
+                      onChange={() => toggleDepartment(d)}
+                      className="w-4 h-4"
+                    />
+                    {d}
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Event Type */}
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-3">
             <label className="block text-xs font-medium text-white/70">Event Type *</label>
             <select
@@ -131,19 +210,19 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               {EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
+          <div className="space-y-3">
+            <label className="block text-xs font-medium text-white/70">Topic</label>
+            <input
+              type="text"
+              value={formData.topic || ""}
+              onChange={(e) => handleChange("topic", e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
+              placeholder="Topic"
+            />
+          </div>
         </div>
 
-        <div className="space-y-3">
-          <label className="block text-xs font-medium text-white/70">Topic</label>
-          <input
-            type="text"
-            value={formData.topic || ""}
-            onChange={(e) => handleChange("topic", e.target.value)}
-            className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
-            placeholder="Topic or description"
-          />
-        </div>
-
+        {/* Times & Clinician */}
         <div className="grid grid-cols-3 gap-3">
           <div className="space-y-3">
             <label className="block text-xs font-medium text-white/70">Start Time</label>
@@ -159,7 +238,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           </div>
         </div>
 
-        {/* Presenters Section */}
+        {/* Presenters */}
         <div className="border-t border-white/10 pt-4">
           <h3 className="text-xs font-semibold text-white mb-3">Presenters</h3>
           <label className="flex items-center gap-2 mb-3">
@@ -172,11 +251,11 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               }}
               className="w-4 h-4"
             />
-            <span className="text-sm text-white/70">Everyone in {formData.department || "department"}</span>
+            <span className="text-sm text-white/70">Everyone in selected departments</span>
           </label>
-          {!formData.presenters_everyone && deptResidents.length > 0 && (
+          {!formData.presenters_everyone && selectedDeptResidents.length > 0 && (
             <div className="space-y-2 bg-white/5 p-3 rounded-lg max-h-32 overflow-y-auto">
-              {deptResidents.map(name => (
+              {selectedDeptResidents.map(name => (
                 <label key={name} className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -191,7 +270,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           )}
         </div>
 
-        {/* Attendance Section */}
+        {/* Attendance */}
         <div className="border-t border-white/10 pt-4">
           <h3 className="text-xs font-semibold text-white mb-3">Expected Attendance</h3>
           <label className="flex items-center gap-2 mb-3">
@@ -204,11 +283,11 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               }}
               className="w-4 h-4"
             />
-            <span className="text-sm text-white/70">Everyone in {formData.department || "department"}</span>
+            <span className="text-sm text-white/70">Everyone in selected departments</span>
           </label>
-          {!formData.attendance_everyone && deptResidents.length > 0 && (
+          {!formData.attendance_everyone && selectedDeptResidents.length > 0 && (
             <div className="space-y-2 bg-white/5 p-3 rounded-lg max-h-32 overflow-y-auto">
-              {deptResidents.map(name => (
+              {selectedDeptResidents.map(name => (
                 <label key={name} className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -223,7 +302,47 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           )}
         </div>
 
-        {/* Journal Club Section */}
+        {/* Faculty Present (only if Surgery in departments) */}
+        {formData.departments.includes("Surgery") && (
+          <div className="border-t border-white/10 pt-4">
+            <h3 className="text-xs font-semibold text-white mb-3">Faculty Present (Surgery)</h3>
+            <div className="space-y-2 bg-white/5 p-3 rounded-lg mb-3 max-h-32 overflow-y-auto">
+              {selectedDeptFaculty
+                .filter(f => staffList.find(s => (s.first_name + " " + s.last_name === f) && s.department === "Surgery"))
+                .map(name => (
+                  <label key={name} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.faculty_present.includes(name)}
+                      onChange={() => toggleFacultyPresent(name)}
+                      className="w-3 h-3"
+                    />
+                    <span className="text-xs text-white/70">{name}</span>
+                  </label>
+                ))}
+            </div>
+            <button
+              onClick={addOtherFaculty}
+              className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+            >
+              <Plus className="w-3 h-3" /> Add Other Faculty
+            </button>
+            {formData.faculty_present.some(f => !selectedDeptFaculty.includes(f)) && (
+              <div className="space-y-2 mt-3 bg-white/5 p-3 rounded-lg">
+                {formData.faculty_present.filter(f => !selectedDeptFaculty.includes(f)).map(name => (
+                  <div key={name} className="flex items-center justify-between text-xs text-white/70 bg-white/10 px-2 py-1 rounded">
+                    <span>{name}</span>
+                    <button onClick={() => removeOtherFaculty(name)} className="text-white/40 hover:text-white/70">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Journal Assignments */}
         {formData.event_type === "Journal Club" && (
           <div className="border-t border-white/10 pt-4">
             <div className="flex items-center justify-between mb-3">
@@ -241,7 +360,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
                     className="flex-1 px-2 py-1 rounded bg-white/10 border border-white/20 text-white text-xs"
                   >
                     <option value="">Select resident</option>
-                    {deptResidents.map(r => <option key={r} value={r}>{r}</option>)}
+                    {selectedDeptResidents.map(r => <option key={r} value={r}>{r}</option>)}
                   </select>
                   <input
                     type="text"
@@ -264,9 +383,33 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           <button onClick={onClose} className="flex-1 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-colors">
             Cancel
           </button>
-          <button onClick={handleSave} disabled={saving} className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50">
-            {saving ? "Saving..." : "Save Changes"}
-          </button>
+          {round?.id && round.approval_status === "scheduled" && (
+            <button
+              onClick={() => handleCompleteOrApprove("completed")}
+              disabled={saving}
+              className="flex-1 px-4 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/40 text-amber-300 text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              Complete Round
+            </button>
+          )}
+          {round?.id && round.approval_status === "scheduled" && canApproveForLogging && (
+            <button
+              onClick={() => handleCompleteOrApprove("approved")}
+              disabled={saving}
+              className="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              Approve for Logging
+            </button>
+          )}
+          {!round?.id && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          )}
         </div>
       </div>
     </div>
