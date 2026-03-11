@@ -423,6 +423,19 @@ export default function MyWorkspace() {
         )}
       </AnimatePresence>
 
+      {/* Educational Log (desktop fullscreen overlay) */}
+      <AnimatePresence>
+        {showEducationalLog && (
+          <div className="hidden lg:block">
+            <EducationalLogView
+              myRounds={myRounds}
+              userEmail={userEmail}
+              onClose={() => setShowEducationalLog(false)}
+            />
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* New surgery form */}
       <AnimatePresence>
         {showForm && (
