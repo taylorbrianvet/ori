@@ -99,10 +99,8 @@ export default function Layout({ children, currentPageName }) {
     return () => cancelAnimationFrame(logoAnimRef.current);
   }, []);
 
-  // Page change bump
+  // Page change gradient swap
   useEffect(() => {
-    logoBaseRotation.current += 30;
-    setLogoRotation(logoBaseRotation.current);
     const idx = PAGE_GRADIENT_MAP[currentPageName] ?? 0;
     const nextGradient = GRADIENT_CONFIGS[idx];
     if (showB) {
