@@ -119,9 +119,9 @@ export default function Transfers() {
     );
   }, [previous, searchQuery]);
 
-  const todayGrouped = groupByPatient(today);
-  const upcomingGrouped = groupByPatient(upcoming);
-  const previousGrouped = groupByPatient(filteredPrevious);
+  const todayByService = useMemo(() => groupByService(today), [today]);
+  const upcomingByService = useMemo(() => groupByService(upcoming), [upcoming]);
+  const previousByService = useMemo(() => groupByService(filteredPrevious), [filteredPrevious]);
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["interservice-transfers"] });
 
