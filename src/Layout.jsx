@@ -1,10 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, Stethoscope, Phone, BookOpen, Menu, X, Settings, Users, BookMarked, GraduationCap, ArrowLeftRight } from "lucide-react";
 import EditMyProfileModal from "@/components/shared/EditMyProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
+
+// Each page gets a distinct radial gradient configuration (same colors, different positions/sizes)
+const GRADIENT_CONFIGS = [
+  // config 0
+  "radial-gradient(ellipse 80% 60% at 15% 30%, rgba(230,80,30,0.55) 0%, transparent 65%), radial-gradient(ellipse 70% 55% at 80% 65%, rgba(245,150,30,0.50) 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 50% 90%, rgba(235,110,20,0.35) 0%, transparent 55%)",
+  // config 1
+  "radial-gradient(ellipse 75% 55% at 75% 25%, rgba(230,80,30,0.55) 0%, transparent 65%), radial-gradient(ellipse 65% 50% at 20% 70%, rgba(245,150,30,0.50) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 55% 50%, rgba(235,110,20,0.30) 0%, transparent 55%)",
+  // config 2
+  "radial-gradient(ellipse 85% 50% at 50% 60%, rgba(230,80,30,0.50) 0%, transparent 65%), radial-gradient(ellipse 60% 60% at 90% 20%, rgba(245,150,30,0.45) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 10% 85%, rgba(235,110,20,0.40) 0%, transparent 55%)",
+  // config 3
+  "radial-gradient(ellipse 70% 65% at 30% 70%, rgba(230,80,30,0.55) 0%, transparent 65%), radial-gradient(ellipse 75% 50% at 70% 20%, rgba(245,150,30,0.50) 0%, transparent 60%), radial-gradient(ellipse 45% 55% at 85% 75%, rgba(235,110,20,0.35) 0%, transparent 55%)",
+  // config 4
+  "radial-gradient(ellipse 90% 45% at 60% 15%, rgba(230,80,30,0.50) 0%, transparent 65%), radial-gradient(ellipse 55% 70% at 15% 55%, rgba(245,150,30,0.48) 0%, transparent 60%), radial-gradient(ellipse 60% 45% at 75% 85%, rgba(235,110,20,0.38) 0%, transparent 55%)",
+];
+
+const PAGE_GRADIENT_MAP = {
+  Home: 0, Services: 1, ServiceBoard: 2, OnCall: 3, EducationalRounds: 4,
+  Transfers: 0, Resources: 1, Pharmacy: 2, Directory: 3, Admin: 4,
+  MyWorkspace: 0, JournalClub: 1, PatientCare: 2,
+};
 
 const navItems = [
   { name: "Home", page: "Home", icon: Home },
