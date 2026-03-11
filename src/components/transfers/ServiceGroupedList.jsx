@@ -45,7 +45,7 @@ export default function ServiceGroupedList({ serviceGroups, bucket, onUpdated, e
                 <ArrowRight className="w-3.5 h-3.5 text-orange-300" />
                 <span className="text-sm font-semibold text-white">{service}</span>
                 <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-white/15 text-white/55 font-semibold">
-                  {patientGroups.length} pt{patientGroups.length !== 1 ? "s" : ""}
+                  {patientGroups.length} {patientGroups.length !== 1 ? "patients" : "patient"}
                 </span>
               </div>
               <div className="flex-1 h-px bg-white/10" />
