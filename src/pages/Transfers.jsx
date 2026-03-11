@@ -33,7 +33,9 @@ function bucketTransfers(transfers) {
   const previous = [];
 
   transfers.forEach(t => {
-    const created = new Date(t.created_date);
+    const raw = t.created_date;
+    const s = raw && /[Z+\-]\d*$/.test(raw) ? raw : (raw + "Z");
+    const created = new Date(s);
     if (created >= todaySixAm && created < tomorrowSixAm) {
       upcoming.push(t);
     } else if (created >= yesterdaySixAm && created < todaySixAm) {
