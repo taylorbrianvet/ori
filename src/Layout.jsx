@@ -83,8 +83,26 @@ export default function Layout({ children, currentPageName }) {
     }).catch(() => {});
   }, []);
 
+  // Continuous slow spin
   useEffect(() => {
-    setLogoRotation(r => r + 20);
+    let lastTime = null;
+    const step = (timestamp) => {
+      if (lastTime !== null) {
+        const delta = timestamp - lastTime;
+        logoBaseRotation.current += delta * 0.02; // ~1 full rotation per ~18s
+        setLogoRotation(logoBaseRotation.current);
+      }
+      lastTime = timestamp;
+      logoAnimRef.current = requestAnimationFrame(step);
+    };
+    logoAnimRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(logoAnimRef.current);
+  }, []);
+
+  // Page change bump
+  useEffect(() => {
+    logoBaseRotation.current += 30;
+    setLogoRotation(logoBaseRotation.current);
     const idx = PAGE_GRADIENT_MAP[currentPageName] ?? 0;
     const nextGradient = GRADIENT_CONFIGS[idx];
     if (showB) {
