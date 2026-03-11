@@ -1,4 +1,3 @@
-import React from "react";
 import { X, Calendar, BookOpen, Users } from "lucide-react";
 
 function formatDate(dateStr) {
