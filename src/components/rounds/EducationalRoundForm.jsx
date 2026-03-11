@@ -287,7 +287,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Expected Attendance */}
-        {selectedDeptResidents.length > 0 && (
+        {formData.departments.length > 0 && selectedDeptResidents.length > 0 && (
           <div className="border-t border-white/10 pt-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-white">Expected Attendance</h3>
