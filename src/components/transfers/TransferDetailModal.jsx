@@ -6,10 +6,13 @@ import TransferEditForm from "./TransferEditForm";
 
 function formatLocalTime(isoString) {
   if (!isoString) return "";
-  const d = new Date(isoString);
+  // Ensure UTC parsing by appending Z if no timezone info present
+  const s = /[Z+\-]\d*$/.test(isoString) ? isoString : isoString + "Z";
+  const d = new Date(s);
   return d.toLocaleString(undefined, {
     month: "short", day: "numeric", year: "numeric",
     hour: "numeric", minute: "2-digit", hour12: true,
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
 }
 
