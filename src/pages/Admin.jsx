@@ -195,8 +195,8 @@ export default function Admin() {
       {/* Rotation Block Calendars */}
       {editableServices.length > 0 && (
         <div className="mb-10">
-          <h2 className="text-xl font-bold text-white mb-4">Rotation Block Schedules</h2>
-          <p className="text-sm text-white/50 mb-6">Click any date to mark it as a block start. The gap between two starts defines the block length. Blocks go live at 8am on their start date.</p>
+          <h2 className="text-xl font-bold text-white mb-4">Student Rotation Block Schedules</h2>
+          <p className="text-sm text-white/50 mb-6">Use <strong className="text-white/70">Block Start</strong> mode to mark rotation start dates. Use <strong className="text-white/70">Split Shift Day</strong> mode to mark holidays or special days — those days will appear with separate 8am–8pm and 8pm–8am student slots.</p>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {editableServices.map((svc) => (
               <GlassCard key={svc} className="p-6">
