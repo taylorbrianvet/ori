@@ -302,7 +302,7 @@ export default function OnCallEditPanel({ staff, currentUser }) {
                   <span className="text-[11px] text-white/40 w-16 capitalize shrink-0">{slot}</span>
                   <select
               value={editForm[slot]}
-              onChange={(e) => setEditForm((f) => ({ ...f, [slot]: e.target.value }))} className="bg-white/8 text-white/85 px-3 py-1.5 text-xs opacity-100 rounded-xl flex-1 border border-white/12 focus:outline-none focus:border-white/25">
+              onChange={(e) => setEditForm((f) => ({ ...f, [slot]: e.target.value }))} className="bg-gray-900 text-white px-3 py-1.5 text-xs rounded-xl flex-1 border border-white/20 focus:outline-none focus:border-white/40">
 
 
                     {doctorOptions.map((opt) =>
