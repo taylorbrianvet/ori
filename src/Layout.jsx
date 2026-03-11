@@ -238,7 +238,7 @@ export default function Layout({ children, currentPageName }) {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 26, stiffness: 300 }}
-              className="md:hidden fixed inset-y-0 left-0 z-50 w-72 glass-panel border-r border-white/10"
+              className="md:hidden fixed inset-y-0 left-0 z-50 w-72 glass-panel border-r border-black/8"
             >
               <div className="p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
