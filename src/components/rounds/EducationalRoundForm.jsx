@@ -29,12 +29,14 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
   // Get residents for selected departments
   const selectedDeptResidents = staffList
     .filter(s => formData.departments.includes(s.department) && s.role === "Resident")
-    .map(s => s.first_name + " " + s.last_name);
+    .map(s => s.first_name + " " + s.last_name)
+    .sort();
 
   // Get faculty for selected departments
   const selectedDeptFaculty = staffList
     .filter(s => formData.departments.includes(s.department) && s.role === "Faculty")
-    .map(s => s.first_name + " " + s.last_name);
+    .map(s => s.first_name + " " + s.last_name)
+    .sort();
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -59,6 +61,22 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     }));
   };
 
+  const selectAllAttendees = (isPresenter = false) => {
+    const field = isPresenter ? "presenters" : "attendance";
+    setFormData(prev => ({
+      ...prev,
+      [field]: selectedDeptResidents
+    }));
+  };
+
+  const clearAllAttendees = (isPresenter = false) => {
+    const field = isPresenter ? "presenters" : "attendance";
+    setFormData(prev => ({
+      ...prev,
+      [field]: []
+    }));
+  };
+
   const toggleFacultyPresent = (name) => {
     setFormData(prev => ({
       ...prev,
@@ -70,10 +88,10 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
 
   const addOtherFaculty = () => {
     const name = prompt("Enter faculty name:");
-    if (name) {
+    if (name && name.trim()) {
       setFormData(prev => ({
         ...prev,
-        faculty_present: [...prev.faculty_present, name]
+        faculty_present: [...prev.faculty_present, name.trim()]
       }));
     }
   };
@@ -148,17 +166,17 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="glass-card w-full max-w-2xl my-8 p-6 space-y-4">
-        <div className="flex items-center justify-between mb-4">
+    <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="glass-card w-full max-w-2xl max-h-[95vh] overflow-y-auto p-6 space-y-4">
+        <div className="flex items-center justify-between mb-4 sticky top-0 bg-inherit">
           <h2 className="text-lg font-semibold text-white">{round?.id ? "Edit Round" : "Add New Round"}</h2>
-          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/50">
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/50 flex-shrink-0">
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Date */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <label className="block text-xs font-medium text-white/70">Date *</label>
           <input
             type="date"
@@ -169,7 +187,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         </div>
 
         {/* Departments Multi-Select */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <label className="block text-xs font-medium text-white/70">Departments * (select one or more)</label>
           <div className="relative">
             <button
@@ -177,7 +195,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm text-left flex items-center justify-between hover:bg-white/15 transition-colors"
             >
               <span>{formData.departments.length > 0 ? formData.departments.join(", ") : "Select departments..."}</span>
-              <ChevronDown className={`w-4 h-4 text-white/50 transition-transform ${deptDropdown ? "rotate-180" : ""}`} />
+              <ChevronDown className={`w-4 h-4 text-white/50 transition-transform flex-shrink-0 ${deptDropdown ? "rotate-180" : ""}`} />
             </button>
             {deptDropdown && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm z-50 max-h-48 overflow-y-auto">
@@ -197,9 +215,9 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           </div>
         </div>
 
-        {/* Event Type */}
+        {/* Event Type & Topic */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-3">
+          <div className="space-y-2">
             <label className="block text-xs font-medium text-white/70">Event Type *</label>
             <select
               value={formData.event_type}
@@ -210,7 +228,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               {EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <label className="block text-xs font-medium text-white/70">Topic</label>
             <input
               type="text"
@@ -224,102 +242,96 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
 
         {/* Times & Clinician */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="space-y-3">
-            <label className="block text-xs font-medium text-white/70">Start Time</label>
+          <div className="space-y-2">
+            <label className="block text-xs font-medium text-white/70">Start</label>
             <input type="time" value={formData.start_time || ""} onChange={(e) => handleChange("start_time", e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm" />
           </div>
-          <div className="space-y-3">
-            <label className="block text-xs font-medium text-white/70">End Time</label>
+          <div className="space-y-2">
+            <label className="block text-xs font-medium text-white/70">End</label>
             <input type="time" value={formData.end_time || ""} onChange={(e) => handleChange("end_time", e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm" />
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <label className="block text-xs font-medium text-white/70">Clinician</label>
             <input type="text" value={formData.clinician || ""} onChange={(e) => handleChange("clinician", e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm" />
           </div>
         </div>
 
         {/* Presenters */}
-        <div className="border-t border-white/10 pt-4">
-          <h3 className="text-xs font-semibold text-white mb-3">Presenters</h3>
-          <label className="flex items-center gap-2 mb-3">
-            <input
-              type="checkbox"
-              checked={formData.presenters_everyone}
-              onChange={(e) => {
-                handleChange("presenters_everyone", e.target.checked);
-                if (e.target.checked) handleChange("presenters", []);
-              }}
-              className="w-4 h-4"
-            />
-            <span className="text-sm text-white/70">Everyone in selected departments</span>
-          </label>
-          {!formData.presenters_everyone && selectedDeptResidents.length > 0 && (
-            <div className="space-y-2 bg-white/5 p-3 rounded-lg max-h-32 overflow-y-auto">
+        {selectedDeptResidents.length > 0 && (
+          <div className="border-t border-white/10 pt-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-semibold text-white">Presenters</h3>
+              <div className="flex gap-2">
+                <button onClick={() => selectAllAttendees(true)} className="text-[10px] text-blue-400 hover:text-blue-300">
+                  Select All
+                </button>
+                <button onClick={() => clearAllAttendees(true)} className="text-[10px] text-white/40 hover:text-white/60">
+                  Clear
+                </button>
+              </div>
+            </div>
+            <div className="space-y-1 bg-white/5 p-3 rounded-lg max-h-32 overflow-y-auto">
               {selectedDeptResidents.map(name => (
-                <label key={name} className="flex items-center gap-2">
+                <label key={name} className="flex items-center gap-2 cursor-pointer hover:bg-white/10 -mx-3 px-3 py-1.5 rounded transition-colors">
                   <input
                     type="checkbox"
                     checked={formData.presenters.includes(name)}
                     onChange={() => toggleAttendee(name, true)}
-                    className="w-3 h-3"
+                    className="w-3 h-3 flex-shrink-0"
                   />
                   <span className="text-xs text-white/70">{name}</span>
                 </label>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Attendance */}
-        <div className="border-t border-white/10 pt-4">
-          <h3 className="text-xs font-semibold text-white mb-3">Expected Attendance</h3>
-          <label className="flex items-center gap-2 mb-3">
-            <input
-              type="checkbox"
-              checked={formData.attendance_everyone}
-              onChange={(e) => {
-                handleChange("attendance_everyone", e.target.checked);
-                if (e.target.checked) handleChange("attendance", []);
-              }}
-              className="w-4 h-4"
-            />
-            <span className="text-sm text-white/70">Everyone in selected departments</span>
-          </label>
-          {!formData.attendance_everyone && selectedDeptResidents.length > 0 && (
-            <div className="space-y-2 bg-white/5 p-3 rounded-lg max-h-32 overflow-y-auto">
+        {/* Expected Attendance */}
+        {selectedDeptResidents.length > 0 && (
+          <div className="border-t border-white/10 pt-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-semibold text-white">Expected Attendance</h3>
+              <div className="flex gap-2">
+                <button onClick={() => selectAllAttendees(false)} className="text-[10px] text-blue-400 hover:text-blue-300">
+                  Select All
+                </button>
+                <button onClick={() => clearAllAttendees(false)} className="text-[10px] text-white/40 hover:text-white/60">
+                  Clear
+                </button>
+              </div>
+            </div>
+            <div className="space-y-1 bg-white/5 p-3 rounded-lg max-h-32 overflow-y-auto">
               {selectedDeptResidents.map(name => (
-                <label key={name} className="flex items-center gap-2">
+                <label key={name} className="flex items-center gap-2 cursor-pointer hover:bg-white/10 -mx-3 px-3 py-1.5 rounded transition-colors">
                   <input
                     type="checkbox"
                     checked={formData.attendance.includes(name)}
                     onChange={() => toggleAttendee(name, false)}
-                    className="w-3 h-3"
+                    className="w-3 h-3 flex-shrink-0"
                   />
                   <span className="text-xs text-white/70">{name}</span>
                 </label>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Faculty Present (only if Surgery in departments) */}
-        {formData.departments.includes("Surgery") && (
+        {/* Faculty Present */}
+        {selectedDeptFaculty.length > 0 && (
           <div className="border-t border-white/10 pt-4">
-            <h3 className="text-xs font-semibold text-white mb-3">Faculty Present (Surgery)</h3>
-            <div className="space-y-2 bg-white/5 p-3 rounded-lg mb-3 max-h-32 overflow-y-auto">
-              {selectedDeptFaculty
-                .filter(f => staffList.find(s => (s.first_name + " " + s.last_name === f) && s.department === "Surgery"))
-                .map(name => (
-                  <label key={name} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formData.faculty_present.includes(name)}
-                      onChange={() => toggleFacultyPresent(name)}
-                      className="w-3 h-3"
-                    />
-                    <span className="text-xs text-white/70">{name}</span>
-                  </label>
-                ))}
+            <h3 className="text-xs font-semibold text-white mb-2">Faculty Present</h3>
+            <div className="space-y-1 bg-white/5 p-3 rounded-lg mb-2 max-h-32 overflow-y-auto">
+              {selectedDeptFaculty.map(name => (
+                <label key={name} className="flex items-center gap-2 cursor-pointer hover:bg-white/10 -mx-3 px-3 py-1.5 rounded transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={formData.faculty_present.includes(name)}
+                    onChange={() => toggleFacultyPresent(name)}
+                    className="w-3 h-3 flex-shrink-0"
+                  />
+                  <span className="text-xs text-white/70">{name}</span>
+                </label>
+              ))}
             </div>
             <button
               onClick={addOtherFaculty}
@@ -328,9 +340,9 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               <Plus className="w-3 h-3" /> Add Other Faculty
             </button>
             {formData.faculty_present.some(f => !selectedDeptFaculty.includes(f)) && (
-              <div className="space-y-2 mt-3 bg-white/5 p-3 rounded-lg">
+              <div className="space-y-1 mt-2 bg-white/5 p-3 rounded-lg">
                 {formData.faculty_present.filter(f => !selectedDeptFaculty.includes(f)).map(name => (
-                  <div key={name} className="flex items-center justify-between text-xs text-white/70 bg-white/10 px-2 py-1 rounded">
+                  <div key={name} className="flex items-center justify-between text-xs text-white/70 bg-white/10 px-2 py-1.5 rounded">
                     <span>{name}</span>
                     <button onClick={() => removeOtherFaculty(name)} className="text-white/40 hover:text-white/70">
                       <X className="w-3 h-3" />
@@ -343,11 +355,11 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Journal Assignments */}
-        {formData.event_type === "Journal Club" && (
+        {formData.event_type === "Journal Club" && selectedDeptResidents.length > 0 && (
           <div className="border-t border-white/10 pt-4">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-white">Journal Assignments</h3>
-              <button onClick={addJournalAssignment} className="text-xs text-white/50 hover:text-white/70 flex items-center gap-1">
+              <button onClick={addJournalAssignment} className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
                 <Plus className="w-3 h-3" /> Add
               </button>
             </div>
@@ -369,7 +381,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
                     placeholder="Citation"
                     className="flex-1 px-2 py-1 rounded bg-white/10 border border-white/20 text-white text-xs placeholder:text-white/30"
                   />
-                  <button onClick={() => removeJournalAssignment(idx)} className="text-white/40 hover:text-white/70">
+                  <button onClick={() => removeJournalAssignment(idx)} className="text-white/40 hover:text-white/70 flex-shrink-0">
                     <Trash2 className="w-3 h-3" />
                   </button>
                 </div>
@@ -379,7 +391,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Actions */}
-        <div className="flex gap-3 pt-4 border-t border-white/10">
+        <div className="flex gap-3 pt-4 border-t border-white/10 sticky bottom-0 bg-inherit">
           <button onClick={onClose} className="flex-1 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-colors">
             Cancel
           </button>
@@ -389,7 +401,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               disabled={saving}
               className="flex-1 px-4 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/40 text-amber-300 text-sm font-medium transition-colors disabled:opacity-50"
             >
-              Complete Round
+              Complete
             </button>
           )}
           {round?.id && round.approval_status === "scheduled" && canApproveForLogging && (
@@ -398,7 +410,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               disabled={saving}
               className="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
-              Approve for Logging
+              Approve
             </button>
           )}
           {!round?.id && (
@@ -407,7 +419,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               disabled={saving}
               className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
-              {saving ? "Saving..." : "Save Changes"}
+              {saving ? "Saving..." : "Save"}
             </button>
           )}
         </div>
