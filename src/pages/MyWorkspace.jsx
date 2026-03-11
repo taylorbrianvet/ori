@@ -49,6 +49,11 @@ export default function MyWorkspace() {
     queryFn: () => base44.entities.OnCallSchedule.list("date"),
   });
 
+  const { data: educationalRounds = [] } = useQuery({
+    queryKey: ["educational-rounds-all"],
+    queryFn: () => base44.entities.EducationalRound.list("-created_date"),
+  });
+
   const { data: diagnostics = [] } = useQuery({
     queryKey: ["diagnostics-all"],
     queryFn: () => base44.entities.Diagnostic.list(),
@@ -86,7 +91,20 @@ export default function MyWorkspace() {
   });
 
   const loggedCount = myEntries.filter((e) => (e.logged_by || []).includes(userEmail)).length;
-  const pendingCount = myEntries.length - loggedCount;
+  const procedurePendingCount = myEntries.length - loggedCount;
+
+  const myRounds = educationalRounds.filter(r => {
+    const inResidents = (r.residents_present || []).some(resident => 
+      resident.toLowerCase().includes(firstName)
+    );
+    const inFaculty = (r.faculty_present || []).some(faculty => 
+      faculty.toLowerCase().includes(firstName)
+    );
+    return inResidents || inFaculty;
+  });
+
+  const myRoundsLogged = myRounds.length;
+  const myRoundsPending = 0;
 
   // Find clinic schedule entries for this user (by full name or first name match)
   const myClinicEntries = clinicSchedules.filter(e => {
@@ -252,7 +270,9 @@ export default function MyWorkspace() {
 
             {activeTab === "logs" && (
               <section key="logs" className="space-y-3">
+                {/* Procedure Logs */}
                 <div className="glass-card p-4 space-y-3">
+                  <h3 className="text-xs font-semibold text-white/70">Procedure Logs</h3>
                   <div className="grid grid-cols-3 gap-3">
                     <div className="rounded-xl bg-white/6 border border-white/10 p-3 text-center">
                       <p className="text-lg font-bold text-white">{myEntries.length}</p>
@@ -263,7 +283,7 @@ export default function MyWorkspace() {
                       <p className="text-[10px] text-white/40 mt-0.5">Logged</p>
                     </div>
                     <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-center">
-                      <p className="text-lg font-bold text-amber-300">{pendingCount}</p>
+                      <p className="text-lg font-bold text-amber-300">{procedurePendingCount}</p>
                       <p className="text-[10px] text-white/40 mt-0.5">Pending</p>
                     </div>
                   </div>
@@ -276,6 +296,25 @@ export default function MyWorkspace() {
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/12 hover:bg-white/20 text-white text-xs font-medium transition-colors">
                       <Plus className="w-3.5 h-3.5" /> Log Surgery
                     </button>
+                  </div>
+                </div>
+
+                {/* Educational Logs */}
+                <div className="glass-card p-4 space-y-3">
+                  <h3 className="text-xs font-semibold text-white/70">Educational Rounds</h3>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="rounded-xl bg-white/6 border border-white/10 p-3 text-center">
+                      <p className="text-lg font-bold text-white">{myRounds.length}</p>
+                      <p className="text-[10px] text-white/40 mt-0.5">Total</p>
+                    </div>
+                    <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-3 text-center">
+                      <p className="text-lg font-bold text-green-300">{myRoundsLogged}</p>
+                      <p className="text-[10px] text-white/40 mt-0.5">Logged</p>
+                    </div>
+                    <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-center">
+                      <p className="text-lg font-bold text-amber-300">{myRoundsPending}</p>
+                      <p className="text-[10px] text-white/40 mt-0.5">Pending</p>
+                    </div>
                   </div>
                 </div>
               </section>
