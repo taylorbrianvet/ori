@@ -1,302 +1,212 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
 import PageContainer from "../components/shared/PageContainer";
-import WeekNav from "../components/rounds/WeekNav";
-import RoundRow from "../components/rounds/RoundRow";
-import RoundDetailModal from "../components/rounds/RoundDetailModal";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
-import { ChevronLeft, BookOpen, CalendarDays, List } from "lucide-react";
-import {
-  startOfWeek, endOfWeek, addWeeks, subWeeks, eachDayOfInterval,
-  format, parseISO, isWithinInterval, isFuture, isToday, compareAsc
-} from "date-fns";
+import PageHeader from "../components/shared/PageHeader";
+import EducationalRoundForm from "../components/rounds/EducationalRoundForm";
+import { Plus, Calendar, CheckCircle, Clock, XCircle, Edit2, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { AnimatePresence } from "framer-motion";
 
-const DEPARTMENTS = [
-  "Surgery", "Internal Medicine", "Emergency & Critical Care",
-  "Neurology", "Oncology", "Dermatology", "Cardiology",
-  "Ophthalmology", "Radiology", "Anesthesia"
-];
+const DEPARTMENTS = ["Surgery", "Internal Medicine", "Emergency & Critical Care", "Neurology", "Oncology", "Dermatology", "Cardiology", "Ophthalmology", "Radiology", "Anesthesia"];
 
-const DEPT_SHORT = {
-  "Surgery": "Surgery",
-  "Internal Medicine": "Int Med",
-  "Emergency & Critical Care": "ECC",
-  "Neurology": "Neuro",
-  "Oncology": "Onco",
-  "Dermatology": "Derm",
-  "Cardiology": "Cardio",
-  "Ophthalmology": "Ophth",
-  "Radiology": "Radiology",
-  "Anesthesia": "Anesth",
-};
+function formatDate(dateStr) {
+  if (!dateStr) return "—";
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  } catch {
+    return dateStr;
+  }
+}
 
-function SeminarRow({ round, onClick }) {
+function RoundStatusBadge({ status }) {
+  const configs = {
+    scheduled: { icon: Clock, bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-300", label: "Scheduled" },
+    approved: { icon: CheckCircle, bg: "bg-green-500/15", border: "border-green-500/30", text: "text-green-300", label: "Approved" },
+    cancelled: { icon: XCircle, bg: "bg-red-500/15", border: "border-red-500/30", text: "text-red-300", label: "Cancelled" }
+  };
+  const config = configs[status] || configs.scheduled;
+  const Icon = config.icon;
   return (
-    <button onClick={onClick}
-      className="w-full text-left rounded-xl border border-emerald-400/20 bg-emerald-500/8 hover:bg-emerald-500/14 transition-all p-3 flex items-center gap-3">
-      <div className="flex-shrink-0 w-12 text-center rounded-lg py-1.5 bg-emerald-500/20">
-        <p className="text-[10px] text-emerald-300/70 font-medium uppercase">Fri</p>
-        <p className="text-sm font-bold text-emerald-200 leading-none mt-0.5">{format(parseISO(round.date), "d")}</p>
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 font-medium">Seminar</span>
-          <span className="text-[10px] text-white/30">{round.start_time || "09:00"} – {round.end_time || "10:00"}</span>
-        </div>
-        <p className="text-xs text-white/75 font-medium truncate">{round.topic || "Topic TBD"}</p>
-        {round.clinician && <p className="text-[10px] text-white/35 mt-0.5">{round.clinician}</p>}
-      </div>
-    </button>
+    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${config.bg} ${config.border}`}>
+      <Icon className={`w-3 h-3 ${config.text}`} />
+      <span className={`text-[10px] font-medium ${config.text}`}>{config.label}</span>
+    </div>
   );
 }
 
 export default function EducationalRounds() {
-  const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
-  const [selectedRound, setSelectedRound] = useState(null);
-  const [activeDept, setActiveDept] = useState(null); // null = not yet loaded
-  const [showSeminarsPanel, setShowSeminarsPanel] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editingRound, setEditingRound] = useState(null);
+  const [filterDept, setFilterDept] = useState("");
   const queryClient = useQueryClient();
 
-  // Load user preference
-  const { data: currentUser } = useQuery({
-    queryKey: ["me"],
-    queryFn: () => base44.auth.me(),
-  });
-
-  useEffect(() => {
-    if (currentUser && activeDept === null) {
-      setActiveDept(currentUser.default_rounds_department || "Surgery");
-    }
-  }, [currentUser, activeDept]);
-
-  const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
-
-  const { data: rounds = [] } = useQuery({
-    queryKey: ["educational-rounds"],
-    queryFn: () => base44.entities.EducationalRound.list("date"),
+  const { data: allRounds = [], isLoading } = useQuery({
+    queryKey: ["educational-rounds-all"],
+    queryFn: () => base44.entities.EducationalRound.list("-date")
   });
 
   const { data: staffList = [] } = useQuery({
     queryKey: ["staff-all"],
-    queryFn: () => base44.entities.Staff.list(),
+    queryFn: () => base44.entities.Staff.list()
   });
 
-  const handleSetDefault = async (dept) => {
-    setActiveDept(dept);
-    await base44.auth.updateMe({ default_rounds_department: dept });
+  const { data: currentUser } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => base44.auth.me()
+  });
+
+  const isAdmin = currentUser?.role === "admin";
+
+  const filteredRounds = filterDept ? allRounds.filter(r => r.department === filterDept) : allRounds;
+
+  const handleEdit = (round) => {
+    setEditingRound(round);
+    setShowForm(true);
   };
 
-  const inCurrentWeek = (r) => isWithinInterval(parseISO(r.date), { start: weekStart, end: weekEnd });
+  const handleDelete = async (roundId) => {
+    if (!confirm("Delete this round?")) return;
+    try {
+      // Delete by setting approval_status to cancelled (soft delete approach)
+      const round = allRounds.find(r => r.id === roundId);
+      await base44.entities.EducationalRound.update(roundId, { approval_status: "cancelled" });
+      toast.success("Round deleted");
+      queryClient.invalidateQueries({ queryKey: ["educational-rounds-all"] });
+    } catch (error) {
+      toast.error("Failed to delete round");
+    }
+  };
 
-  // Seminars are NOT department-specific — always show all seminars for the week
-  const seminars = rounds.filter(r => inCurrentWeek(r) && (r.is_seminar || r.event_type === "Seminar"));
+  const handleApprove = async (roundId) => {
+    try {
+      await base44.entities.EducationalRound.update(roundId, { approval_status: "approved" });
+      toast.success("Round approved");
+      queryClient.invalidateQueries({ queryKey: ["educational-rounds-all"] });
+    } catch (error) {
+      toast.error("Failed to approve round");
+    }
+  };
 
-  // Regular rounds filtered by active department
-  const regularRounds = rounds.filter(r => {
-    if (!inCurrentWeek(r)) return false;
-    if (r.is_seminar || r.event_type === "Seminar") return false;
-    const depts = r.departments?.length > 0 ? r.departments : (r.department ? [r.department] : []);
-    return !activeDept || depts.includes(activeDept) || depts.length === 0;
-  });
+  const handleCancel = async (roundId) => {
+    try {
+      await base44.entities.EducationalRound.update(roundId, { approval_status: "cancelled" });
+      toast.success("Round cancelled");
+      queryClient.invalidateQueries({ queryKey: ["educational-rounds-all"] });
+    } catch (error) {
+      toast.error("Failed to cancel round");
+    }
+  };
 
-  const weekRounds = [...regularRounds, ...seminars];
+  const visibleRounds = filteredRounds.filter(r => r.approval_status !== "cancelled");
 
-  // Group Mon–Fri (skip Saturday/Sunday for display)
-  const days = eachDayOfInterval({ start: weekStart, end: weekEnd }).filter(d => {
-    const dow = d.getDay();
-    return dow >= 1 && dow <= 5; // Mon-Fri
-  });
-
-  const roundsByDay = days.reduce((acc, day) => {
-    const dayStr = format(day, "yyyy-MM-dd");
-    acc[dayStr] = regularRounds.filter(r => r.date === dayStr);
-    return acc;
-  }, {});
-
-  // Mon–Thu regular rounds, Friday seminars
-  const monThuDays = days.filter(d => d.getDay() >= 1 && d.getDay() <= 4);
-  const friDays = days.filter(d => d.getDay() === 5);
+  if (!isAdmin) {
+    return (
+      <PageContainer>
+        <div className="py-20 text-center text-white/40">
+          <p>Admin access required</p>
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
-      <div className="mb-5">
-        <Link to={createPageUrl("Home")}
-          className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 transition-colors">
-          <ChevronLeft className="w-3.5 h-3.5" /> Home
-        </Link>
+      <PageHeader title="Educational Rounds Management" />
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <select
+          value={filterDept}
+          onChange={(e) => setFilterDept(e.target.value)}
+          className="px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
+        >
+          <option value="">All Departments</option>
+          {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+        </select>
+        <button
+          onClick={() => {
+            setEditingRound(null);
+            setShowForm(true);
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+        >
+          <Plus className="w-4 h-4" /> Add Round
+        </button>
       </div>
 
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-          <BookOpen className="w-5 h-5 text-white/70" />
-        </div>
-        <div>
-          <h1 className="text-xl font-semibold text-white tracking-tight">Educational Rounds</h1>
-          <p className="text-xs text-white/40 mt-0.5">Weekly schedule of rounds and seminars</p>
-        </div>
-      </div>
-
-      {/* Department selector */}
-      <div className="mb-5">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-[10px] text-white/35 uppercase tracking-wider font-semibold">Service</p>
-          <div className="flex items-center gap-3">
-            {activeDept && (
-              <p className="text-[10px] text-white/25">
-                Default: <span className="text-white/45">{activeDept}</span> · tap to change
-              </p>
-            )}
-            <button
-              onClick={() => setShowSeminarsPanel(true)}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-emerald-400/25 bg-emerald-500/10 text-emerald-200/70 hover:bg-emerald-500/20 hover:text-emerald-200 transition-colors font-medium"
-            >
-              <List className="w-3 h-3" /> All Seminars
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {DEPARTMENTS.map(dept => (
-            <button
-              key={dept}
-              onClick={() => handleSetDefault(dept)}
-              className={`text-xs px-3 py-1.5 rounded-xl border transition-colors font-medium ${
-                activeDept === dept
-                  ? "bg-white/18 border-white/30 text-white"
-                  : "bg-white/4 border-white/12 text-white/40 hover:bg-white/10 hover:text-white/70"
-              }`}
-            >
-              {DEPT_SHORT[dept] || dept}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Week nav */}
-      <WeekNav
-        weekStart={weekStart}
-        onPrev={() => setWeekStart(w => subWeeks(w, 1))}
-        onNext={() => setWeekStart(w => addWeeks(w, 1))}
-      />
-
-      {/* Mon–Thu rounds */}
-      <div className="space-y-4 mb-6">
-        {monThuDays.map(day => {
-          const dayStr = format(day, "yyyy-MM-dd");
-          const dayRounds = roundsByDay[dayStr] || [];
-          if (dayRounds.length === 0) return null;
-
-          return (
-            <div key={dayStr}>
-              <p className="text-[10px] text-white/35 uppercase tracking-wider font-semibold mb-2">
-                {format(day, "EEEE, MMMM d")}
-              </p>
-              <div className="space-y-2">
-                {dayRounds.map(r => (
-                  <RoundRow key={r.id} round={r} onClick={() => setSelectedRound(r)} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Friday Seminar — always at bottom */}
-      {(seminars.length > 0 || friDays.length > 0) && (
-        <div>
-          <p className="text-[10px] text-white/35 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1.5">
-            <CalendarDays className="w-3 h-3" /> Friday Seminar
-          </p>
-          <div className="space-y-2">
-            {seminars.length > 0 ? (
-              seminars.map(r => (
-                <SeminarRow key={r.id} round={r} onClick={() => setSelectedRound(r)} />
-              ))
-            ) : (
-              <div className="rounded-xl border border-white/8 bg-white/3 p-3 text-xs text-white/20 text-center">
-                No seminar scheduled this Friday
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {weekRounds.length === 0 && (
-        <div className="text-center py-16 text-white/25 text-sm">
-          No rounds scheduled for {activeDept ? `${activeDept} ` : ""}this week.
-        </div>
-      )}
-
-      {/* Upcoming Seminars Panel */}
-      <AnimatePresence>
-        {showSeminarsPanel && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
-              onClick={() => setShowSeminarsPanel(false)}
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 280 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm glass-panel border-l border-white/10 flex flex-col"
-            >
-              <div className="flex items-center justify-between p-5 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="w-4 h-4 text-emerald-300/70" />
-                  <h2 className="text-sm font-semibold text-white">Upcoming Seminars</h2>
+      {/* Rounds List */}
+      {isLoading ? (
+        <div className="text-center py-8 text-white/40">Loading...</div>
+      ) : visibleRounds.length === 0 ? (
+        <div className="text-center py-8 text-white/40">No rounds found</div>
+      ) : (
+        <div className="space-y-3">
+          {visibleRounds.map(round => (
+            <div key={round.id} className="glass-card p-4 space-y-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="w-4 h-4 text-white/40" />
+                    <span className="text-sm font-semibold text-white">{formatDate(round.date)}</span>
+                    <span className="text-xs text-white/50">•</span>
+                    <span className="text-xs text-white/60">{round.department}</span>
+                  </div>
+                  <p className="text-sm text-white/80 mb-1">{round.event_type}</p>
+                  {round.topic && <p className="text-xs text-white/60 mb-2">{round.topic}</p>}
+                  <div className="flex flex-wrap gap-2 text-[10px]">
+                    {round.start_time && <span className="text-white/50">⏰ {round.start_time}{round.end_time ? ` - ${round.end_time}` : ""}</span>}
+                    {round.clinician && <span className="text-white/50">👤 {round.clinician}</span>}
+                  </div>
                 </div>
-                <button onClick={() => setShowSeminarsPanel(false)} className="text-white/40 hover:text-white/80 text-lg leading-none">✕</button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                {rounds
-                  .filter(r => (r.is_seminar || r.event_type === "Seminar") && (isToday(parseISO(r.date)) || isFuture(parseISO(r.date))))
-                  .sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date)))
-                  .map(r => (
-                    <button
-                      key={r.id}
-                      onClick={() => { setSelectedRound(r); setShowSeminarsPanel(false); }}
-                      className="w-full text-left rounded-xl border border-emerald-400/20 bg-emerald-500/8 hover:bg-emerald-500/14 transition-all p-3 flex items-center gap-3"
-                    >
-                      <div className="flex-shrink-0 w-12 text-center rounded-lg py-1.5 bg-emerald-500/20">
-                        <p className="text-[10px] text-emerald-300/70 font-medium uppercase">{format(parseISO(r.date), "MMM")}</p>
-                        <p className="text-sm font-bold text-emerald-200 leading-none mt-0.5">{format(parseISO(r.date), "d")}</p>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[10px] text-white/30 mb-0.5">{format(parseISO(r.date), "EEEE, MMMM d, yyyy")}</p>
-                        <p className="text-xs text-white/75 font-medium truncate">{r.topic || "Topic TBD"}</p>
-                        {r.clinician && <p className="text-[10px] text-white/35 mt-0.5">{r.clinician}</p>}
-                      </div>
+                <div className="flex flex-col items-end gap-2">
+                  <RoundStatusBadge status={round.approval_status} />
+                  <div className="flex gap-2">
+                    <button onClick={() => handleEdit(round)} className="w-8 h-8 rounded-lg hover:bg-white/10 text-white/40 hover:text-white transition-colors flex items-center justify-center">
+                      <Edit2 className="w-4 h-4" />
                     </button>
-                  ))
-                }
-                {rounds.filter(r => (r.is_seminar || r.event_type === "Seminar") && (isToday(parseISO(r.date)) || isFuture(parseISO(r.date)))).length === 0 && (
-                  <p className="text-center text-white/25 text-sm py-12">No upcoming seminars scheduled.</p>
+                    {round.approval_status === "scheduled" && (
+                      <button onClick={() => handleApprove(round.id)} className="px-3 py-1.5 rounded-lg bg-green-600/20 hover:bg-green-600/30 text-green-300 text-xs font-medium transition-colors">
+                        Approve
+                      </button>
+                    )}
+                    {round.approval_status !== "cancelled" && (
+                      <button onClick={() => handleCancel(round.id)} className="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 text-xs font-medium transition-colors">
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Attendance Preview */}
+              <div className="pt-2 border-t border-white/10 space-y-1">
+                <p className="text-[10px] text-white/40 uppercase font-medium">Expected Attendance</p>
+                {round.attendance_everyone ? (
+                  <p className="text-xs text-white/60">All residents in {round.department}</p>
+                ) : round.attendance?.length > 0 ? (
+                  <p className="text-xs text-white/60">{round.attendance.join(", ")}</p>
+                ) : (
+                  <p className="text-xs text-white/40 italic">None specified</p>
                 )}
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Detail modal */}
+      {/* Form Modal */}
       <AnimatePresence>
-        {selectedRound && (
-          <RoundDetailModal
-            round={selectedRound}
-            staffList={staffList}
-            onClose={() => setSelectedRound(null)}
-            onSaved={() => {
-              queryClient.invalidateQueries({ queryKey: ["educational-rounds"] });
-              setSelectedRound(null);
+        {showForm && (
+          <EducationalRoundForm
+            round={editingRound}
+            onClose={() => {
+              setShowForm(false);
+              setEditingRound(null);
             }}
+            onSaved={() => queryClient.invalidateQueries({ queryKey: ["educational-rounds-all"] })}
+            staffList={staffList}
           />
         )}
       </AnimatePresence>
