@@ -418,13 +418,22 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         {/* Actions */}
         <div className="flex gap-3 pt-4 border-t border-white/10">
           <button onClick={onClose} className="flex-1 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-colors">
-            Cancel
+            Close
           </button>
           {round?.id && round.approval_status === "scheduled" && (
             <button
+              onClick={handleCancel}
+              disabled={saving}
+              className="px-4 py-2 rounded-lg bg-red-600/30 hover:bg-red-600/40 text-red-300 text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              Cancel Round
+            </button>
+          )}
+          {round?.id && round.approval_status === "scheduled" && isPastRoundDate && (
+            <button
               onClick={() => handleCompleteOrApprove("completed")}
               disabled={saving}
-              className="flex-1 px-4 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/40 text-amber-300 text-sm font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/40 text-amber-300 text-sm font-medium transition-colors disabled:opacity-50"
             >
               Complete
             </button>
@@ -433,9 +442,18 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
             <button
               onClick={() => handleCompleteOrApprove("approved")}
               disabled={saving}
-              className="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
               Approve
+            </button>
+          )}
+          {round?.id && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save Changes"}
             </button>
           )}
           {!round?.id && (
@@ -444,7 +462,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               disabled={saving}
               className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
-              {saving ? "Saving..." : "Save"}
+              {saving ? "Saving..." : "Create Round"}
             </button>
           )}
         </div>
