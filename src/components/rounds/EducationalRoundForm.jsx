@@ -287,11 +287,11 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           </div>
         )}
 
-        {/* Expected Attendance */}
+        {/* Attendees */}
         {formData.departments.length > 0 && selectedDeptResidents.length > 0 && (
           <div className="border-t border-white/10 pt-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs font-semibold text-white">Expected Attendance</h3>
+              <h3 className="text-xs font-semibold text-white">Attendees</h3>
               <div className="flex gap-2">
                 <button onClick={() => selectAllAttendees(false)} className="text-[10px] text-blue-400 hover:text-blue-300">
                   Select All
