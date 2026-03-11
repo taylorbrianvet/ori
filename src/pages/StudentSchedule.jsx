@@ -22,10 +22,10 @@ export default function StudentSchedule() {
       setIsStudent(user?.role === "student");
     }).catch(() => {});
 
-    // Fetch anesthesia block start from shared HomeTileConfig record
-    base44.entities.HomeTileConfig.filter({ tile_key: "anesthesia_block_start" }).then((results) => {
-      if (results?.length > 0 && results[0].image_url) {
-        setAnesthesiaStartDate(new Date(results[0].image_url + "T12:00:00"));
+    // Fetch anesthesia block start from shared AppSettings record
+    base44.entities.AppSettings.filter({ key: "anesthesia_block_start" }).then((results) => {
+      if (results?.length > 0 && results[0].value) {
+        setAnesthesiaStartDate(new Date(results[0].value + "T12:00:00"));
       } else {
         setAnesthesiaStartDate(yesterday);
       }

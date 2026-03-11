@@ -121,10 +121,10 @@ function AnesthesiaScheduleConfig() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    base44.entities.HomeTileConfig.filter({ tile_key: "anesthesia_block_start" }).then((results) => {
+    base44.entities.AppSettings.filter({ key: "anesthesia_block_start" }).then((results) => {
       if (results?.length > 0) {
         setExistingRecord(results[0]);
-        setStartDate(results[0].image_url); // reusing image_url field to store the date string
+        setStartDate(results[0].value);
       }
     }).catch(() => {});
   }, []);
@@ -133,9 +133,9 @@ function AnesthesiaScheduleConfig() {
     setSaving(true);
     try {
       if (existingRecord?.id) {
-        await base44.entities.HomeTileConfig.update(existingRecord.id, { image_url: startDate });
+        await base44.entities.AppSettings.update(existingRecord.id, { value: startDate });
       } else {
-        const created = await base44.entities.HomeTileConfig.create({ tile_key: "anesthesia_block_start", image_url: startDate });
+        const created = await base44.entities.AppSettings.create({ key: "anesthesia_block_start", value: startDate });
         setExistingRecord(created);
       }
       queryClient.invalidateQueries({ queryKey: ["anesthesia-block-start"] });
