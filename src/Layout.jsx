@@ -169,7 +169,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2.5">
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-7 h-7" style={{ filter: "brightness(0) invert(1)" }} />
-            <span className="text-sm font-semibold text-white">SoL</span>
+            <span className="text-sm font-semibold text-white">ORI</span>
           </div>
           <div className="flex items-center gap-2">
             {currentUser && (
