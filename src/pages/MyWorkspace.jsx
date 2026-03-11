@@ -105,8 +105,8 @@ export default function MyWorkspace() {
     return inResidents || inFaculty;
   });
 
-  const myRoundsLogged = myRounds.length;
-  const myRoundsPending = 0;
+  const myRoundsLogged = myRounds.filter(r => (r.logged_by || []).includes(userEmail)).length;
+  const myRoundsPending = myRounds.length - myRoundsLogged;
 
   // Find clinic schedule entries for this user (by full name or first name match)
   const myClinicEntries = clinicSchedules.filter(e => {
