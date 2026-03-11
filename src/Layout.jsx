@@ -63,7 +63,10 @@ export default function Layout({ children, currentPageName }) {
   const [staffProfile, setStaffProfile] = useState(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [gradientStyle, setGradientStyle] = useState(GRADIENT_CONFIGS[0]);
+  // Two gradient slots for crossfade: "current" fully visible, "next" fading in
+  const [gradientA, setGradientA] = useState(GRADIENT_CONFIGS[0]);
+  const [gradientB, setGradientB] = useState(GRADIENT_CONFIGS[0]);
+  const [showB, setShowB] = useState(false); // which layer is on top
 
   useEffect(() => {
     base44.auth.me().then((u) => {
@@ -79,22 +82,38 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     const idx = PAGE_GRADIENT_MAP[currentPageName] ?? 0;
-    setGradientStyle(GRADIENT_CONFIGS[idx]);
+    const nextGradient = GRADIENT_CONFIGS[idx];
+    if (showB) {
+      // B is on top — load new into A, then fade A in (hide B)
+      setGradientA(nextGradient);
+      requestAnimationFrame(() => requestAnimationFrame(() => setShowB(false)));
+    } else {
+      // A is on top — load new into B, then fade B in
+      setGradientB(nextGradient);
+      requestAnimationFrame(() => requestAnimationFrame(() => setShowB(true)));
+    }
   }, [currentPageName]);
+
+  const BASE_BG = "#0d1a3a"; // deep navy base
 
   return (
     <div className="min-h-screen font-inter flex" style={{ position: "relative" }}>
-      {/* Animated fluid background */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 0,
-          backgroundColor: "#f5ede6",
-          backgroundImage: gradientStyle,
-          transition: "background-image 1.2s ease-in-out",
-        }}
-      />
+      {/* Crossfade background — layer A */}
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0,
+        backgroundColor: BASE_BG,
+        backgroundImage: gradientA,
+        opacity: showB ? 0 : 1,
+        transition: "opacity 1.4s ease-in-out",
+      }} />
+      {/* Crossfade background — layer B */}
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0,
+        backgroundColor: BASE_BG,
+        backgroundImage: gradientB,
+        opacity: showB ? 1 : 0,
+        transition: "opacity 1.4s ease-in-out",
+      }} />
       {/* Desktop Sidebar */}
       <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-black/8 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className={`border-b border-black/8 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
