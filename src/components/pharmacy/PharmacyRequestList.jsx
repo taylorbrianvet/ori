@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { CheckCircle2, RotateCcw } from "lucide-react";
+import { CheckCircle2, RotateCcw, Pencil } from "lucide-react";
+import PharmacyEditModal from "./PharmacyEditModal";
 
 async function setStatus(id, newStatus, label, onRefetch) {
   await base44.entities.PharmacyRefillRequest.update(id, { status: newStatus });
@@ -9,7 +10,9 @@ async function setStatus(id, newStatus, label, onRefetch) {
   onRefetch();
 }
 
-export default function PharmacyRequestList({ requests, title, status, onRefetch }) {
+export default function PharmacyRequestList({ requests, title, status, onRefetch, staffList }) {
+  const [editing, setEditing] = useState(null);
+
   return (
     <div className="glass-card p-4 mb-6">
       <h3 className="text-sm font-semibold text-white mb-4">{title}</h3>
@@ -24,9 +27,16 @@ export default function PharmacyRequestList({ requests, title, status, onRefetch
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/8 text-white/50 font-mono">{req.patient_id}</span>
                 </div>
                 <p className="text-xs text-white/70">{req.medication}</p>
-                <p className="text-[11px] text-white/50 mt-1">{req.clinician_name} ({req.clinician_role}) • {req.service}</p>
+                <p className="text-[11px] text-white/50 mt-1">{req.clinician_name}{req.clinician_role ? ` (${req.clinician_role})` : ""} • {req.service}</p>
               </div>
               <div className="flex items-center gap-1 flex-wrap justify-end">
+                {/* Edit */}
+                <button
+                  onClick={() => setEditing(req)}
+                  className="px-2 py-1 rounded-lg bg-white/8 border border-white/15 hover:bg-white/14 text-white/50 text-[11px] font-medium transition-colors flex items-center gap-1"
+                >
+                  <Pencil className="w-3 h-3" /> Edit
+                </button>
                 {/* Forward actions */}
                 {status === "pending" && (
                   <button
@@ -68,6 +78,15 @@ export default function PharmacyRequestList({ requests, title, status, onRefetch
           </div>
         ))}
       </div>
+
+      {editing && (
+        <PharmacyEditModal
+          request={editing}
+          staffList={staffList}
+          onSaved={() => { setEditing(null); onRefetch(); }}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 }
