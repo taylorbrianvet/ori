@@ -117,13 +117,14 @@ function TileImageEditor({ tile, config }) {
 function AnesthesiaScheduleConfig() {
   const [startDate, setStartDate] = useState("");
   const [saving, setSaving] = useState(false);
+  const [existingRecord, setExistingRecord] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Fetch current anesthesia start date from user settings
-    base44.auth.me().then((user) => {
-      if (user?.anesthesia_block_start_date) {
-        setStartDate(user.anesthesia_block_start_date);
+    base44.entities.HomeTileConfig.filter({ tile_key: "anesthesia_block_start" }).then((results) => {
+      if (results?.length > 0) {
+        setExistingRecord(results[0]);
+        setStartDate(results[0].image_url); // reusing image_url field to store the date string
       }
     }).catch(() => {});
   }, []);
@@ -131,9 +132,14 @@ function AnesthesiaScheduleConfig() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({ anesthesia_block_start_date: startDate });
+      if (existingRecord?.id) {
+        await base44.entities.HomeTileConfig.update(existingRecord.id, { image_url: startDate });
+      } else {
+        const created = await base44.entities.HomeTileConfig.create({ tile_key: "anesthesia_block_start", image_url: startDate });
+        setExistingRecord(created);
+      }
+      queryClient.invalidateQueries({ queryKey: ["anesthesia-block-start"] });
       toast.success("Anesthesia block start date updated");
-      queryClient.invalidateQueries({ queryKey: ["me"] });
     } finally {
       setSaving(false);
     }
@@ -145,18 +151,21 @@ function AnesthesiaScheduleConfig() {
         <Calendar className="w-5 h-5 text-primary" />
         <h3 className="text-lg font-semibold text-white">Anesthesia 3-Week Block</h3>
       </div>
-      <p className="text-sm text-white/60 mb-4">Set the start date for the 3-week anesthesia student schedule block.</p>
+      <p className="text-sm text-white/60 mb-4">Set the Monday start date for the 3-week anesthesia student schedule block.</p>
       <div className="flex gap-3">
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="flex-1 px-4 py-2 rounded-lg border border-white/20 bg-white/8 text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+          className="flex-1 px-4 py-2 rounded-lg border border-white/20 bg-white/10 text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 [color-scheme:dark]"
         />
         <Button onClick={handleSave} disabled={saving} className="text-sm">
           {saving ? "Saving..." : "Save"}
         </Button>
       </div>
+      {startDate && (
+        <p className="text-xs text-white/50 mt-2">Current block starts: {startDate}</p>
+      )}
     </GlassCard>
   );
 }
