@@ -258,15 +258,15 @@ export default function Layout({ children, currentPageName }) {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 26, stiffness: 300 }}
-              className="md:hidden fixed inset-y-0 left-0 z-50 w-72 glass-panel border-r border-black/8"
+              className="md:hidden fixed inset-y-0 left-0 z-50 w-72 glass-panel border-r border-white/10"
             >
-              <div className="p-6 border-b border-black/8">
+              <div className="p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-7 h-7" style={{ filter: "brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(600%) hue-rotate(355deg)" }} />
-                    <span className="text-sm font-semibold text-orange-900">ORI</span>
+                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-7 h-7" style={{ filter: "brightness(0) invert(1)" }} />
+                    <span className="text-sm font-semibold text-white">ORI</span>
                   </div>
-                  <button onClick={() => setMobileOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-orange-500/10 text-orange-800/70">
+                  <button onClick={() => setMobileOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/70">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -281,11 +281,11 @@ export default function Layout({ children, currentPageName }) {
                       onClick={() => setMobileOpen(false)}
                       className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-orange-500/15 text-orange-900"
-                          : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
+                          ? "bg-white/15 text-white"
+                          : "text-white/55 hover:bg-white/10 hover:text-white"
                       }`}
                     >
-                      <item.icon className={`w-[17px] h-[17px] ${isActive ? "text-orange-700" : "text-orange-800/40"}`} />
+                      <item.icon className={`w-[17px] h-[17px] ${isActive ? "text-orange-300" : "text-white/40"}`} />
                       {item.name}
                     </Link>
                   );
@@ -296,11 +296,11 @@ export default function Layout({ children, currentPageName }) {
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                       currentPageName === "Admin"
-                        ? "bg-orange-500/15 text-orange-900"
-                        : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
+                        ? "bg-white/15 text-white"
+                        : "text-white/55 hover:bg-white/10 hover:text-white"
                     }`}
                   >
-                    <Settings className={`w-[17px] h-[17px] ${currentPageName === "Admin" ? "text-orange-700" : "text-orange-800/40"}`} />
+                    <Settings className={`w-[17px] h-[17px] ${currentPageName === "Admin" ? "text-orange-300" : "text-white/40"}`} />
                     Admin
                   </Link>
                 )}
