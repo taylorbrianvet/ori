@@ -4,10 +4,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import PageContainer from "../components/shared/PageContainer";
 import PageHeader from "../components/shared/PageHeader";
 import GlassCard from "../components/shared/GlassCard";
-import { Upload, ImageIcon, CheckCircle2, Loader2, Calendar } from "lucide-react";
+import { Upload, ImageIcon, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "../components/ui/button";
-import { format } from "date-fns";
+import RotationBlockCalendar from "../components/admin/RotationBlockCalendar";
 
 const DEFAULT_TILES = [
   { key: "my_workspace", title: "My Workspace", defaultImage: "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=80" },
