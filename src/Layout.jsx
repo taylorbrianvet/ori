@@ -222,11 +222,11 @@ export default function Layout({ children, currentPageName }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 glass-panel border-b border-black/8">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/10">
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2.5">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-7 h-7" style={{ filter: "brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(600%) hue-rotate(355deg)" }} />
-            <span className="text-sm font-semibold text-orange-900">ORI</span>
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-7 h-7" style={{ filter: "brightness(0) invert(1)" }} />
+            <span className="text-sm font-semibold text-white">ORI</span>
           </div>
           <div className="flex items-center gap-2">
             {currentUser && (
@@ -234,7 +234,7 @@ export default function Layout({ children, currentPageName }) {
             )}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-orange-500/10 transition-colors text-orange-800/70"
+              className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors text-white/70"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
