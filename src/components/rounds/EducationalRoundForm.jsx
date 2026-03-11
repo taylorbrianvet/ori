@@ -355,7 +355,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Journal Assignments */}
-        {formData.event_type === "Journal Club" && selectedDeptResidents.length > 0 && (
+        {formData.event_type === "Journal Club" && formData.departments.length > 0 && selectedDeptResidents.length > 0 && (
           <div className="border-t border-white/10 pt-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-white">Journal Assignments</h3>
