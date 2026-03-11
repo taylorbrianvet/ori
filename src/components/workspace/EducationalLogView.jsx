@@ -1,0 +1,166 @@
+import React, { useState } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQueryClient } from "@tanstack/react-query";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { X, GripVertical } from "lucide-react";
+import { toast } from "sonner";
+import EducationalRoundCard from "./EducationalRoundCard";
+import EducationalDetailPanel from "./EducationalDetailPanel";
+
+export default function EducationalLogView({ myRounds, userEmail, onClose }) {
+  const queryClient = useQueryClient();
+  const [selectedRound, setSelectedRound] = useState(null);
+
+  const pending = myRounds.filter((r) => !(r.logged_by || []).includes(userEmail));
+  const logged = myRounds.filter((r) => (r.logged_by || []).includes(userEmail));
+
+  const handleDragEnd = async (result) => {
+    const { source, destination, draggableId } = result;
+    if (!destination) return;
+    if (source.droppableId === destination.droppableId) return;
+
+    const round = myRounds.find((r) => r.id === draggableId);
+    if (!round) return;
+
+    const isNowLogged = destination.droppableId === "logged";
+    const current = round.logged_by || [];
+    const next = isNowLogged
+      ? [...current, userEmail]
+      : current.filter((x) => x !== userEmail);
+
+    try {
+      await base44.entities.EducationalRound.update(round.id, { logged_by: next });
+      queryClient.invalidateQueries({ queryKey: ["educational-rounds-all"] });
+      toast.success(isNowLogged ? "Marked as logged" : "Moved to pending");
+    } catch {
+      toast.error("Failed to update round");
+    }
+  };
+
+  return (
+    <div className="fixed top-0 right-0 bottom-0 left-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col" style={{ marginLeft: "var(--sidebar-width, 0px)" }}>
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-white/5 flex-shrink-0">
+        <h2 className="text-sm font-semibold text-white">My Educational Rounds Log</h2>
+        <button
+          onClick={onClose}
+          className="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* 3-column layout */}
+      <div className="flex flex-1 min-h-0 overflow-hidden w-full">
+        {/* LEFT: Detail panel */}
+        <div className="w-64 sm:w-80 flex-shrink-0 border-r border-white/10 p-4 overflow-y-auto bg-white/3 min-w-0">
+          {selectedRound ? (
+            <EducationalDetailPanel
+              round={selectedRound}
+              onClose={() => setSelectedRound(null)}
+            />
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <div className="w-12 h-12 rounded-xl bg-white/8 flex items-center justify-center mb-3">
+                <GripVertical className="w-5 h-5 text-white/25" />
+              </div>
+              <p className="text-sm text-white/30">Click any round card to view details</p>
+            </div>
+          )}
+        </div>
+
+        {/* MIDDLE + RIGHT: Kanban columns */}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="flex flex-1 min-w-0 divide-x divide-white/10">
+            {/* MIDDLE: Pending */}
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2 flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+                  <span className="text-[11px] font-bold text-amber-400">{pending.length}</span>
+                </div>
+                <span className="text-sm font-medium text-white/70">Pending</span>
+                <span className="text-xs text-white/30 ml-1">— drag to Logged →</span>
+              </div>
+              <Droppable droppableId="pending">
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`flex-1 overflow-y-auto p-3 space-y-2 transition-colors ${
+                      snapshot.isDraggingOver ? "bg-amber-500/5" : ""
+                    }`}
+                  >
+                    {pending.length === 0 && (
+                      <p className="text-xs text-white/25 text-center py-8">No pending rounds</p>
+                    )}
+                    {pending.map((round, index) => (
+                      <Draggable key={round.id} draggableId={round.id} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <EducationalRoundCard
+                              round={round}
+                              onClick={() => setSelectedRound(round)}
+                              isDragging={snapshot.isDragging}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+
+            {/* RIGHT: Logged */}
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2 flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center">
+                  <span className="text-[11px] font-bold text-green-400">{logged.length}</span>
+                </div>
+                <span className="text-sm font-medium text-white/70">Logged</span>
+              </div>
+              <Droppable droppableId="logged">
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`flex-1 overflow-y-auto p-3 space-y-2 transition-colors ${
+                      snapshot.isDraggingOver ? "bg-green-500/5" : ""
+                    }`}
+                  >
+                    {logged.length === 0 && (
+                      <p className="text-xs text-white/25 text-center py-8">No logged rounds yet</p>
+                    )}
+                    {logged.map((round, index) => (
+                      <Draggable key={round.id} draggableId={round.id} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <EducationalRoundCard
+                              round={round}
+                              onClick={() => setSelectedRound(round)}
+                              isDragging={snapshot.isDragging}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+          </div>
+        </DragDropContext>
+      </div>
+    </div>
+  );
+}
