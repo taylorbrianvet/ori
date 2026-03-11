@@ -82,6 +82,7 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   useEffect(() => {
+    setLogoRotation(r => r + 20);
     const idx = PAGE_GRADIENT_MAP[currentPageName] ?? 0;
     const nextGradient = GRADIENT_CONFIGS[idx];
     if (showB) {
