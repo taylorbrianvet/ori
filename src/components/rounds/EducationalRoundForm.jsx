@@ -131,13 +131,19 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
   const roundDate = formData.date ? new Date(formData.date) : null;
   const isPastRoundDate = roundDate && roundDate < today;
 
-  // Check if any Surgery faculty is selected
+  // Check if any faculty is selected
   const surgeryFacultySelected = formData.faculty_present && formData.faculty_present.length > 0;
   const canApproveForLogging = isPastRoundDate && surgeryFacultySelected;
 
   const handleSave = async () => {
-    if (!formData.date || !formData.event_type || formData.departments.length === 0) {
-      toast.error("Date, event type, and at least one department are required");
+    if (!formData.date || !formData.event_type) {
+      toast.error("Date and event type are required");
+      return;
+    }
+    
+    // If not seminar, require departments
+    if (formData.event_type !== "Seminar" && formData.departments.length === 0) {
+      toast.error("At least one department is required");
       return;
     }
 
@@ -145,15 +151,15 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     try {
       if (round?.id) {
         await base44.entities.EducationalRound.update(round.id, formData);
-        toast.success("Round updated");
+        toast.success("Event updated");
       } else {
         await base44.entities.EducationalRound.create(formData);
-        toast.success("Round created");
+        toast.success("Event created");
       }
       onSaved?.();
       onClose();
     } catch (error) {
-      toast.error("Failed to save round");
+      toast.error("Failed to save event");
       console.error(error);
     } finally {
       setSaving(false);
@@ -165,11 +171,11 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
       setSaving(true);
       try {
         await base44.entities.EducationalRound.update(round.id, { approval_status: "cancelled" });
-        toast.success("Round cancelled");
+        toast.success("Event cancelled");
         onSaved?.();
         onClose();
       } catch (error) {
-        toast.error("Failed to cancel round");
+        toast.error("Failed to cancel event");
       } finally {
         setSaving(false);
       }
@@ -180,21 +186,23 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     setSaving(true);
     try {
       await base44.entities.EducationalRound.update(round.id, { approval_status: action });
-      toast.success(action === "approved" ? "Round approved for logging" : "Round completed");
+      toast.success(action === "approved" ? "Event approved for logging" : "Event completed");
       onSaved?.();
       onClose();
     } catch (error) {
-      toast.error("Failed to update round");
+      toast.error("Failed to update event");
     } finally {
       setSaving(false);
     }
   };
 
+  const isSeminar = formData.event_type === "Seminar";
+
   return (
     <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="glass-card w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">{round?.id ? "Edit Round" : "Add New Round"}</h2>
+          <h2 className="text-lg font-semibold text-white">{round?.id ? "Edit Event" : "Add New Event"}</h2>
           <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/50 flex-shrink-0">
             <X className="w-4 h-4" />
           </button>
@@ -211,58 +219,60 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           />
         </div>
 
-        {/* Departments Multi-Select */}
+        {/* Event Type */}
         <div className="space-y-2">
-          <label className="block text-xs font-medium text-white/70">Departments * (select one or more)</label>
-          <div className="relative">
-            <button
-              onClick={() => setDeptDropdown(!deptDropdown)}
-              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm text-left flex items-center justify-between hover:bg-white/15 transition-colors"
-            >
-              <span>{formData.departments.length > 0 ? formData.departments.join(", ") : "Select departments..."}</span>
-              <ChevronDown className={`w-4 h-4 text-white/50 transition-transform flex-shrink-0 ${deptDropdown ? "rotate-180" : ""}`} />
-            </button>
-            {deptDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm z-50 max-h-48 overflow-y-auto">
-                {DEPARTMENTS.map(d => (
-                  <label key={d} className="flex items-center gap-2 px-3 py-2 hover:bg-white/10 cursor-pointer text-sm text-white/70">
-                    <input
-                      type="checkbox"
-                      checked={formData.departments.includes(d)}
-                      onChange={() => toggleDepartment(d)}
-                      className="w-4 h-4"
-                    />
-                    {d}
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
+          <label className="block text-xs font-medium text-white/70">Event Type *</label>
+          <select
+            value={formData.event_type}
+            onChange={(e) => handleChange("event_type", e.target.value)}
+            className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
+          >
+            <option value="">Select type</option>
+            {EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
         </div>
 
-        {/* Event Type & Topic */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Departments Multi-Select (hidden for Seminars) */}
+        {!isSeminar && (
           <div className="space-y-2">
-            <label className="block text-xs font-medium text-white/70">Event Type *</label>
-            <select
-              value={formData.event_type}
-              onChange={(e) => handleChange("event_type", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
-            >
-              <option value="">Select type</option>
-              {EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
+            <label className="block text-xs font-medium text-white/70">Departments * (select one or more)</label>
+            <div className="relative">
+              <button
+                onClick={() => setDeptDropdown(!deptDropdown)}
+                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm text-left flex items-center justify-between hover:bg-white/15 transition-colors"
+              >
+                <span className="text-white/80">{formData.departments.length > 0 ? formData.departments.join(", ") : "Select departments..."}</span>
+                <ChevronDown className={`w-4 h-4 text-white/60 transition-transform flex-shrink-0 ${deptDropdown ? "rotate-180" : ""}`} />
+              </button>
+              {deptDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white/15 border border-white/20 rounded-lg backdrop-blur-sm z-50 max-h-48 overflow-y-auto">
+                  {DEPARTMENTS.map(d => (
+                    <label key={d} className="flex items-center gap-2 px-3 py-2 hover:bg-white/10 cursor-pointer text-sm text-white/80">
+                      <input
+                        type="checkbox"
+                        checked={formData.departments.includes(d)}
+                        onChange={() => toggleDepartment(d)}
+                        className="w-4 h-4"
+                      />
+                      {d}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="space-y-2">
-            <label className="block text-xs font-medium text-white/70">Topic</label>
-            <input
-              type="text"
-              value={formData.topic || ""}
-              onChange={(e) => handleChange("topic", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
-              placeholder="Topic"
-            />
-          </div>
+        )}
+
+        {/* Topic */}
+        <div className="space-y-2">
+          <label className="block text-xs font-medium text-white/70">Topic</label>
+          <input
+            type="text"
+            value={formData.topic || ""}
+            onChange={(e) => handleChange("topic", e.target.value)}
+            className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
+            placeholder="Topic"
+          />
         </div>
 
         {/* Times & Clinician */}
@@ -282,7 +292,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         </div>
 
         {/* Presenters */}
-        {formData.departments.length > 0 && selectedDeptResidents.length > 0 && (
+        {(isSeminar || (formData.departments.length > 0 && selectedDeptResidents.length > 0)) && (
           <div className="border-t border-white/10 pt-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-white">Presenters</h3>
@@ -312,7 +322,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Attendees */}
-        {formData.departments.length > 0 && selectedDeptResidents.length > 0 && (
+        {(isSeminar || (formData.departments.length > 0 && selectedDeptResidents.length > 0)) && (
           <div className="border-t border-white/10 pt-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-white">Attendees</h3>
@@ -342,7 +352,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Faculty Present */}
-        {formData.departments.length > 0 && selectedDeptFaculty.length > 0 && (
+        {(isSeminar || (formData.departments.length > 0 && selectedDeptFaculty.length > 0)) && (
           <div className="border-t border-white/10 pt-4">
             <h3 className="text-xs font-semibold text-white mb-2">Faculty Present</h3>
             <div className="space-y-1 bg-white/5 p-3 rounded-lg mb-2 max-h-32 overflow-y-auto">
@@ -380,7 +390,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
         )}
 
         {/* Journal Assignments */}
-        {formData.event_type === "Journal Club" && formData.departments.length > 0 && selectedDeptResidents.length > 0 && (
+        {formData.event_type === "Journal Club" && (isSeminar || (formData.departments.length > 0 && selectedDeptResidents.length > 0)) && (
           <div className="border-t border-white/10 pt-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-white">Journal Assignments</h3>
@@ -426,7 +436,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               disabled={saving}
               className="px-4 py-2 rounded-lg bg-red-600/30 hover:bg-red-600/40 text-red-300 text-sm font-medium transition-colors disabled:opacity-50"
             >
-              Cancel Round
+              Cancel Event
             </button>
           )}
           {round?.id && round.approval_status === "scheduled" && isPastRoundDate && (
@@ -462,7 +472,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
               disabled={saving}
               className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
-              {saving ? "Saving..." : "Create Round"}
+              {saving ? "Saving..." : "Create Event"}
             </button>
           )}
         </div>
