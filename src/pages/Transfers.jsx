@@ -251,7 +251,7 @@ export default function Transfers() {
                   placeholder="Search by patient, service, clinician, ID…"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/6 border border-white/12 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-white/25"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/35 focus:outline-none focus:border-white/35"
                 />
               </div>
             </div>
