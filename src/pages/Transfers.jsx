@@ -7,7 +7,7 @@ const DEFAULT_HERO = "https://images.unsplash.com/photo-1551076805-e1869033e561?
 import PageContainer from "../components/shared/PageContainer";
 import TransferForm from "../components/transfers/TransferForm";
 import TransferCard from "../components/transfers/TransferCard";
-import ServiceGroupedList from "../components/transfers/ServiceGroupedList";
+import ServiceGroupedList from "@/components/transfers/ServiceGroupedList";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Returns 6am local-time boundaries as UTC-equivalent Date objects for bucketing transfers
