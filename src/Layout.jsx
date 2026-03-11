@@ -132,7 +132,7 @@ export default function Layout({ children, currentPageName }) {
             );
           })}
         </nav>
-        <div className="p-4 border-t border-white/10 space-y-1">
+        <div className="p-4 border-t border-black/8 space-y-1">
           <Link
             to={createPageUrl("Pharmacy")}
             title={!sidebarOpen ? "Pharmacy" : ""}
