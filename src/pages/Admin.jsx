@@ -115,12 +115,34 @@ function TileImageEditor({ tile, config }) {
 
 
 
+// Which services an admin can manage rotation blocks for
+// Surgery + Neurosurgery share the same admin department
+const SERVICE_ADMIN_MAP = {
+  Anesthesia: ["Anesthesia"],
+  Surgery: ["Surgery", "Neurosurgery"],
+  Neurosurgery: ["Surgery", "Neurosurgery"],
+};
+
+function getEditableServices(staffProfile) {
+  if (!staffProfile) return [];
+  const dept = staffProfile.department || "";
+  return SERVICE_ADMIN_MAP[dept] || [];
+}
+
 export default function Admin() {
   const [user, setUser] = useState(null);
+  const [staffProfile, setStaffProfile] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).finally(() => setAuthLoading(false));
+    base44.auth.me().then((u) => {
+      setUser(u);
+      if (u?.email) {
+        base44.entities.Staff.filter({ email: u.email }).then((results) => {
+          if (results?.length > 0) setStaffProfile(results[0]);
+        }).catch(() => {});
+      }
+    }).finally(() => setAuthLoading(false));
   }, []);
 
   const { data: configs, isLoading } = useQuery({
@@ -155,15 +177,36 @@ export default function Admin() {
 
   const configMap = Object.fromEntries(configs.map((c) => [c.tile_key, c]));
 
+  // Super admins (no staff profile or unrecognized dept) can edit all services
+  const editableServices = staffProfile
+    ? getEditableServices(staffProfile)
+    : ["Anesthesia", "Surgery", "Neurosurgery"];
+
+  const SERVICE_LABELS = {
+    Anesthesia: { label: "Anesthesia", color: "text-purple-300" },
+    Surgery: { label: "Surgery", color: "text-blue-300" },
+    Neurosurgery: { label: "Neurosurgery", color: "text-emerald-300" },
+  };
+
   return (
     <PageContainer>
       <PageHeader title="Admin" subtitle="Manage system settings and home tile images." />
-      
-      {/* Schedule Configuration */}
-      <div className="mb-8">
-        <h2 className="text-xl font-bold text-white mb-4">Schedule Settings</h2>
-        <AnesthesiaScheduleConfig />
-      </div>
+
+      {/* Rotation Block Calendars */}
+      {editableServices.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-xl font-bold text-white mb-4">Rotation Block Schedules</h2>
+          <p className="text-sm text-white/50 mb-6">Click any date to mark it as a block start. The gap between two starts defines the block length. Blocks go live at 8am on their start date.</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {editableServices.map((svc) => (
+              <GlassCard key={svc} className="p-6">
+                <h3 className={`text-base font-semibold mb-4 ${SERVICE_LABELS[svc].color}`}>{SERVICE_LABELS[svc].label}</h3>
+                <RotationBlockCalendar service={svc} />
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Home Tile Images */}
       <div>
