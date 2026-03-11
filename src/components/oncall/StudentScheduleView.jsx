@@ -5,7 +5,7 @@ import StudentShiftSlot from "./StudentShiftSlot";
 import { format, addDays, startOfWeek, getDay, isToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 
-export default function StudentScheduleView({ service: initialService, blockStartDate, blockType = "2-week", currentUser, canEdit = false }) {
+export default function StudentScheduleView({ service: initialService, blockStartDate, numWeeks, blockType = "2-week", currentUser, canEdit = false }) {
   const [selectedService, setSelectedService] = useState(initialService);
   
   useEffect(() => {
