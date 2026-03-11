@@ -160,6 +160,22 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     }
   };
 
+  const handleCancel = async () => {
+    if (round?.id) {
+      setSaving(true);
+      try {
+        await base44.entities.EducationalRound.update(round.id, { approval_status: "cancelled" });
+        toast.success("Round cancelled");
+        onSaved?.();
+        onClose();
+      } catch (error) {
+        toast.error("Failed to cancel round");
+      } finally {
+        setSaving(false);
+      }
+    }
+  };
+
   const handleCompleteOrApprove = async (action) => {
     setSaving(true);
     try {
