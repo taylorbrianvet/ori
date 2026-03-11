@@ -159,7 +159,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
           )}
           {sidebarOpen && (
-            <p className="text-[11px] text-white/30 text-center pt-1">© 2026 Streamlined Operations Link</p>
+            <p className="text-[11px] text-white/30 text-center pt-1">© 2026 ORI</p>
           )}
         </div>
       </aside>
