@@ -209,12 +209,24 @@ export default function Admin() {
       )}
 
       {/* Home Tile Images */}
-      <div>
+      <div className="mb-10">
         <h2 className="text-xl font-bold text-white mb-4">Home Tile Images</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {DEFAULT_TILES.map((tile) => (
             <TileImageEditor key={tile.key} tile={tile} config={configMap[tile.key]} />
           ))}
+        </div>
+      </div>
+
+      {/* Interservice Transfers Hero Image */}
+      <div>
+        <h2 className="text-xl font-bold text-white mb-1">Interservice Transfers Hero Image</h2>
+        <p className="text-sm text-white/45 mb-4">The banner image displayed at the top of the Interservice Transfers page.</p>
+        <div className="max-w-sm">
+          <TileImageEditor
+            tile={{ key: "transfers_hero", title: "Transfers Hero", defaultImage: "https://images.unsplash.com/photo-1551076805-e1869033e561?w=1600&q=80" }}
+            config={configMap["transfers_hero"]}
+          />
         </div>
       </div>
     </PageContainer>
