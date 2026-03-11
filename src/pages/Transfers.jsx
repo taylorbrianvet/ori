@@ -58,6 +58,24 @@ function groupByPatient(transferList) {
   return Object.values(grouped);
 }
 
+// Group a flat transfer list by receiving service, each service containing patient groups
+function groupByService(transferList) {
+  const byService = {};
+  transferList.forEach(t => {
+    const svc = t.receiving_service || "Unknown";
+    if (!byService[svc]) byService[svc] = {};
+    const key = t.patient_id || t.patient_name;
+    if (!byService[svc][key]) byService[svc][key] = [];
+    byService[svc][key].push(t);
+  });
+  return Object.entries(byService)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([service, patientsObj]) => ({
+      service,
+      patientGroups: Object.values(patientsObj),
+    }));
+}
+
 const TABS = [
   { id: "today", label: "Today's Transfers" },
   { id: "upcoming", label: "Upcoming Transfers" },
