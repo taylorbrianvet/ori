@@ -59,11 +59,19 @@ function groupByPatient(transferList) {
   return Object.values(grouped);
 }
 
+// Normalize neurology-related services to a single label
+function normalizeService(svc) {
+  if (!svc) return "Unknown";
+  const lower = svc.toLowerCase();
+  if (lower.includes("neuro")) return "Neurology";
+  return svc;
+}
+
 // Group a flat transfer list by receiving service, each service containing patient groups
 function groupByService(transferList) {
   const byService = {};
   transferList.forEach(t => {
-    const svc = t.receiving_service || "Unknown";
+    const svc = normalizeService(t.receiving_service);
     if (!byService[svc]) byService[svc] = {};
     const key = t.patient_id || t.patient_name;
     if (!byService[svc][key]) byService[svc][key] = [];
