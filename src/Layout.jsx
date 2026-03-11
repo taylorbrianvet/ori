@@ -115,18 +115,18 @@ export default function Layout({ children, currentPageName }) {
         transition: "opacity 1.4s ease-in-out",
       }} />
       {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-black/8 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
-        <div className={`border-b border-black/8 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
+      <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
+        <div className={`border-b border-white/10 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
           <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(600%) hue-rotate(355deg)" }} />
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) invert(1)" }} />
             {sidebarOpen && (
              <div>
-               <h1 className="text-base font-semibold text-orange-900 tracking-tight">ORI</h1>
-               <p className="text-[11px] text-orange-800/60 font-medium">Hospital Management</p>
+               <h1 className="text-base font-semibold text-white tracking-tight">ORI</h1>
+               <p className="text-[11px] text-white/50 font-medium">Hospital Management</p>
              </div>
             )}
             {!sidebarOpen && (
-             <h1 className="text-xs font-semibold text-orange-900 tracking-tight">ORI</h1>
+             <h1 className="text-xs font-semibold text-white tracking-tight">ORI</h1>
             )}
           </div>
         </div>
@@ -142,17 +142,17 @@ export default function Layout({ children, currentPageName }) {
                   sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
                 } text-sm font-medium ${
                   isActive
-                    ? "bg-orange-500/15 text-orange-900 shadow-sm"
-                    : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
+                    ? "bg-white/15 text-white shadow-sm"
+                    : "text-white/55 hover:bg-white/10 hover:text-white"
                 }`}
               >
-                <item.icon className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-orange-700" : "text-orange-800/40"}`} />
+                <item.icon className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-orange-300" : "text-white/40"}`} />
                 {sidebarOpen && <span>{item.name}</span>}
               </Link>
             );
           })}
         </nav>
-        <div className="p-4 border-t border-black/8 space-y-1">
+        <div className="p-4 border-t border-white/10 space-y-1">
           <Link
             to={createPageUrl("Pharmacy")}
             title={!sidebarOpen ? "Pharmacy" : ""}
@@ -160,11 +160,11 @@ export default function Layout({ children, currentPageName }) {
               sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
             } text-sm font-medium ${
               currentPageName === "Pharmacy"
-                ? "bg-orange-500/15 text-orange-900 shadow-sm"
-                : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
+                ? "bg-white/15 text-white shadow-sm"
+                : "text-white/55 hover:bg-white/10 hover:text-white"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-orange-700" : "text-orange-800/40"}`} />
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-orange-300" : "text-white/40"}`} />
             {sidebarOpen && <span>Pharmacy</span>}
           </Link>
 
@@ -175,11 +175,11 @@ export default function Layout({ children, currentPageName }) {
               sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
             } text-sm font-medium ${
               currentPageName === "Directory"
-                ? "bg-orange-500/15 text-orange-900 shadow-sm"
-                : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
+                ? "bg-white/15 text-white shadow-sm"
+                : "text-white/55 hover:bg-white/10 hover:text-white"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-orange-700" : "text-orange-800/40"}`} />
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-orange-300" : "text-white/40"}`} />
             {sidebarOpen && <span>Directory</span>}
           </Link>
           {isAdmin && (
@@ -190,11 +190,11 @@ export default function Layout({ children, currentPageName }) {
                 sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
               } text-sm font-medium ${
                 currentPageName === "Admin"
-                  ? "bg-orange-500/15 text-orange-900 shadow-sm"
-                  : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-white/55 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <Settings className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-orange-700" : "text-orange-800/40"}`} />
+              <Settings className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-orange-300" : "text-white/40"}`} />
               {sidebarOpen && <span>Admin</span>}
             </Link>
           )}
@@ -202,7 +202,7 @@ export default function Layout({ children, currentPageName }) {
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             title={sidebarOpen ? "Collapse" : "Expand"}
-            className="w-full flex items-center justify-center py-2 mt-2 rounded-xl text-orange-800/40 hover:text-orange-900 hover:bg-orange-500/10 transition-colors text-xs font-medium"
+            className="w-full flex items-center justify-center py-2 mt-2 rounded-xl text-white/30 hover:text-white hover:bg-white/10 transition-colors text-xs font-medium"
           >
             {sidebarOpen ? "◄" : "►"}
           </button>
@@ -210,13 +210,13 @@ export default function Layout({ children, currentPageName }) {
           {/* User profile at bottom of sidebar */}
           {currentUser && sidebarOpen && (
             <div className="pt-2 px-1">
-              <button onClick={() => setShowEditProfile(true)} className="w-full text-left hover:bg-orange-500/8 rounded-xl px-1 py-1 transition-colors">
+              <button onClick={() => setShowEditProfile(true)} className="w-full text-left hover:bg-white/8 rounded-xl px-1 py-1 transition-colors">
                 <UserAvatar user={currentUser} staffProfile={staffProfile} />
               </button>
             </div>
           )}
           {sidebarOpen && (
-            <p className="text-[11px] text-orange-800/30 text-center pt-1">© 2026 ORI</p>
+            <p className="text-[11px] text-white/25 text-center pt-1">© 2026 ORI</p>
           )}
         </div>
       </aside>
