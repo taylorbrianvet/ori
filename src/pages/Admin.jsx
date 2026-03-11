@@ -113,61 +113,7 @@ function TileImageEditor({ tile, config }) {
   );
 }
 
-function AnesthesiaScheduleConfig() {
-  const [startDate, setStartDate] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [existingRecord, setExistingRecord] = useState(null);
-  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    base44.entities.AppSettings.filter({ key: "anesthesia_block_start" }).then((results) => {
-      if (results?.length > 0) {
-        setExistingRecord(results[0]);
-        setStartDate(results[0].value);
-      }
-    }).catch(() => {});
-  }, []);
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      if (existingRecord?.id) {
-        await base44.entities.AppSettings.update(existingRecord.id, { value: startDate });
-      } else {
-        const created = await base44.entities.AppSettings.create({ key: "anesthesia_block_start", value: startDate });
-        setExistingRecord(created);
-      }
-      queryClient.invalidateQueries({ queryKey: ["anesthesia-block-start"] });
-      toast.success("Anesthesia block start date updated");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <GlassCard className="p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <Calendar className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-semibold text-white">Anesthesia 3-Week Block</h3>
-      </div>
-      <p className="text-sm text-white/60 mb-4">Set the Monday start date for the 3-week anesthesia student schedule block.</p>
-      <div className="flex gap-3">
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="flex-1 px-4 py-2 rounded-lg border border-white/20 bg-white/10 text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 [color-scheme:dark]"
-        />
-        <Button onClick={handleSave} disabled={saving} className="text-sm">
-          {saving ? "Saving..." : "Save"}
-        </Button>
-      </div>
-      {startDate && (
-        <p className="text-xs text-white/50 mt-2">Current block starts: {startDate}</p>
-      )}
-    </GlassCard>
-  );
-}
 
 export default function Admin() {
   const [user, setUser] = useState(null);
