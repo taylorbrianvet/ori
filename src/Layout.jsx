@@ -140,11 +140,11 @@ export default function Layout({ children, currentPageName }) {
               sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
             } text-sm font-medium ${
               currentPageName === "Pharmacy"
-                ? "bg-white/15 text-white shadow-sm"
-                : "text-white/55 hover:bg-white/10 hover:text-white/90"
+                ? "bg-orange-500/15 text-orange-900 shadow-sm"
+                : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-white" : "text-white/50"}`} />
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-orange-700" : "text-orange-800/40"}`} />
             {sidebarOpen && <span>Pharmacy</span>}
           </Link>
 
@@ -155,11 +155,11 @@ export default function Layout({ children, currentPageName }) {
               sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
             } text-sm font-medium ${
               currentPageName === "Directory"
-                ? "bg-white/15 text-white shadow-sm"
-                : "text-white/55 hover:bg-white/10 hover:text-white/90"
+                ? "bg-orange-500/15 text-orange-900 shadow-sm"
+                : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-white" : "text-white/50"}`} />
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-orange-700" : "text-orange-800/40"}`} />
             {sidebarOpen && <span>Directory</span>}
           </Link>
           {isAdmin && (
@@ -170,11 +170,11 @@ export default function Layout({ children, currentPageName }) {
                 sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
               } text-sm font-medium ${
                 currentPageName === "Admin"
-                  ? "bg-white/15 text-white shadow-sm"
-                  : "text-white/55 hover:bg-white/10 hover:text-white/90"
+                  ? "bg-orange-500/15 text-orange-900 shadow-sm"
+                  : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
               }`}
             >
-              <Settings className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-white" : "text-white/50"}`} />
+              <Settings className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-orange-700" : "text-orange-800/40"}`} />
               {sidebarOpen && <span>Admin</span>}
             </Link>
           )}
@@ -182,7 +182,7 @@ export default function Layout({ children, currentPageName }) {
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             title={sidebarOpen ? "Collapse" : "Expand"}
-            className="w-full flex items-center justify-center py-2 mt-2 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition-colors text-xs font-medium"
+            className="w-full flex items-center justify-center py-2 mt-2 rounded-xl text-orange-800/40 hover:text-orange-900 hover:bg-orange-500/10 transition-colors text-xs font-medium"
           >
             {sidebarOpen ? "◄" : "►"}
           </button>
@@ -190,13 +190,13 @@ export default function Layout({ children, currentPageName }) {
           {/* User profile at bottom of sidebar */}
           {currentUser && sidebarOpen && (
             <div className="pt-2 px-1">
-              <button onClick={() => setShowEditProfile(true)} className="w-full text-left hover:bg-white/8 rounded-xl px-1 py-1 transition-colors">
+              <button onClick={() => setShowEditProfile(true)} className="w-full text-left hover:bg-orange-500/8 rounded-xl px-1 py-1 transition-colors">
                 <UserAvatar user={currentUser} staffProfile={staffProfile} />
               </button>
             </div>
           )}
           {sidebarOpen && (
-            <p className="text-[11px] text-white/30 text-center pt-1">© 2026 ORI</p>
+            <p className="text-[11px] text-orange-800/30 text-center pt-1">© 2026 ORI</p>
           )}
         </div>
       </aside>
