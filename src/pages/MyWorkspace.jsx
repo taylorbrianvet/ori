@@ -178,9 +178,9 @@ export default function MyWorkspace() {
               }`}
             >
               <Bell className="w-3.5 h-3.5 inline mr-1.5" />Notifications
-              {(pendingDiagnostics.length + pendingRefills.length) > 0 && (
+              {(pendingDiagnostics.length + visibleRefills.length) > 0 && (
                 <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {pendingDiagnostics.length + pendingRefills.length}
+                  {pendingDiagnostics.length + visibleRefills.length}
                 </span>
               )}
             </button>
