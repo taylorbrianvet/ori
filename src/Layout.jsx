@@ -89,7 +89,7 @@ export default function Layout({ children, currentPageName }) {
     const step = (timestamp) => {
       if (lastTime !== null) {
         const delta = timestamp - lastTime;
-        logoBaseRotation.current += delta * 0.02; // ~1 full rotation per ~18s
+        logoBaseRotation.current += delta * 0.014; // ~1 full rotation per ~25s
         setLogoRotation(logoBaseRotation.current);
       }
       lastTime = timestamp;
