@@ -62,6 +62,7 @@ export default function Layout({ children, currentPageName }) {
   const [staffProfile, setStaffProfile] = useState(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [gradientStyle, setGradientStyle] = useState(GRADIENT_CONFIGS[0]);
 
   useEffect(() => {
     base44.auth.me().then((u) => {
@@ -75,8 +76,24 @@ export default function Layout({ children, currentPageName }) {
     }).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const idx = PAGE_GRADIENT_MAP[currentPageName] ?? 0;
+    setGradientStyle(GRADIENT_CONFIGS[idx]);
+  }, [currentPageName]);
+
   return (
-    <div className="min-h-screen font-inter flex">
+    <div className="min-h-screen font-inter flex" style={{ position: "relative" }}>
+      {/* Animated fluid background */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          backgroundColor: "#f5ede6",
+          backgroundImage: gradientStyle,
+          transition: "background-image 1.2s ease-in-out",
+        }}
+      />
       {/* Desktop Sidebar */}
       <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-white/10 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className={`border-b border-white/10 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
