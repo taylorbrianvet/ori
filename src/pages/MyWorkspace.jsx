@@ -6,6 +6,7 @@ import PageContainer from "../components/shared/PageContainer";
 import SurgicalLogForm from "../components/surgical/SurgicalLogForm";
 import WorkspaceProfile from "../components/workspace/WorkspaceProfile";
 import ProcedureLogView from "../components/workspace/ProcedureLogView";
+import EducationalLogView from "../components/workspace/EducationalLogView";
 import ClinicScheduleCalendar from "../components/clinic/ClinicScheduleCalendar";
 import NotificationSettings from "../components/workspace/NotificationSettings";
 import WorkspaceRefillsPanel from "../components/workspace/WorkspaceRefillsPanel";
