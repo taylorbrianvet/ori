@@ -28,13 +28,13 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
 
   // Get residents for selected departments
   const selectedDeptResidents = staffList
-    .filter(s => formData.departments.includes(s.department) && s.role === "Resident")
+    .filter(s => (formData.departments || []).includes(s.department) && s.role === "Resident")
     .map(s => s.first_name + " " + s.last_name)
     .sort();
 
   // Get faculty for selected departments
   const selectedDeptFaculty = staffList
-    .filter(s => formData.departments.includes(s.department) && s.role === "Faculty")
+    .filter(s => (formData.departments || []).includes(s.department) && s.role === "Faculty")
     .map(s => s.first_name + " " + s.last_name)
     .sort();
 
