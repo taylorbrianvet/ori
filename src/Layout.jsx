@@ -122,11 +122,11 @@ export default function Layout({ children, currentPageName }) {
                   sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
                 } text-sm font-medium ${
                   isActive
-                    ? "bg-white/15 text-white shadow-sm"
-                    : "text-white/55 hover:bg-white/10 hover:text-white/90"
+                    ? "bg-orange-500/15 text-orange-900 shadow-sm"
+                    : "text-orange-900/50 hover:bg-orange-500/10 hover:text-orange-900"
                 }`}
               >
-                <item.icon className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-white" : "text-white/50"}`} />
+                <item.icon className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-orange-700" : "text-orange-800/40"}`} />
                 {sidebarOpen && <span>{item.name}</span>}
               </Link>
             );
