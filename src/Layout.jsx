@@ -6,18 +6,19 @@ import EditMyProfileModal from "@/components/shared/EditMyProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 
-// Each page gets a distinct radial gradient configuration (same colors, different positions/sizes)
+// Dark navy base + warm orange/amber radial blobs — matching the sunset-to-ocean image
+// Each config shifts the blob positions for a fluid per-page feel
 const GRADIENT_CONFIGS = [
-  // config 0
-  "radial-gradient(ellipse 80% 60% at 15% 30%, rgba(230,80,30,0.55) 0%, transparent 65%), radial-gradient(ellipse 70% 55% at 80% 65%, rgba(245,150,30,0.50) 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 50% 90%, rgba(235,110,20,0.35) 0%, transparent 55%)",
-  // config 1
-  "radial-gradient(ellipse 75% 55% at 75% 25%, rgba(230,80,30,0.55) 0%, transparent 65%), radial-gradient(ellipse 65% 50% at 20% 70%, rgba(245,150,30,0.50) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 55% 50%, rgba(235,110,20,0.30) 0%, transparent 55%)",
-  // config 2
-  "radial-gradient(ellipse 85% 50% at 50% 60%, rgba(230,80,30,0.50) 0%, transparent 65%), radial-gradient(ellipse 60% 60% at 90% 20%, rgba(245,150,30,0.45) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 10% 85%, rgba(235,110,20,0.40) 0%, transparent 55%)",
-  // config 3
-  "radial-gradient(ellipse 70% 65% at 30% 70%, rgba(230,80,30,0.55) 0%, transparent 65%), radial-gradient(ellipse 75% 50% at 70% 20%, rgba(245,150,30,0.50) 0%, transparent 60%), radial-gradient(ellipse 45% 55% at 85% 75%, rgba(235,110,20,0.35) 0%, transparent 55%)",
-  // config 4
-  "radial-gradient(ellipse 90% 45% at 60% 15%, rgba(230,80,30,0.50) 0%, transparent 65%), radial-gradient(ellipse 55% 70% at 15% 55%, rgba(245,150,30,0.48) 0%, transparent 60%), radial-gradient(ellipse 60% 45% at 75% 85%, rgba(235,110,20,0.38) 0%, transparent 55%)",
+  // config 0 — orange bottom-left, blue top-right
+  "radial-gradient(ellipse 70% 60% at 10% 85%, rgba(220,90,20,0.90) 0%, transparent 60%), radial-gradient(ellipse 65% 55% at 85% 10%, rgba(30,80,200,0.75) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 50% 45%, rgba(180,60,10,0.30) 0%, transparent 55%)",
+  // config 1 — orange center-left, blue top-right, hint bottom-right
+  "radial-gradient(ellipse 65% 65% at 20% 70%, rgba(220,90,20,0.85) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 15%, rgba(25,70,210,0.78) 0%, transparent 60%), radial-gradient(ellipse 45% 40% at 75% 80%, rgba(15,40,140,0.45) 0%, transparent 55%)",
+  // config 2 — orange bottom, blue top-center
+  "radial-gradient(ellipse 80% 55% at 30% 90%, rgba(215,85,15,0.88) 0%, transparent 60%), radial-gradient(ellipse 70% 55% at 70% 5%, rgba(35,85,210,0.72) 0%, transparent 58%), radial-gradient(ellipse 40% 35% at 15% 20%, rgba(200,70,10,0.25) 0%, transparent 50%)",
+  // config 3 — orange left, blue right-center
+  "radial-gradient(ellipse 60% 70% at 5% 60%, rgba(225,85,18,0.90) 0%, transparent 60%), radial-gradient(ellipse 65% 60% at 90% 35%, rgba(20,65,205,0.78) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 55% 90%, rgba(170,55,8,0.28) 0%, transparent 52%)",
+  // config 4 — orange bottom-center, blue top-left
+  "radial-gradient(ellipse 75% 55% at 45% 95%, rgba(218,88,16,0.88) 0%, transparent 60%), radial-gradient(ellipse 60% 55% at 15% 10%, rgba(28,75,215,0.75) 0%, transparent 58%), radial-gradient(ellipse 45% 40% at 88% 55%, rgba(12,38,150,0.42) 0%, transparent 52%)",
 ];
 
 const PAGE_GRADIENT_MAP = {
