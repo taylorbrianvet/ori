@@ -7,7 +7,7 @@ const DEPARTMENTS = ["Surgery", "Internal Medicine", "Emergency & Critical Care"
 const EVENT_TYPES = ["Journal Club", "Textbook Review", "Morbidity & Mortality", "Formal Case Presentation", "Seminar", "Other"];
 
 export default function EducationalRoundForm({ round, onClose, onSaved, staffList = [] }) {
-  const [formData, setFormData] = useState(round || {
+  const [formData, setFormData] = useState({
     date: "",
     departments: [],
     event_type: "",
@@ -21,7 +21,8 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     attendance: [],
     faculty_present: [],
     journal_assignments: [],
-    approval_status: "scheduled"
+    approval_status: "scheduled",
+    ...round
   });
   const [saving, setSaving] = useState(false);
   const [deptDropdown, setDeptDropdown] = useState(false);
