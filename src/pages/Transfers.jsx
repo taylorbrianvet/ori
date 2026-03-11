@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Plus, X, ArrowLeftRight, Search } from "lucide-react";
+
+const DEFAULT_HERO = "https://images.unsplash.com/photo-1551076805-e1869033e561?w=1600&q=80";
 import PageContainer from "../components/shared/PageContainer";
 import TransferForm from "../components/transfers/TransferForm";
 import TransferCard from "../components/transfers/TransferCard";
