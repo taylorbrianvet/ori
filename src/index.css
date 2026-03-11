@@ -65,8 +65,8 @@
   }
   body {
     @apply font-inter antialiased;
-    color: #1a1208;
-    background-color: #f5f0eb;
+    color: rgba(255, 255, 255, 0.92);
+    background-color: #0d1a3a;
     min-height: 100vh;
   }
 }
