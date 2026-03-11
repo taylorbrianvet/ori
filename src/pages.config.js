@@ -96,7 +96,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "EducationalRounds",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };
