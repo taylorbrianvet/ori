@@ -69,7 +69,7 @@ export default function Layout({ children, currentPageName }) {
               </div>
             )}
             {!sidebarOpen && (
-              <h1 className="text-xs font-semibold text-white tracking-tight">SoL</h1>
+              <h1 className="text-xs font-semibold text-white tracking-tight">ORI</h1>
             )}
           </div>
         </div>
