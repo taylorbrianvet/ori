@@ -13,22 +13,25 @@ export default function StudentSchedule() {
   const [anesthesiaStartDate, setAnesthesiaStartDate] = useState(null);
 
   useEffect(() => {
+    const today = startOfDay(new Date());
+    const yesterday = addDays(today, -1);
+    setBlockStartDate(yesterday);
+
     base44.auth.me().then((user) => {
       setCurrentUser(user);
       setIsStudent(user?.role === "student");
-      
-      // For 2-week services (Neurosurgery, Surgery): yesterday
-      const today = startOfDay(new Date());
-      const yesterday = addDays(today, -1);
-      setBlockStartDate(yesterday);
+    }).catch(() => {});
 
-      // For 3-week service (Anesthesia): fetch from admin config or use yesterday
-      if (user?.anesthesia_block_start_date) {
-        setAnesthesiaStartDate(new Date(user.anesthesia_block_start_date));
+    // Fetch anesthesia block start from shared HomeTileConfig record
+    base44.entities.HomeTileConfig.filter({ tile_key: "anesthesia_block_start" }).then((results) => {
+      if (results?.length > 0 && results[0].image_url) {
+        setAnesthesiaStartDate(new Date(results[0].image_url + "T12:00:00"));
       } else {
         setAnesthesiaStartDate(yesterday);
       }
-    }).catch(() => {});
+    }).catch(() => {
+      setAnesthesiaStartDate(yesterday);
+    });
   }, []);
 
   if (!isStudent) {
