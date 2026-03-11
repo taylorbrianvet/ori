@@ -68,6 +68,8 @@ export default function Layout({ children, currentPageName }) {
   const [gradientB, setGradientB] = useState(GRADIENT_CONFIGS[0]);
   const [showB, setShowB] = useState(false); // which layer is on top
   const [logoRotation, setLogoRotation] = useState(0);
+  const logoBaseRotation = useRef(0);
+  const logoAnimRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then((u) => {
