@@ -177,10 +177,10 @@ export default function Admin() {
 
   const configMap = Object.fromEntries(configs.map((c) => [c.tile_key, c]));
 
-  // Super admins (no staff profile or unrecognized dept) can edit all services
-  const editableServices = staffProfile
-    ? getEditableServices(staffProfile)
-    : ["Anesthesia", "Surgery", "Neurosurgery"];
+  // Admins always get all services; service-specific admins are limited by dept
+  const editableServices = user?.role === "admin"
+    ? ["Anesthesia", "Surgery", "Neurosurgery"]
+    : getEditableServices(staffProfile);
 
   const SERVICE_LABELS = {
     Anesthesia: { label: "Anesthesia", color: "text-purple-300" },
