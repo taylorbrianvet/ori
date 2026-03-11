@@ -1,243 +1,221 @@
-import { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PageContainer from "../components/shared/PageContainer";
 import PageHeader from "../components/shared/PageHeader";
+import SectionHeader from "../components/shared/SectionHeader";
 import EducationalRoundForm from "../components/rounds/EducationalRoundForm";
-import { Plus, ChevronLeft, ChevronRight, Edit2 } from "lucide-react";
-import { toast } from "sonner";
+import { ChevronLeft, ChevronRight, Plus, Calendar } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
+import { startOfWeek, addDays, format, isSameDay } from "date-fns";
 
 const DEPARTMENTS = ["Surgery", "Internal Medicine", "Emergency & Critical Care", "Neurology", "Oncology", "Dermatology", "Cardiology", "Ophthalmology", "Radiology", "Anesthesia"];
 
-function getWeekStart(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff));
-}
-
-function getWeekDates(weekStart) {
-  const dates = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(weekStart);
-    d.setDate(d.getDate() + i);
-    dates.push(d);
-  }
-  return dates;
-}
-
-function formatDate(date) {
-  return date.toISOString().split("T")[0];
-}
-
-function formatDisplayDate(date) {
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function formatDayOfWeek(date) {
-  return date.toLocaleDateString("en-US", { weekday: "short" });
-}
-
-function RoundCard({ round, onEdit }) {
-  const deptText = round.departments?.slice(0, 2).join(", ") + (round.departments?.length > 2 ? "..." : "");
-  
-  const statusColors = {
-    scheduled: "bg-amber-500/15 border-amber-500/30 hover:bg-amber-500/25",
-    approved: "bg-green-500/15 border-green-500/30 hover:bg-green-500/25",
-    completed: "bg-slate-500/15 border-slate-500/30 hover:bg-slate-500/25"
-  };
-
-  return (
-    <div
-      className={`rounded-lg border p-2 cursor-pointer transition-all h-full flex flex-col ${statusColors[round.approval_status] || "bg-white/5 border-white/10 hover:bg-white/10"}`}
-      onClick={() => onEdit(round)}
-    >
-      <div className="flex-1 min-h-0">
-        <p className="text-[11px] font-semibold text-white line-clamp-1">{round.event_type}</p>
-        <p className="text-[9px] text-white/60 line-clamp-1">{deptText}</p>
-        {round.topic && <p className="text-[9px] text-white/50 line-clamp-2 mt-0.5">{round.topic}</p>}
-      </div>
-      {round.start_time && <p className="text-[8px] text-white/40 mt-1">⏰ {round.start_time}</p>}
-    </div>
-  );
-}
-
-export default function EducationalRounds() {
-  const [weekStart, setWeekStart] = useState(() => getWeekStart(new Date()));
-  const [showForm, setShowForm] = useState(false);
-  const [editingRound, setEditingRound] = useState(null);
-  const [selectedDept, setSelectedDept] = useState("");
+export default function EducationalRoundsPage() {
   const queryClient = useQueryClient();
-
-  // Save department preference
-  useEffect(() => {
-    if (selectedDept) {
-      base44.auth.me().then(user => {
-        if (user?.email) {
-          base44.entities.UserPreference.filter({ user_email: user.email }).then(prefs => {
-            if (prefs?.length > 0) {
-              base44.entities.UserPreference.update(prefs[0].id, { selected_department: selectedDept }).catch(() => {});
-            } else {
-              base44.entities.UserPreference.create({ user_email: user.email, selected_department: selectedDept }).catch(() => {});
-            }
-          });
-        }
-      });
-    }
-  }, [selectedDept]);
-
-  // Load department preference
-  useEffect(() => {
-    base44.auth.me().then(user => {
-      if (user?.email) {
-        base44.entities.UserPreference.filter({ user_email: user.email }).then(prefs => {
-          if (prefs?.length > 0 && prefs[0].selected_department) {
-            setSelectedDept(prefs[0].selected_department);
-          }
-        }).catch(() => {});
-      }
-    });
-  }, []);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [selectedRound, setSelectedRound] = useState(null);
 
   const { data: allRounds = [] } = useQuery({
-    queryKey: ["educational-rounds"],
-    queryFn: () => base44.entities.EducationalRound.list("-date")
+    queryKey: ["educational-rounds-all"],
+    queryFn: () => base44.entities.EducationalRound.list("-created_date"),
   });
 
   const { data: staffList = [] } = useQuery({
     queryKey: ["staff-all"],
-    queryFn: () => base44.entities.Staff.list()
+    queryFn: () => base44.entities.Staff.list(),
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ["me"],
-    queryFn: () => base44.auth.me()
+    queryFn: () => base44.auth.me(),
   });
 
   const isAdmin = currentUser?.role === "admin";
 
-  const weekDates = getWeekDates(weekStart);
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 6);
+  // Calculate week range
+  const weekStart = startOfWeek(currentDate);
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
-  // Get rounds for this week
-  const weekRounds = allRounds.filter(r => {
-    const rDate = new Date(r.date);
-    return rDate >= weekStart && rDate <= weekEnd && r.approval_status !== "cancelled";
-  });
+  // Filter rounds: only approved ones for the current week
+  const weekRounds = useMemo(() => {
+    return allRounds.filter(r => {
+      if (r.approval_status !== "approved") return false;
+      const roundDate = r.date ? new Date(r.date) : null;
+      return weekDays.some(d => isSameDay(d, roundDate));
+    });
+  }, [allRounds, weekDays]);
 
-  // Filter by department if selected
-  const displayRounds = selectedDept
-    ? weekRounds.filter(r => r.departments?.includes(selectedDept))
-    : weekRounds;
+  // Group rounds by date
+  const roundsByDate = useMemo(() => {
+    const grouped = {};
+    weekDays.forEach(d => {
+      grouped[format(d, "yyyy-MM-dd")] = [];
+    });
+    weekRounds.forEach(r => {
+      const key = r.date;
+      if (key && grouped[key]) {
+        grouped[key].push(r);
+      }
+    });
+    return grouped;
+  }, [weekRounds, weekDays]);
 
-  const roundsByDate = {};
-  weekDates.forEach(d => {
-    roundsByDate[formatDate(d)] = displayRounds.filter(r => r.date === formatDate(d));
-  });
-
-  const weekdayDates = weekDates.slice(0, 5); // Mon-Fri
-  const weekendDates = weekDates.slice(5); // Sat-Sun
-
-  const handlePrevWeek = () => {
-    const newStart = new Date(weekStart);
-    newStart.setDate(newStart.getDate() - 7);
-    setWeekStart(newStart);
+  // Filter by department (if selected) - seminars always show
+  const getVisibleRounds = (dateRounds) => {
+    return dateRounds.filter(r => {
+      if (r.event_type === "Seminar") return true;
+      if (!selectedDepartment) return true;
+      return r.departments?.includes(selectedDepartment);
+    });
   };
 
-  const handleNextWeek = () => {
-    const newStart = new Date(weekStart);
-    newStart.setDate(newStart.getDate() + 7);
-    setWeekStart(newStart);
-  };
-
-  const handleEdit = (round) => {
-    setEditingRound(round);
+  const handleEditRound = (round) => {
+    setSelectedRound(round);
     setShowForm(true);
   };
 
-  if (!isAdmin) {
-    return (
-      <PageContainer>
-        <div className="py-20 text-center text-white/40">
-          <p>Admin access required</p>
-        </div>
-      </PageContainer>
-    );
-  }
+  const handleAddEvent = () => {
+    setSelectedRound(null);
+    setShowForm(true);
+  };
+
+  const handleRefetch = () => {
+    queryClient.invalidateQueries({ queryKey: ["educational-rounds-all"] });
+  };
+
+  const navigateWeek = (direction) => {
+    setCurrentDate(prev => addDays(prev, direction * 7));
+  };
 
   return (
     <PageContainer>
-      <PageHeader title="Educational Rounds" />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <PageHeader
+              title="Educational Events"
+              subtitle={`Week of ${format(weekStart, "MMMM d, yyyy")}`}
+            />
+          </div>
+          {isAdmin && (
+            <button
+              onClick={handleAddEvent}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Add Event
+            </button>
+          )}
+        </div>
 
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button onClick={handlePrevWeek} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/70 transition-colors flex-shrink-0">
+        {/* Week Navigation */}
+        <div className="flex items-center justify-between bg-white/5 p-3 rounded-lg border border-white/10">
+          <button
+            onClick={() => navigateWeek(-1)}
+            className="p-2 hover:bg-white/10 rounded-lg text-white/70 transition-colors"
+          >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <div className="text-center min-w-48">
-            <p className="text-sm font-semibold text-white">{formatDisplayDate(weekStart)} – {formatDisplayDate(weekEnd)}</p>
-            <p className="text-xs text-white/50">Week of {weekStart.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
-          </div>
-          <button onClick={handleNextWeek} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/70 transition-colors flex-shrink-0">
+          <span className="text-sm font-medium text-white/60">
+            {format(weekStart, "MMM d")} - {format(addDays(weekStart, 6), "MMM d, yyyy")}
+          </span>
+          <button
+            onClick={() => navigateWeek(1)}
+            className="p-2 hover:bg-white/10 rounded-lg text-white/70 transition-colors"
+          >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex gap-3 w-full sm:w-auto">
-          <select
-            value={selectedDept}
-            onChange={(e) => setSelectedDept(e.target.value)}
-            className="flex-1 sm:flex-none px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
-          >
-            <option value="">All Departments</option>
-            {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-          </select>
+        {/* Department Filter */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-white/50 font-medium">Filter:</span>
           <button
-            onClick={() => {
-              setEditingRound(null);
-              setShowForm(true);
-            }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors whitespace-nowrap"
+            onClick={() => setSelectedDepartment(null)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              selectedDepartment === null
+                ? "bg-blue-600 text-white"
+                : "bg-white/10 text-white/60 hover:bg-white/15"
+            }`}
           >
-            <Plus className="w-4 h-4" /> Add Round
+            All Departments
           </button>
+          {DEPARTMENTS.map(dept => (
+            <button
+              key={dept}
+              onClick={() => setSelectedDepartment(dept)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                selectedDepartment === dept
+                  ? "bg-blue-600 text-white"
+                  : "bg-white/10 text-white/60 hover:bg-white/15"
+              }`}
+            >
+              {dept}
+            </button>
+          ))}
         </div>
-      </div>
 
-      {/* Weekday Calendar (Mon-Fri) */}
-      <div className="mb-8">
-        <h3 className="text-xs font-semibold text-white/70 uppercase mb-3">Monday - Friday</h3>
-        <div className="grid grid-cols-5 gap-3">
-          {weekdayDates.map(date => {
-            const dateStr = formatDate(date);
-            const dayRounds = roundsByDate[dateStr] || [];
-            const isToday = new Date().toDateString() === date.toDateString();
+        {/* Weekly Calendar */}
+        <div className="grid grid-cols-7 gap-2">
+          {weekDays.map((day, idx) => {
+            const dateKey = format(day, "yyyy-MM-dd");
+            const dateRounds = roundsByDate[dateKey] || [];
+            const visibleRounds = getVisibleRounds(dateRounds);
+            const isWeekend = idx === 5 || idx === 6;
 
             return (
               <div
-                key={dateStr}
-                className={`rounded-lg border p-3 min-h-[200px] flex flex-col ${
-                  isToday ? "bg-white/10 border-white/30" : "bg-white/5 border-white/10"
+                key={dateKey}
+                className={`rounded-xl border p-3 min-h-[200px] ${
+                  isWeekend
+                    ? "bg-white/3 border-white/8"
+                    : "bg-white/5 border-white/10"
                 }`}
               >
-                <div className="mb-3 pb-2 border-b border-white/10">
-                  <p className={`text-xs font-semibold ${isToday ? "text-blue-300" : "text-white"}`}>
-                    {formatDayOfWeek(date)}
-                  </p>
-                  <p className={`text-sm font-bold ${isToday ? "text-blue-300" : "text-white/80"}`}>
-                    {formatDisplayDate(date)}
-                  </p>
+                <div className="font-semibold text-white text-sm mb-3">
+                  {format(day, "EEE")}
+                  <div className="text-xs text-white/50 font-normal">
+                    {format(day, "M/d")}
+                  </div>
                 </div>
-                <div className="flex-1 flex flex-col gap-2">
-                  {dayRounds.length > 0 ? (
-                    dayRounds.map(round => (
-                      <RoundCard key={round.id} round={round} onEdit={handleEdit} />
-                    ))
+
+                <div className="space-y-2">
+                  {visibleRounds.length === 0 ? (
+                    <p className="text-[10px] text-white/25">No events</p>
                   ) : (
-                    <p className="text-[10px] text-white/30 italic">No rounds</p>
+                    visibleRounds.map(round => (
+                      <button
+                        key={round.id}
+                        onClick={() => isAdmin && handleEditRound(round)}
+                        disabled={!isAdmin}
+                        className={`w-full text-left p-2 rounded-lg text-[10px] transition-all ${
+                          round.event_type === "Seminar"
+                            ? "bg-purple-500/20 border border-purple-400/30 hover:bg-purple-500/30 text-purple-200"
+                            : "bg-blue-500/20 border border-blue-400/30 hover:bg-blue-500/30 text-blue-200"
+                        } ${!isAdmin && "cursor-default"}`}
+                      >
+                        <div className="font-semibold line-clamp-1">
+                          {round.event_type}
+                        </div>
+                        {round.topic && (
+                          <div className="text-[9px] text-white/60 line-clamp-1">
+                            {round.topic}
+                          </div>
+                        )}
+                        {round.event_type !== "Seminar" && round.departments && (
+                          <div className="text-[9px] text-white/40 line-clamp-1">
+                            {round.departments.join(", ")}
+                          </div>
+                        )}
+                        {round.event_type === "Seminar" && (
+                          <div className="text-[9px] text-white/50 font-medium">
+                            All Departments
+                          </div>
+                        )}
+                      </button>
+                    ))
                   )}
                 </div>
               </div>
@@ -246,55 +224,13 @@ export default function EducationalRounds() {
         </div>
       </div>
 
-      {/* Weekend Calendar (Sat-Sun) */}
-      <div>
-        <h3 className="text-xs font-semibold text-white/70 uppercase mb-3">Saturday - Sunday</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {weekendDates.map(date => {
-            const dateStr = formatDate(date);
-            const dayRounds = roundsByDate[dateStr] || [];
-            const isToday = new Date().toDateString() === date.toDateString();
-
-            return (
-              <div
-                key={dateStr}
-                className={`rounded-lg border p-3 min-h-[200px] flex flex-col ${
-                  isToday ? "bg-white/10 border-white/30" : "bg-white/5 border-white/10"
-                }`}
-              >
-                <div className="mb-3 pb-2 border-b border-white/10">
-                  <p className={`text-xs font-semibold ${isToday ? "text-blue-300" : "text-white"}`}>
-                    {formatDayOfWeek(date)}
-                  </p>
-                  <p className={`text-sm font-bold ${isToday ? "text-blue-300" : "text-white/80"}`}>
-                    {formatDisplayDate(date)}
-                  </p>
-                </div>
-                <div className="flex-1 flex flex-col gap-2">
-                  {dayRounds.length > 0 ? (
-                    dayRounds.map(round => (
-                      <RoundCard key={round.id} round={round} onEdit={handleEdit} />
-                    ))
-                  ) : (
-                    <p className="text-[10px] text-white/30 italic">No rounds</p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Form Modal */}
+      {/* Edit Event Modal */}
       <AnimatePresence>
         {showForm && (
           <EducationalRoundForm
-            round={editingRound}
-            onClose={() => {
-              setShowForm(false);
-              setEditingRound(null);
-            }}
-            onSaved={() => queryClient.invalidateQueries({ queryKey: ["educational-rounds"] })}
+            round={selectedRound}
+            onClose={() => setShowForm(false)}
+            onSaved={handleRefetch}
             staffList={staffList}
           />
         )}
