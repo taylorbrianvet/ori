@@ -125,7 +125,15 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     }));
   };
 
-  const canApproveForLogging = formData.faculty_present && formData.faculty_present.length > 0;
+  // Check if today is past the scheduled date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const roundDate = formData.date ? new Date(formData.date) : null;
+  const isPastRoundDate = roundDate && roundDate < today;
+
+  // Check if any Surgery faculty is selected
+  const surgeryFacultySelected = formData.faculty_present && formData.faculty_present.length > 0;
+  const canApproveForLogging = isPastRoundDate && surgeryFacultySelected;
 
   const handleSave = async () => {
     if (!formData.date || !formData.event_type || formData.departments.length === 0) {
