@@ -9,9 +9,10 @@ import TransferForm from "../components/transfers/TransferForm";
 import TransferCard from "../components/transfers/TransferCard";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Returns 6am boundaries for bucketing transfers
+// Returns 6am local-time boundaries as UTC-equivalent Date objects for bucketing transfers
 function getSixAmBoundaries() {
   const now = new Date();
+  // Build 6am in local time today using UTC math to avoid DST issues
   const todaySixAm = new Date(now);
   todaySixAm.setHours(6, 0, 0, 0);
 
