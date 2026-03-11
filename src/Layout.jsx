@@ -98,15 +98,15 @@ export default function Layout({ children, currentPageName }) {
       <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 glass-panel border-r border-black/8 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className={`border-b border-black/8 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
           <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="SoL" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) invert(1)" }} />
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69ae5c53616161c3fff1c63f/899aa1d62_sollogo.png" alt="ORI" className="w-10 h-10 flex-shrink-0" style={{ filter: "brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(600%) hue-rotate(355deg)" }} />
             {sidebarOpen && (
-              <div>
-                <h1 className="text-base font-semibold text-white tracking-tight">ORI</h1>
-                <p className="text-[11px] text-white/50 font-medium">Hospital Management</p>
-              </div>
+             <div>
+               <h1 className="text-base font-semibold text-orange-900 tracking-tight">ORI</h1>
+               <p className="text-[11px] text-orange-800/60 font-medium">Hospital Management</p>
+             </div>
             )}
             {!sidebarOpen && (
-              <h1 className="text-xs font-semibold text-white tracking-tight">ORI</h1>
+             <h1 className="text-xs font-semibold text-orange-900 tracking-tight">ORI</h1>
             )}
           </div>
         </div>
