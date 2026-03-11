@@ -117,7 +117,7 @@ export default function Layout({ children, currentPageName }) {
   const BASE_BG = "#0d1a3a"; // deep navy base
 
   return (
-    <div className="min-h-screen font-inter flex" style={{ position: "relative" }}>
+    <div className="min-h-screen font-inter flex" style={{ position: "relative", "--sidebar-width": sidebarOpen ? "16rem" : "5rem" }}>
       {/* Crossfade background — layer A */}
       <div style={{
         position: "fixed", inset: 0, zIndex: 0,
