@@ -166,8 +166,8 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="glass-card w-full max-w-2xl max-h-[95vh] overflow-y-auto p-6 space-y-4">
+    <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <div className="glass-card w-full max-w-2xl my-auto p-6 space-y-4">
         <div className="flex items-center justify-between mb-4 sticky top-0 bg-inherit">
           <h2 className="text-lg font-semibold text-white">{round?.id ? "Edit Round" : "Add New Round"}</h2>
           <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/50 flex-shrink-0">
