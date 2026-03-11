@@ -77,6 +77,13 @@ export default function Transfers() {
     queryFn: () => base44.entities.Staff.list(),
   });
 
+  const { data: tileConfigs = [] } = useQuery({
+    queryKey: ["home-tile-configs"],
+    queryFn: () => base44.entities.HomeTileConfig.list(),
+  });
+
+  const heroImage = tileConfigs.find(c => c.tile_key === "transfers_hero")?.image_url || DEFAULT_HERO;
+
   const { today, upcoming, previous } = useMemo(() => bucketTransfers(transfers), [transfers]);
 
   const filteredPrevious = useMemo(() => {
