@@ -102,7 +102,18 @@ export default function EducationalDetailPanel({ round, onClose, currentUserEmai
             </div>
           </div>
         )}
-      </div>
-    </div>
-  );
-}
+        </div>
+
+        {/* Attendance Logging Section */}
+        {currentUserEmail && (
+        <div className="mt-4 pt-4 border-t border-white/10">
+          <EducationalAttendancePanel
+            round={round}
+            currentUserEmail={currentUserEmail}
+            onToggleLog={onToggleLog}
+          />
+        </div>
+        )}
+        </div>
+        );
+        }
