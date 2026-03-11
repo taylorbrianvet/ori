@@ -318,6 +318,12 @@ export default function MyWorkspace() {
                       <p className="text-[10px] text-white/40 mt-0.5">Pending</p>
                     </div>
                   </div>
+                  <div className="flex gap-3 pt-1">
+                    <button onClick={() => setShowEducationalLog(true)}
+                      className="flex-1 py-2.5 rounded-xl bg-white/8 hover:bg-white/14 border border-white/10 text-xs text-white/70 hover:text-white transition-colors">
+                      Open Educational Log
+                    </button>
+                  </div>
                 </div>
               </section>
             )}
