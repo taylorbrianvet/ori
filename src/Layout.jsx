@@ -230,7 +230,7 @@ export default function Layout({ children, currentPageName }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="md:hidden fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+              className="md:hidden fixed inset-0 z-40 bg-orange-900/10 backdrop-blur-sm"
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
