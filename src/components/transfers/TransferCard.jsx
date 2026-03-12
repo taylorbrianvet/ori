@@ -23,8 +23,14 @@ export default function TransferCard({ transfers, transfer, onUpdated, bucket })
   const primaryTransfer = transferGroup[0];
   const isDoubleTransfer = transferGroup.length > 1;
 
+  const ageString = [
+    primaryTransfer.age_years && `${primaryTransfer.age_years}y`,
+    primaryTransfer.age_months && `${primaryTransfer.age_months}m`,
+    primaryTransfer.age_weeks && `${primaryTransfer.age_weeks}w`,
+  ].filter(Boolean).join(" ");
+
   const signalment = [
-    primaryTransfer.age,
+    ageString,
     primaryTransfer.sex,
     primaryTransfer.species,
     primaryTransfer.breed,
