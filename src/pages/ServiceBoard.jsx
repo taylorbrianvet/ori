@@ -73,6 +73,11 @@ export default function ServiceBoard() {
     queryFn: () => base44.entities.ClinicSchedule.list(),
   });
 
+  const { data: staffList = [] } = useQuery({
+    queryKey: ["staff"],
+    queryFn: () => base44.entities.Staff.list(),
+  });
+
   // Filter data for selected service
   const inpatients = patients.filter(
     p => p.service === selectedService &&
