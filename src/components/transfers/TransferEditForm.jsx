@@ -15,27 +15,32 @@ const SEX_OPTIONS = ["MI", "MC", "FI", "FS"];
 const LOCATIONS = ["ICU", "PCW", "ER", "Ward", "Recovery", "Imaging", "OR", "Other"];
 
 export default function TransferEditForm({ transfers, onClose, onSaved }) {
-  const primary = transfers[0];
-  const [form, setForm] = useState({
-    patient_name: primary.patient_name || "",
-    patient_id: primary.patient_id || "",
-    age: primary.age || "",
-    sex: primary.sex || "",
-    species: primary.species || "",
-    breed: primary.breed || "",
-    location: primary.location || "",
-    problem_list: primary.problem_list || [],
-    requesting_service: primary.requesting_service || "",
-    receiving_service: primary.receiving_service || "",
-    requesting_clinician: primary.requesting_clinician || "",
-    estimate: primary.estimate || "",
-    notes: primary.notes || "",
-    already_transferred: primary.already_transferred || false,
-  });
-  const [problemInput, setProblemInput] = useState("");
-  const [saving, setSaving] = useState(false);
+   const primary = transfers[0];
+   const [form, setForm] = useState({
+     patient_name: primary.patient_name || "",
+     patient_id: primary.patient_id || "",
+     age_years: primary.age_years || "",
+     age_months: primary.age_months || "",
+     age_weeks: primary.age_weeks || "",
+     sex: primary.sex || "",
+     species: primary.species || "",
+     breed: primary.breed || "",
+     location: primary.location || "",
+     problem_list: primary.problem_list || [],
+     requesting_service: primary.requesting_service || "",
+     receiving_service: primary.receiving_service || "",
+     requesting_clinician: primary.requesting_clinician || "",
+     estimate: primary.estimate || "",
+     notes: primary.notes || "",
+     already_transferred: primary.already_transferred || false,
+   });
+   const [problemInput, setProblemInput] = useState("");
+   const [saving, setSaving] = useState(false);
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+   // If patient came from GlobalPatient, lock demographic fields
+   const isFromGlobalPatient = !!primary.global_patient_id;
+
+   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const addProblem = () => {
     const p = problemInput.trim();
