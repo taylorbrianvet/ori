@@ -95,8 +95,13 @@ export default function ServiceBoard() {
 
   const woundPatients = woundCases.filter(w => w.service === selectedService);
 
+  // Upcoming transfers: not yet transferred AND no matching inpatient already exists
+  const inpatientPatientIds = new Set(patients.filter(p => p.patient_type === "Inpatient" && p.discharge_status !== "discharged").map(p => p.patient_id).filter(Boolean));
+
   const pendingTransfers = transfers.filter(t => {
     if (t.already_transferred) return false;
+    // Hide if a matching inpatient already exists (i.e. patient has been moved to inpatients)
+    if (t.patient_id && inpatientPatientIds.has(t.patient_id)) return false;
     if (t.receiving_services?.length > 0) return t.receiving_services.includes(selectedService);
     return t.receiving_service === selectedService;
   });
