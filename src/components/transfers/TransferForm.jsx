@@ -33,6 +33,7 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
   const [isSearchingPatient, setIsSearchingPatient] = useState(false);
   const [searchResult, setSearchResult] = useState(null); // { id, name, patient_id, species, breed, sex, age_years, age_months, age_weeks }
   const [selectedPatient, setSelectedPatient] = useState(null); // locked-in patient after "Transfer Patient" click
+  const [searchAttempted, setSearchAttempted] = useState(false); // track if we've tried to search
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
