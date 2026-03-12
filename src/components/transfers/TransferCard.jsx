@@ -18,8 +18,11 @@ function formatLocalTime(isoString) {
 export default function TransferCard({ transfers, transfer, onUpdated, bucket }) {
   const [showDetail, setShowDetail] = useState(false);
 
-  // Support both grouped and single transfer
-  const transferGroup = transfers || (transfer ? [transfer] : []);
+  // Support both grouped and single transfer; deduplicate by ID
+  const allTransfers = transfers || (transfer ? [transfer] : []);
+  const transferGroup = Array.from(
+    new Map(allTransfers.map(t => [t.id, t])).values()
+  );
   const primaryTransfer = transferGroup[0];
   const isDoubleTransfer = transferGroup.some(t => {
     const receivingServices = t.receiving_services?.length > 0 ? t.receiving_services : (t.receiving_service ? [t.receiving_service] : []);
