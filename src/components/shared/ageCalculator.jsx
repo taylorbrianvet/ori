@@ -46,8 +46,9 @@ export function calculateCurrentAge(birthdateStr) {
     return `${totalMonths} month${totalMonths !== 1 ? "s" : ""}`;
   }
 
-  // 1 year or more: display years and months
-  return `${years} year${years !== 1 ? "s" : ""}, ${months} month${months !== 1 ? "s" : ""}`;
+  // 1 year or more: display years, and months only if > 0
+  const monthsDisplay = months > 0 ? `, ${months} month${months !== 1 ? "s" : ""}` : "";
+  return `${years} year${years !== 1 ? "s" : ""}${monthsDisplay}`;
 }
 
 /**
