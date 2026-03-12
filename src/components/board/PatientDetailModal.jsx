@@ -6,6 +6,7 @@ import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import TransferForm from "../transfers/TransferForm";
 import DiagnosticForm from "../diagnostics/DiagnosticForm";
+import DischargeDatePicker from "./DischargeDatePicker";
 
 export default function PatientDetailModal({ patient: initialPatient, onClose }) {
   const [patient, setPatient] = useState(initialPatient);
