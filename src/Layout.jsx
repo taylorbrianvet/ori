@@ -5,6 +5,7 @@ import { Home, Stethoscope, Phone, BookOpen, Menu, X, Settings, Users, BookMarke
 import EditMyProfileModal from "@/components/shared/EditMyProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
+import { Toaster } from "sonner";
 
 // Dark navy base + warm orange/amber radial blobs — matching the sunset-to-ocean image
 // Each config shifts the blob positions for a fluid per-page feel
