@@ -105,6 +105,18 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     setActionLoading(null);
   };
 
+  const handleScheduleDischargeFromPicker = async (dt) => {
+    setActionLoading("schedule");
+    await base44.entities.Patient.update(patient.id, {
+      discharge_status: "scheduled",
+      scheduled_discharge_time: dt.toISOString(),
+    });
+    toast.success("Discharge scheduled");
+    setShowScheduleDischarge(false);
+    await refreshPatient();
+    setActionLoading(null);
+  };
+
   const handleReadmit = async () => {
     setActionLoading("readmit");
     await base44.entities.Patient.update(patient.id, {
