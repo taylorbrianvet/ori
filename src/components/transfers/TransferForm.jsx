@@ -22,8 +22,8 @@ const EMPTY = {
   requesting_clinician: "", estimate: "", notes: "", already_transferred: false,
 };
 
-export default function TransferForm({ staffList = [], onSaved }) {
-  const [form, setForm] = useState(EMPTY);
+export default function TransferForm({ staffList = [], onSaved, prefill = null }) {
+  const [form, setForm] = useState(prefill ? { ...EMPTY, ...prefill } : EMPTY);
   const [problemInput, setProblemInput] = useState("");
   const [saving, setSaving] = useState(false);
 
