@@ -38,8 +38,10 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
   const queryClient = useQueryClient();
 
   const { data: surgeries = [] } = useQuery({
-    queryKey: ["surgical-logs", patient.id],
-    queryFn: () => base44.entities.SurgicalLogEntry.filter({ patient_id: patient.id }),
+    queryKey: ["surgical-logs", patient.global_patient_id || patient.id],
+    queryFn: () => patient.global_patient_id
+      ? base44.entities.SurgicalLogEntry.filter({ global_patient_id: patient.global_patient_id })
+      : Promise.resolve([]),
   });
 
   const { data: notes = [], refetch: refetchNotes } = useQuery({
