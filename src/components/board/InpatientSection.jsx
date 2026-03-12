@@ -10,6 +10,24 @@ export default function InpatientSection({ patients, compact = false }) {
     .filter(Boolean)
     .join(" • ");
 
+  const TransferBadge = ({ patient }) => {
+    if (patient.transfer_type === "double") {
+      return (
+        <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/20 border border-red-400/30 text-red-200">
+          <AlertCircle className="w-2.5 h-2.5" /> Double Tx
+        </span>
+      );
+    }
+    if (patient.transfer_type === "single") {
+      return (
+        <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-sky-500/15 border border-sky-400/25 text-sky-200">
+          <ArrowLeftRight className="w-2.5 h-2.5" /> Transfer
+        </span>
+      );
+    }
+    return null;
+  };
+
   if (compact) {
     return (
       <>
