@@ -191,15 +191,21 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
     }
   };
 
-  const handleCompleteOrApprove = async (action) => {
+  const handleStatusChange = async (newStatus) => {
     setSaving(true);
     try {
-      await base44.entities.EducationalRound.update(round.id, { approval_status: action });
-      toast.success(action === "approved" ? "Round approved for logging" : "Round completed");
+      await base44.entities.EducationalRound.update(round.id, { approval_status: newStatus });
+      const messages = {
+        approved: "Round approved — residents can now log attendance",
+        completed: "Round marked as completed",
+        scheduled: "Round reset to scheduled",
+        cancelled: "Round cancelled",
+      };
+      toast.success(messages[newStatus] || "Status updated");
       onSaved?.();
       onClose();
     } catch (error) {
-      toast.error("Failed to update round");
+      toast.error("Failed to update round status");
     } finally {
       setSaving(false);
     }
