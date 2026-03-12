@@ -51,7 +51,7 @@ export default function PendingTransfersSection({ transfers }) {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] px-2 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-200">
-                  Pending
+                  Upcoming
                 </span>
                 <button
                   onClick={() => handleMarkTransferred(t)}
