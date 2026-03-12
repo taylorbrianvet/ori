@@ -138,9 +138,17 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
   const roundDate = formData.date ? (() => { const [y,m,d] = formData.date.split("-").map(Number); return new Date(y, m-1, d); })() : null;
   const isPastRoundDate = roundDate && roundDate < today;
 
-  // Check if any Surgery faculty is selected
-  const surgeryFacultySelected = formData.faculty_present && formData.faculty_present.length > 0;
-  const canApproveForLogging = isPastRoundDate && surgeryFacultySelected;
+  // Faculty must be selected to approve for logging
+  const facultySelected = formData.faculty_present && formData.faculty_present.length > 0;
+  const canApproveForLogging = isPastRoundDate && facultySelected;
+
+  const STATUS_CONFIG = {
+    scheduled: { label: "Scheduled", color: "text-blue-300", bg: "bg-blue-500/15 border-blue-500/30" },
+    approved: { label: "Approved for Logging", color: "text-green-300", bg: "bg-green-500/15 border-green-500/30" },
+    completed: { label: "Completed", color: "text-amber-300", bg: "bg-amber-500/15 border-amber-500/30" },
+    cancelled: { label: "Cancelled", color: "text-red-300", bg: "bg-red-500/15 border-red-500/30" },
+  };
+  const statusCfg = STATUS_CONFIG[formData.approval_status] || STATUS_CONFIG.scheduled;
 
   const handleSave = async () => {
     if (!formData.date || !formData.event_type || formData.departments.length === 0) {
