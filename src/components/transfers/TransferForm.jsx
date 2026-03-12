@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { Plus, X, Loader2 } from "lucide-react";
+import { calculateCurrentAge, calculateAgeComponents } from "@/components/shared/ageCalculator";
 
 const SERVICES = [
   "Emergency",
@@ -17,6 +18,7 @@ const SEX_LABELS = { MI: "MI – Male Intact", MC: "MC – Male Castrated", FI: 
 const LOCATIONS = ["ICU", "PCW", "ER", "Ward", "Recovery", "Imaging", "OR", "Other"];
 
 const EMPTY = {
+  global_patient_id: "",
   patient_name: "", patient_id: "", age_years: "", age_months: "", age_weeks: "",
   sex: "", species: "", breed: "",
   location: "", problem_list: [], requesting_service: "", receiving_services: [],
@@ -27,8 +29,51 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
   const [form, setForm] = useState(prefill ? { ...EMPTY, ...prefill } : EMPTY);
   const [problemInput, setProblemInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const [searchPatientId, setSearchPatientId] = useState("");
+  const [isSearchingPatient, setIsSearchingPatient] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleSearchPatient = async () => {
+    const idToSearch = searchPatientId.trim();
+    if (!idToSearch) return;
+
+    setIsSearchingPatient(true);
+    try {
+      const globalPatients = await base44.entities.GlobalPatient.filter({ patient_id: idToSearch });
+      if (globalPatients && globalPatients.length > 0) {
+        const patient = globalPatients[0];
+        const ageComponents = calculateAgeComponents(patient.birthdate);
+        setForm(prevForm => ({
+          ...prevForm,
+          patient_name: patient.name,
+          patient_id: patient.patient_id,
+          species: patient.species,
+          breed: patient.breed || "",
+          sex: patient.sex || "",
+          age_years: ageComponents.years.toString(),
+          age_months: ageComponents.months.toString(),
+          age_weeks: ageComponents.weeks.toString(),
+          global_patient_id: patient.id,
+        }));
+        toast.success(`Patient ${patient.name} (${patient.patient_id}) found and pre-filled.`);
+        setSearchPatientId("");
+      } else {
+        toast.info(`No patient found with ID: ${idToSearch}. Please enter details manually.`);
+        setForm(prevForm => ({
+          ...prevForm,
+          patient_id: idToSearch,
+          global_patient_id: "",
+        }));
+        setSearchPatientId("");
+      }
+    } catch (error) {
+      console.error("Error searching GlobalPatient:", error);
+      toast.error("Failed to search patient. Please try again.");
+    } finally {
+      setIsSearchingPatient(false);
+    }
+  };
 
   const addProblem = () => {
     const p = problemInput.trim();
@@ -53,6 +98,7 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
       age_weeks: form.age_weeks ? parseFloat(form.age_weeks) : undefined,
       receiving_service: form.receiving_services[0] || "",
       receiving_services: form.receiving_services,
+      global_patient_id: form.global_patient_id || undefined,
     };
     const created = await base44.entities.InterserviceTransfer.create(transferData);
     // Trigger backend sync to upsert GlobalPatient + PatientVisit
@@ -80,6 +126,28 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
   return (
     <div className="glass-card p-5 space-y-4">
       <h2 className="text-sm font-semibold text-white mb-1">New Transfer</h2>
+
+      {/* Patient search */}
+      <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Search Existing Patient by ID</label>
+        <div className="flex gap-2">
+          <input
+            className="flex-1 px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+            placeholder="Enter patient ID (e.g., 123456)"
+            value={searchPatientId}
+            onChange={e => setSearchPatientId(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') handleSearchPatient(); }}
+          />
+          <button
+            type="button"
+            onClick={handleSearchPatient}
+            disabled={!searchPatientId.trim() || isSearchingPatient}
+            className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-sm text-white hover:bg-white/16 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 whitespace-nowrap"
+          >
+            {isSearchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : "Search"}
+          </button>
+        </div>
+      </div>
 
       {/* Patient info row */}
       <div className="grid grid-cols-2 gap-3">
