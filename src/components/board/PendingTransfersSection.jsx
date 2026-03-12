@@ -104,7 +104,7 @@ export default function PendingTransfersSection({ transfers }) {
                 </button>
               </div>
             </div>
-            <p className="text-xs text-white/50 mb-1">{t.age || "?"} • {t.sex || "?"} • {t.species} • {t.breed}</p>
+            <p className="text-xs text-white/50 mb-1">{getAgeString(t)} • {t.sex || "?"} • {t.species} • {t.breed}</p>
             <p className="text-xs text-white/70 mb-1">{t.requesting_service} → {receivingLabel(t)}</p>
             {t.problem_list?.length > 0 && (
               <p className="text-[11px] text-white/60 mb-1">
