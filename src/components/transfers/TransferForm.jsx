@@ -36,13 +36,13 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const handleSearchPatient = async () => {
-    const idToSearch = searchPatientId.trim();
-    if (!idToSearch) return;
+  const handleCheckPatientId = async (patientId) => {
+    const idToCheck = patientId.trim();
+    if (!idToCheck) return;
 
     setIsSearchingPatient(true);
     try {
-      const globalPatients = await base44.entities.GlobalPatient.filter({ patient_id: idToSearch });
+      const globalPatients = await base44.entities.GlobalPatient.filter({ patient_id: idToCheck });
       if (globalPatients && globalPatients.length > 0) {
         const patient = globalPatients[0];
         const ageComponents = calculateAgeComponents(patient.birthdate);
@@ -57,17 +57,19 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
           age_months: ageComponents.months,
           age_weeks: ageComponents.weeks,
         });
-        toast.success(`Patient ${patient.name} found.`);
-      } else {
-        toast.info(`No patient found with ID: ${idToSearch}. You can fill the form manually.`);
-        setSearchResult(null);
+        toast.success(`Patient ${patient.name} found. Use this patient or continue with manual entry.`);
       }
     } catch (error) {
       console.error("Error searching GlobalPatient:", error);
-      toast.error("Failed to search patient. Please try again.");
     } finally {
       setIsSearchingPatient(false);
     }
+  };
+
+  const handleSearchPatient = async () => {
+    const idToSearch = searchPatientId.trim();
+    if (!idToSearch) return;
+    handleCheckPatientId(idToSearch);
   };
 
   const handleTransferPatient = () => {
