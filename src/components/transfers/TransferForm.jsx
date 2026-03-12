@@ -215,69 +215,85 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
       {/* Form only visible when patient is selected OR search not used */}
       {selectedPatient || (!searchResult && !selectedPatient) ? (
         <>
-          {/* Patient info row */}
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient Name <span className="text-red-400">*</span></label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="e.g. Buddy" value={form.patient_name} onChange={e => set("patient_name", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID <span className="text-red-400">*</span></label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="e.g. 123456" value={form.patient_id} onChange={e => set("patient_id", e.target.value)} />
-        </div>
-      </div>
+          {/* Patient info fields - only shown if NOT selected via search */}
+          {!selectedPatient && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient Name <span className="text-red-400">*</span></label>
+                  <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                    placeholder="e.g. Buddy" value={form.patient_name} onChange={e => set("patient_name", e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID <span className="text-red-400">*</span></label>
+                  <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                    placeholder="e.g. 123456" value={form.patient_id} onChange={e => set("patient_id", e.target.value)} />
+                </div>
+              </div>
 
-      <div className="grid grid-cols-4 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age (yrs)</label>
-          <input type="number" min="0" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="0" value={form.age_years} onChange={e => set("age_years", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Months</label>
-          <input type="number" min="0" max="11" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="0" value={form.age_months} onChange={e => set("age_months", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Weeks</label>
-          <input type="number" min="0" max="3" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="0" value={form.age_weeks} onChange={e => set("age_weeks", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.sex} onChange={e => set("sex", e.target.value)}>
-            <option value="">—</option>
-            {SEX_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-      </div>
+              <div className="grid grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age (yrs)</label>
+                  <input type="number" min="0" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                    placeholder="0" value={form.age_years} onChange={e => set("age_years", e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Months</label>
+                  <input type="number" min="0" max="11" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                    placeholder="0" value={form.age_months} onChange={e => set("age_months", e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Weeks</label>
+                  <input type="number" min="0" max="3" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                    placeholder="0" value={form.age_weeks} onChange={e => set("age_weeks", e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
+                  <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                    value={form.sex} onChange={e => set("sex", e.target.value)}>
+                    <option value="">—</option>
+                    {SEX_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Species</label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.species} onChange={e => set("species", e.target.value)}>
-            <option value="">—</option>
-            {SPECIES.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Breed <span className="text-red-400">*</span></label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="e.g. Golden Retriever" value={form.breed} onChange={e => set("breed", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.location} onChange={e => set("location", e.target.value)}>
-            <option value="">—</option>
-            {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
-        </div>
-      </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Species</label>
+                  <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                    value={form.species} onChange={e => set("species", e.target.value)}>
+                    <option value="">—</option>
+                    {SPECIES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Breed <span className="text-red-400">*</span></label>
+                  <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                    placeholder="e.g. Golden Retriever" value={form.breed} onChange={e => set("breed", e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
+                  <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                    value={form.location} onChange={e => set("location", e.target.value)}>
+                    <option value="">—</option>
+                    {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Location field - shown only when patient is selected via search */}
+          {selectedPatient && (
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
+              <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                value={form.location} onChange={e => set("location", e.target.value)}>
+                <option value="">—</option>
+                {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+          )}
 
       {/* Problem list */}
       <div>
