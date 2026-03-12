@@ -6,8 +6,26 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { calculateCurrentAge } from "../shared/ageCalculator";
 
 export default function PendingTransfersSection({ transfers }) {
-  const [markingId, setMarkingId] = useState(null);
-  const queryClient = useQueryClient();
+   const [markingId, setMarkingId] = useState(null);
+   const queryClient = useQueryClient();
+
+   // Fetch all global patients referenced by transfers to get birthdates
+   const globalPatientIds = useMemo(() => 
+     Array.from(new Set(transfers.map(t => t.global_patient_id).filter(Boolean))),
+     [transfers]
+   );
+
+   const { data: globalPatientMap = {} } = useQuery({
+     queryKey: ["global-patients-batch", globalPatientIds],
+     queryFn: async () => {
+       if (globalPatientIds.length === 0) return {};
+       const patients = await base44.entities.GlobalPatient.filter({
+         id: { $in: globalPatientIds }
+       });
+       return Object.fromEntries(patients.map(p => [p.id, p]));
+     },
+     enabled: globalPatientIds.length > 0,
+   });
 
   const handleMarkTransferred = async (transfer) => {
     setMarkingId(transfer.id);
