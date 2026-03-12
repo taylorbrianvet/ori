@@ -10,6 +10,7 @@ import WoundPatientsSection from "../components/board/WoundPatientsSection";
 import PendingTransfersSection from "../components/board/PendingTransfersSection";
 import DiagnosticsSection from "../components/board/DiagnosticsSection";
 import ClinicTeamSection from "../components/board/ClinicTeamSection";
+import DischargedTodaySection from "../components/board/DischargedTodaySection";
 
 const CLINICAL_SERVICES = [
   "Cardiology",
