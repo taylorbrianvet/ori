@@ -287,6 +287,13 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
                 <ArrowLeftRight className="w-3.5 h-3.5" /> Transfer Patient
               </button>
 
+              <button
+                onClick={() => setShowDiagnosticForm(v => !v)}
+                className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-violet-500/15 border border-violet-400/25 text-violet-200 text-xs font-medium hover:bg-violet-500/25 transition-colors"
+              >
+                <Beaker className="w-3.5 h-3.5" /> Diagnostic Request
+              </button>
+
               {isScheduled ? (
                 <button
                   onClick={handleReadmit}
