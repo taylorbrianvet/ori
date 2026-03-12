@@ -227,8 +227,8 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
         </>
       )}
 
-      {/* Form only visible when patient is selected OR search not used */}
-      {selectedPatient || (!searchResult && !selectedPatient) ? (
+      {/* Form shown when: patient is selected OR search was attempted but not found */}
+      {selectedPatient || (searchAttempted && !searchResult) ? (
         <>
           {/* Patient info fields - only shown if NOT selected via search */}
           {!selectedPatient && (
