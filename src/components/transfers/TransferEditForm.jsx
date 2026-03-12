@@ -54,13 +54,7 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
   const handleSave = async () => {
     setSaving(true);
     for (const t of transfers) {
-      await base44.entities.InterserviceTransfer.update(t.id, {
-        patient_name: form.patient_name,
-        patient_id: form.patient_id,
-        age: form.age,
-        sex: form.sex,
-        species: form.species,
-        breed: form.breed,
+      const updateData = {
         location: form.location,
         problem_list: form.problem_list,
         requesting_service: form.requesting_service,
@@ -68,7 +62,21 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
         estimate: form.estimate ? parseFloat(form.estimate) : null,
         notes: form.notes,
         already_transferred: form.already_transferred,
-      });
+      };
+
+      // Only allow patient demographic edits if NOT from GlobalPatient
+      if (!isFromGlobalPatient) {
+        updateData.patient_name = form.patient_name;
+        updateData.patient_id = form.patient_id;
+        updateData.age_years = form.age_years ? parseFloat(form.age_years) : undefined;
+        updateData.age_months = form.age_months ? parseFloat(form.age_months) : undefined;
+        updateData.age_weeks = form.age_weeks ? parseFloat(form.age_weeks) : undefined;
+        updateData.sex = form.sex;
+        updateData.species = form.species;
+        updateData.breed = form.breed;
+      }
+
+      await base44.entities.InterserviceTransfer.update(t.id, updateData);
     }
     toast.success("Transfer updated.");
     setSaving(false);
@@ -84,58 +92,15 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
         </button>
       </div>
 
-      {isFromGlobalPatient ? (
-        <div className="p-3 rounded-xl bg-blue-500/15 border border-blue-400/30 space-y-2">
-          <p className="text-xs text-blue-300 font-semibold">Patient from Global Registry</p>
-          <p className="text-xs text-blue-200/70">Patient demographics are locked. To edit patient info, create a new transfer.</p>
-          <div className="grid grid-cols-2 gap-3 mt-3">
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient Name</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.patient_name}</div>
-            </div>
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.patient_id}</div>
-            </div>
-          </div>
-          <div className="grid grid-cols-4 gap-3">
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age (yrs)</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.age_years}</div>
-            </div>
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Months</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.age_months}</div>
-            </div>
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Weeks</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.age_weeks}</div>
-            </div>
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.sex}</div>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Species</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.species}</div>
-            </div>
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Breed</label>
-              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.breed}</div>
-            </div>
-            <div>
-              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
-              <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-                value={form.location} onChange={e => set("location", e.target.value)}>
-                <option value="">—</option>
-                {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-              </select>
-            </div>
-          </div>
+      {/* Show locked message if from GlobalPatient */}
+      {isFromGlobalPatient && (
+        <div className="p-3 rounded-xl bg-blue-500/15 border border-blue-400/30 text-xs text-blue-300">
+          This patient was selected from your system. Demographics are locked. To change patient info, create a new transfer.
         </div>
-      ) : (
+      )}
+
+      {/* Patient demographics - locked if from GlobalPatient */}
+      {!isFromGlobalPatient && (
         <>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -200,6 +165,18 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
             </div>
           </div>
         </>
+      )}
+
+      {/* Location only shown for GlobalPatient transfers */}
+      {isFromGlobalPatient && (
+        <div>
+          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
+          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+            value={form.location} onChange={e => set("location", e.target.value)}>
+            <option value="">—</option>
+            {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+          </select>
+        </div>
       )}
 
       {/* Problem list */}
