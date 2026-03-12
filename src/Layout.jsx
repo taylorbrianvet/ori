@@ -354,6 +354,8 @@ export default function Layout({ children, currentPageName }) {
 
 
 
+      <Toaster richColors position="top-right" />
+
       {/* Main Content */}
       <main className={`flex-1 relative z-10 transition-all duration-300 ${sidebarOpen ? "md:ml-64" : "md:ml-20"}`}>
         <div className="pt-14 md:pt-0 min-h-screen">
