@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { X, ArrowRight, MapPin, DollarSign, FileText, User, Pencil, AlertCircle, CheckCircle2 } from "lucide-react";
+import { X, ArrowRight, MapPin, DollarSign, FileText, User, Pencil, AlertCircle, CheckCircle2, Trash2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 import TransferEditForm from "./TransferEditForm";
 
 function formatLocalTime(isoString) {
@@ -18,8 +20,29 @@ function formatLocalTime(isoString) {
 
 export default function TransferDetailModal({ transfers, onClose, onUpdated, bucket }) {
   const [editing, setEditing] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const primaryTransfer = transfers[0];
   const isDoubleTransfer = transfers.length > 1;
+
+  const handleCancelTransfer = async () => {
+    setDeleting(true);
+    try {
+      // Delete all transfer records in this group
+      for (const transfer of transfers) {
+        await base44.entities.InterserviceTransfer.delete(transfer.id);
+      }
+      toast.success("Transfer cancelled and removed.");
+      setShowCancelConfirm(false);
+      onClose();
+      onUpdated?.();
+    } catch (error) {
+      console.error("Error cancelling transfer:", error);
+      toast.error("Failed to cancel transfer.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const signalment = [
     primaryTransfer.age,
@@ -85,6 +108,14 @@ export default function TransferDetailModal({ transfers, onClose, onUpdated, buc
                 {signalment && <p className="text-xs text-white/45">{signalment}</p>}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
+                {bucket === "upcoming" && (
+                  <button
+                    onClick={() => setShowCancelConfirm(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/15 border border-red-400/30 text-xs text-red-300 hover:text-red-200 hover:bg-red-500/25 transition-colors"
+                  >
+                    <Trash2 className="w-3 h-3" /> Cancel
+                  </button>
+                )}
                 <button
                   onClick={() => setEditing(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/8 border border-white/12 text-xs text-white/60 hover:text-white hover:bg-white/14 transition-colors"
@@ -191,7 +222,48 @@ export default function TransferDetailModal({ transfers, onClose, onUpdated, buc
             </div>
           </>
         )}
-      </motion.div>
-    </div>
-  );
-}
+
+        {/* Cancel Confirmation Modal */}
+        {showCancelConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-20 flex items-center justify-center p-4"
+            onClick={() => !deleting && setShowCancelConfirm(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              className="glass-card p-5 max-w-sm w-full"
+              onClick={e => e.stopPropagation()}
+            >
+              <h3 className="text-base font-semibold text-white mb-2">Cancel Transfer?</h3>
+              <p className="text-sm text-white/60 mb-4">
+                Are you sure you want to cancel this transfer for <strong>{primaryTransfer.patient_name}</strong>? This action cannot be undone.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => !deleting && setShowCancelConfirm(false)}
+                  disabled={deleting}
+                  className="flex-1 px-4 py-2 rounded-lg bg-white/8 border border-white/12 text-sm text-white/75 hover:text-white hover:bg-white/12 transition-colors disabled:opacity-50"
+                >
+                  Keep Transfer
+                </button>
+                <button
+                  onClick={handleCancelTransfer}
+                  disabled={deleting}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-500/25 border border-red-400/40 text-sm text-red-300 hover:text-red-200 hover:bg-red-500/35 transition-colors disabled:opacity-50"
+                >
+                  {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                  Cancel Transfer
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+        </motion.div>
+        </div>
+        );
+        }
