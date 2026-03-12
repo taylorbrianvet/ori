@@ -181,29 +181,28 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
 
           {/* Search result card - shown if patient found */}
           {searchResult && (
-            <div className="p-4 rounded-xl bg-white/8 border border-white/20">
-              <p className="text-xs text-white/50 mb-2">Patient found:</p>
+            <div className="p-4 rounded-xl bg-green-500/15 border border-green-400/30">
+              <p className="text-xs text-green-300 mb-2">Patient found:</p>
               <div className="space-y-1 mb-3">
                 <p className="text-sm font-semibold text-white">{searchResult.name}</p>
                 <p className="text-xs text-white/60">ID: {searchResult.patient_id} | {searchResult.species} {searchResult.breed} | {searchResult.sex}</p>
                 <p className="text-xs text-white/60">Age: {searchResult.age_years}y {searchResult.age_months}mo {searchResult.age_weeks}w</p>
               </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={handleTransferPatient}
-                  className="flex-1 px-3 py-2 rounded-xl bg-green-500/20 border border-green-400/50 text-sm text-green-300 hover:bg-green-500/30 transition-colors"
-                >
-                  Transfer This Patient
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setSearchResult(null); setSearchAttempted(true); }}
-                  className="px-3 py-2 rounded-xl bg-white/8 border border-white/20 text-sm text-white hover:bg-white/12 transition-colors"
-                >
-                  Continue with Manual Entry
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleTransferPatient}
+                className="w-full px-3 py-2 rounded-xl bg-green-500/20 border border-green-400/50 text-sm text-green-300 hover:bg-green-500/30 transition-colors font-medium"
+              >
+                Transfer This Patient
+              </button>
+            </div>
+          )}
+
+          {/* Patient not found - show manual entry prompt */}
+          {searchAttempted && !searchResult && (
+            <div className="p-4 rounded-xl bg-orange-500/15 border border-orange-400/30">
+              <p className="text-xs text-orange-300 font-medium mb-1">Patient not found</p>
+              <p className="text-xs text-white/60">New patient entry</p>
             </div>
           )}
         </>
