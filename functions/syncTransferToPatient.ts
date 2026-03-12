@@ -28,6 +28,16 @@ Deno.serve(async (req) => {
     // Determine transfer status
     const transferStatus = transfer.already_transferred ? "transferred_in" : "pending_transfer";
 
+    // Transfer date: if already transferred, use today; otherwise schedule for tomorrow
+    // so the patient stays in "Upcoming Transfers" all day and only becomes an inpatient at 6 AM the next morning.
+    const todayStr = new Date().toISOString().split("T")[0];
+    let transferDate = todayStr;
+    if (!transfer.already_transferred) {
+      const tomorrow = new Date();
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+      transferDate = tomorrow.toISOString().split("T")[0];
+    }
+
     // Check if Patient record already exists for this patient_id
     const existing = await base44.asServiceRole.entities.Patient.filter({ patient_id: transfer.patient_id });
 
@@ -44,7 +54,7 @@ Deno.serve(async (req) => {
         assigned_services: receivingServices,
         transfer_status: transferStatus,
         transfer_type: transferType,
-        transfer_date: transfer.created_date ? transfer.created_date.split("T")[0] : new Date().toISOString().split("T")[0],
+        transfer_date: transferDate,
         patient_type: "Inpatient",
         // Only set primary_clinician if not already set (don't overwrite clinician assignment)
         ...(patient.primary_clinician ? {} : { primary_clinician: transfer.requesting_clinician || "" }),
@@ -62,7 +72,7 @@ Deno.serve(async (req) => {
         assigned_services: receivingServices,
         transfer_status: transferStatus,
         transfer_type: transferType,
-        transfer_date: transfer.created_date ? transfer.created_date.split("T")[0] : new Date().toISOString().split("T")[0],
+        transfer_date: transferDate,
         patient_type: "Inpatient",
         primary_clinician: transfer.requesting_clinician || "",
         discharge_status: "active",
