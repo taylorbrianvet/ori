@@ -17,7 +17,8 @@ const SEX_LABELS = { MI: "MI – Male Intact", MC: "MC – Male Castrated", FI: 
 const LOCATIONS = ["ICU", "PCW", "ER", "Ward", "Recovery", "Imaging", "OR", "Other"];
 
 const EMPTY = {
-  patient_name: "", patient_id: "", age: "", sex: "", species: "", breed: "",
+  patient_name: "", patient_id: "", age_years: "", age_months: "", age_weeks: "",
+  sex: "", species: "", breed: "",
   location: "", problem_list: [], requesting_service: "", receiving_services: [],
   requesting_clinician: "", estimate: "", notes: "", already_transferred: false,
 };
