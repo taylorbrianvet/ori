@@ -95,11 +95,21 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-4 gap-3">
         <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age</label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="e.g. 4y" value={form.age} onChange={e => set("age", e.target.value)} />
+          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age (yrs)</label>
+          <input type="number" min="0" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+            placeholder="0" value={form.age_years} onChange={e => set("age_years", e.target.value)} />
+        </div>
+        <div>
+          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Months</label>
+          <input type="number" min="0" max="11" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+            placeholder="0" value={form.age_months} onChange={e => set("age_months", e.target.value)} />
+        </div>
+        <div>
+          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Weeks</label>
+          <input type="number" min="0" max="3" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+            placeholder="0" value={form.age_weeks} onChange={e => set("age_weeks", e.target.value)} />
         </div>
         <div>
           <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
