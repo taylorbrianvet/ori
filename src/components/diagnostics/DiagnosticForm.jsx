@@ -100,11 +100,23 @@ export default function DiagnosticForm({ staffList = [], prefillService = "", pr
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelCls}>Patient ID <span className="text-red-400">*</span></label>
-          <input className={inputCls} placeholder="e.g. 123456" value={form.patient_id} onChange={e => handleChange("patient_id", e.target.value)} />
+          <input
+            className={`${inputCls} ${prefillPatient ? "opacity-60 cursor-not-allowed" : ""}`}
+            placeholder="e.g. 123456"
+            value={form.patient_id}
+            onChange={e => !prefillPatient && handleChange("patient_id", e.target.value)}
+            readOnly={!!prefillPatient}
+          />
         </div>
         <div>
           <label className={labelCls}>Patient Name <span className="text-red-400">*</span></label>
-          <input className={inputCls} placeholder="e.g. Buddy" value={form.patient_name} onChange={e => handleChange("patient_name", e.target.value)} />
+          <input
+            className={`${inputCls} ${prefillPatient ? "opacity-60 cursor-not-allowed" : ""}`}
+            placeholder="e.g. Buddy"
+            value={form.patient_name}
+            onChange={e => !prefillPatient && handleChange("patient_name", e.target.value)}
+            readOnly={!!prefillPatient}
+          />
         </div>
       </div>
 
