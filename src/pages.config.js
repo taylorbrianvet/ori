@@ -47,14 +47,56 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Admin from './pages/Admin';
+import Diagnostics from './pages/Diagnostics';
+import Directory from './pages/Directory';
+import EducationalRounds from './pages/EducationalRounds';
+import Home from './pages/Home';
+import JournalClub from './pages/JournalClub';
+import JournalDetail from './pages/JournalDetail';
+import MyWorkspace from './pages/MyWorkspace';
+import OnCall from './pages/OnCall';
+import OnCallDetail from './pages/OnCallDetail';
+import PatientCare from './pages/PatientCare';
+import Pharmacy from './pages/Pharmacy';
+import Resources from './pages/Resources';
 import ServiceBoard from './pages/ServiceBoard';
+import ServiceDetail from './pages/ServiceDetail';
+import Services from './pages/Services';
+import StudentSchedule from './pages/StudentSchedule';
+import SurgicalLog from './pages/SurgicalLog';
+import Transfers from './pages/Transfers';
+import WoundCare from './pages/WoundCare';
+import WoundCaseDetail from './pages/WoundCaseDetail';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Admin": Admin,
+    "Diagnostics": Diagnostics,
+    "Directory": Directory,
+    "EducationalRounds": EducationalRounds,
+    "Home": Home,
+    "JournalClub": JournalClub,
+    "JournalDetail": JournalDetail,
+    "MyWorkspace": MyWorkspace,
+    "OnCall": OnCall,
+    "OnCallDetail": OnCallDetail,
+    "PatientCare": PatientCare,
+    "Pharmacy": Pharmacy,
+    "Resources": Resources,
     "ServiceBoard": ServiceBoard,
+    "ServiceDetail": ServiceDetail,
+    "Services": Services,
+    "StudentSchedule": StudentSchedule,
+    "SurgicalLog": SurgicalLog,
+    "Transfers": Transfers,
+    "WoundCare": WoundCare,
+    "WoundCaseDetail": WoundCaseDetail,
 }
 
 export const pagesConfig = {
     mainPage: "ServiceBoard",
     Pages: PAGES,
+    Layout: __Layout,
 };
