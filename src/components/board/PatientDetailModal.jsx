@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { X, UserX, AlertCircle, ArrowLeftRight, Calendar, LogOut, RotateCcw, Stethoscope, Loader2, CheckCircle2 } from "lucide-react";
+import { X, UserX, AlertCircle, ArrowLeftRight, Calendar, LogOut, RotateCcw, Stethoscope, Loader2, CheckCircle2, Beaker, FlaskConical, Scan } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import TransferForm from "../transfers/TransferForm";
+import DiagnosticForm from "../diagnostics/DiagnosticForm";
 
 export default function PatientDetailModal({ patient: initialPatient, onClose }) {
   const [patient, setPatient] = useState(initialPatient);
   const [newNote, setNewNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTransferForm, setShowTransferForm] = useState(false);
+  const [showDiagnosticForm, setShowDiagnosticForm] = useState(false);
   const [showScheduleDischarge, setShowScheduleDischarge] = useState(false);
   const [scheduleDateTime, setScheduleDateTime] = useState("");
   const [assigningClinician, setAssigningClinician] = useState(false);
