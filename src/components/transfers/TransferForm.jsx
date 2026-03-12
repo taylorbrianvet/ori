@@ -157,7 +157,7 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
 
       {!selectedPatient ? (
         <>
-          {/* Patient search */}
+          {/* Patient search - always visible */}
           <div className="p-3 rounded-xl bg-white/5 border border-white/10">
             <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Search Existing Patient by ID</label>
             <div className="flex gap-2">
@@ -179,7 +179,7 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
             </div>
           </div>
 
-          {/* Search result card */}
+          {/* Search result card - shown if patient found */}
           {searchResult && (
             <div className="p-4 rounded-xl bg-white/8 border border-white/20">
               <p className="text-xs text-white/50 mb-2">Patient found:</p>
@@ -198,10 +198,10 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setSearchResult(null); setSearchPatientId(""); }}
+                  onClick={() => { setSearchResult(null); setSearchAttempted(true); }}
                   className="px-3 py-2 rounded-xl bg-white/8 border border-white/20 text-sm text-white hover:bg-white/12 transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  Continue with Manual Entry
                 </button>
               </div>
             </div>
