@@ -93,8 +93,14 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
   const removeProblem = (i) => set("problem_list", form.problem_list.filter((_, idx) => idx !== i));
 
   const handleSubmit = async () => {
-    if (!form.patient_name || !form.patient_id || !form.breed || !form.requesting_service || form.receiving_services.length === 0 || !form.requesting_clinician) {
-      toast.error("Please fill in all required fields and select at least one receiving service.");
+    // If patient selected via search, those fields are auto-populated
+    const patientFieldsRequired = !selectedPatient;
+    if (patientFieldsRequired && (!form.patient_name || !form.patient_id || !form.breed)) {
+      toast.error("Please fill in all required patient fields.");
+      return;
+    }
+    if (!form.requesting_service || form.receiving_services.length === 0 || !form.requesting_clinician) {
+      toast.error("Please fill in all required transfer fields and select at least one receiving service.");
       return;
     }
     setSaving(true);
