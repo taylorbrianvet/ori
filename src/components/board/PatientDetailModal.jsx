@@ -37,6 +37,11 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     queryFn: () => base44.entities.Staff.list(),
   });
 
+  const { data: patientDiagnostics = [], refetch: refetchDiagnostics } = useQuery({
+    queryKey: ["patient-diagnostics", patient.id],
+    queryFn: () => base44.entities.Diagnostic.filter({ patient_id: patient.patient_id }),
+  });
+
   const eligibleClinicians = staffList
     .filter(s => ["Faculty", "Resident", "Intern"].includes(s.role))
     .map(s => `${s.first_name} ${s.last_name}`);
