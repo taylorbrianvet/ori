@@ -17,7 +17,8 @@ const SEX_LABELS = { MI: "MI – Male Intact", MC: "MC – Male Castrated", FI: 
 const LOCATIONS = ["ICU", "PCW", "ER", "Ward", "Recovery", "Imaging", "OR", "Other"];
 
 const EMPTY = {
-  patient_name: "", patient_id: "", age: "", sex: "", species: "", breed: "",
+  patient_name: "", patient_id: "", age_years: "", age_months: "", age_weeks: "",
+  sex: "", species: "", breed: "",
   location: "", problem_list: [], requesting_service: "", receiving_services: [],
   requesting_clinician: "", estimate: "", notes: "", already_transferred: false,
 };
@@ -43,28 +44,19 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
       toast.error("Please fill in all required fields and select at least one receiving service.");
       return;
     }
+    if (!form.age_years && !form.age_months && !form.age_weeks) {
+      toast.error("Please enter at least one age field (years, months, or weeks).");
+      return;
+    }
     setSaving(true);
-    // Write to patient table if patient_id not found
-    const existing = await base44.entities.Patient.filter({ patient_id: form.patient_id });
-    if (!existing || existing.length === 0) {
-      await base44.entities.Patient.create({
-        name: form.patient_name,
-        patient_id: form.patient_id,
-        species: form.species,
-        breed: form.breed,
-        sex: form.sex === "MI" ? "Male Intact" : form.sex === "MC" ? "Male Neutered" : form.sex === "FI" ? "Female Intact" : "Female Spayed",
-        problem_list: form.problem_list,
-        service: form.requesting_service,
-        patient_type: "Inpatient",
-      });
-    }
-    // Create a transfer for each receiving service
-    for (const service of form.receiving_services) {
-      await base44.entities.InterserviceTransfer.create({
-        ...form,
-        receiving_service: service,
-      });
-    }
+    // Create a single transfer record with all receiving services
+    await base44.entities.InterserviceTransfer.create({
+      ...form,
+      age_years: form.age_years ? parseFloat(form.age_years) : undefined,
+      age_months: form.age_months ? parseFloat(form.age_months) : undefined,
+      age_weeks: form.age_weeks ? parseFloat(form.age_weeks) : undefined,
+      receiving_service: form.receiving_services[0] || "",
+    });
     toast.success("Transfer submitted.");
     setForm(EMPTY);
     setProblemInput("");
@@ -105,9 +97,15 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age</label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="e.g. 4y" value={form.age} onChange={e => set("age", e.target.value)} />
+          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age (at least one)</label>
+          <div className="flex gap-1">
+            <input className="w-full px-2 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+              placeholder="Yrs" type="number" min="0" value={form.age_years} onChange={e => set("age_years", e.target.value)} />
+            <input className="w-full px-2 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+              placeholder="Mo" type="number" min="0" value={form.age_months} onChange={e => set("age_months", e.target.value)} />
+            <input className="w-full px-2 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+              placeholder="Wks" type="number" min="0" value={form.age_weeks} onChange={e => set("age_weeks", e.target.value)} />
+          </div>
         </div>
         <div>
           <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
