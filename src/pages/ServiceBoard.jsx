@@ -7,7 +7,7 @@ import PageContainer from "../components/shared/PageContainer";
 import InpatientSection from "../components/board/InpatientSection";
 import WoundPatientsSection from "../components/board/WoundPatientsSection";
 import PendingTransfersSection from "../components/board/PendingTransfersSection";
-import DiagnosticsSection from "../components/board/DiagnosticsSection";
+import DiagnosticsBoard from "../components/diagnostics/DiagnosticsBoard";
 import ClinicTeamSection from "../components/board/ClinicTeamSection";
 import DischargedTodaySection from "../components/board/DischargedTodaySection";
 
