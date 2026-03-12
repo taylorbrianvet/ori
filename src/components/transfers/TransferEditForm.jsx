@@ -54,13 +54,7 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
   const handleSave = async () => {
     setSaving(true);
     for (const t of transfers) {
-      await base44.entities.InterserviceTransfer.update(t.id, {
-        patient_name: form.patient_name,
-        patient_id: form.patient_id,
-        age: form.age,
-        sex: form.sex,
-        species: form.species,
-        breed: form.breed,
+      const updateData = {
         location: form.location,
         problem_list: form.problem_list,
         requesting_service: form.requesting_service,
@@ -68,7 +62,21 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
         estimate: form.estimate ? parseFloat(form.estimate) : null,
         notes: form.notes,
         already_transferred: form.already_transferred,
-      });
+      };
+
+      // Only allow patient demographic edits if NOT from GlobalPatient
+      if (!isFromGlobalPatient) {
+        updateData.patient_name = form.patient_name;
+        updateData.patient_id = form.patient_id;
+        updateData.age_years = form.age_years ? parseFloat(form.age_years) : undefined;
+        updateData.age_months = form.age_months ? parseFloat(form.age_months) : undefined;
+        updateData.age_weeks = form.age_weeks ? parseFloat(form.age_weeks) : undefined;
+        updateData.sex = form.sex;
+        updateData.species = form.species;
+        updateData.breed = form.breed;
+      }
+
+      await base44.entities.InterserviceTransfer.update(t.id, updateData);
     }
     toast.success("Transfer updated.");
     setSaving(false);
