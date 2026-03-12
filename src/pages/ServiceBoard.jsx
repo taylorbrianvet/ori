@@ -35,7 +35,7 @@ export default function ServiceBoard() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const unsub = base44.entities.PatientVisit.subscribe(() => {
+    const unsub = base44.entities.Patient.subscribe(() => {
       queryClient.invalidateQueries({ queryKey: ["patients"] });
     });
     return () => { if (typeof unsub === "function") unsub(); };
@@ -50,7 +50,7 @@ export default function ServiceBoard() {
 
   const { data: patients = [] } = useQuery({
     queryKey: ["patients"],
-    queryFn: () => base44.entities.PatientVisit.list(),
+    queryFn: () => base44.entities.Patient.list(),
   });
 
   const { data: woundCases = [] } = useQuery({
@@ -81,7 +81,7 @@ export default function ServiceBoard() {
   // Filter data for selected service
   const inpatients = patients.filter(
     p => (p.service === selectedService || p.assigned_services?.includes(selectedService)) &&
-    p.patient_type !== "Discharged" &&
+    p.patient_type === "Inpatient" &&
     p.discharge_status !== "discharged"
   );
 

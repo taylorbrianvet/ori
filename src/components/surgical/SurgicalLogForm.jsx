@@ -216,48 +216,23 @@ export default function SurgicalLogForm({ onClose, onSuccess, staffList = [] }) 
 
     setSaving(true);
     try {
-      // ── Look up GlobalPatient by case_number ──────────────────────────────
-      const existingGlobal = await base44.entities.GlobalPatient.filter({ patient_id: form.case_number });
-      let globalPatient = existingGlobal?.[0];
+      // Check if patient exists by case_number
+      const existingPatients = await base44.entities.Patient.filter({ patient_id: form.case_number });
 
-      if (!globalPatient) {
-        // Create a minimal GlobalPatient stub (demographics can be enriched later)
-        globalPatient = await base44.entities.GlobalPatient.create({
-          patient_id: form.case_number,
+      if (existingPatients.length === 0) {
+        // Create new patient stub
+        await base44.entities.Patient.create({
           name: `Patient ${form.case_number}`,
-          species: form.species,
-          birthdate: new Date().toISOString().split("T")[0], // placeholder — update when demographics known
-          infectious_status: "Negative",
-          alerts: [],
-        });
-      }
-
-      // ── Find most recent open PatientVisit ────────────────────────────────
-      const existingVisits = await base44.entities.PatientVisit.filter({ global_patient_id: globalPatient.id });
-      const openVisit = existingVisits
-        ?.filter(v => v.discharge_status !== "discharged")
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))[0];
-
-      // If no open visit, create one
-      let visitId = openVisit?.id;
-      if (!visitId) {
-        const newVisit = await base44.entities.PatientVisit.create({
-          global_patient_id: globalPatient.id,
-          name: globalPatient.name,
           patient_id: form.case_number,
           species: form.species,
+          problem_list: form.diagnosis ? [form.diagnosis] : [],
           service: form.service || undefined,
           patient_type: "Inpatient",
-          discharge_status: "active",
-          problem_list: form.diagnosis ? [form.diagnosis] : [],
         });
-        visitId = newVisit.id;
       }
 
       const entry = await base44.entities.SurgicalLogEntry.create({
         ...form,
-        global_patient_id: globalPatient.id,
-        patient_visit_id: visitId,
         residents_count: form.residents_scrubbed_in.length,
         logged_by: [],
       });

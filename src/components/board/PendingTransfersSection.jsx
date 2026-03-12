@@ -11,12 +11,10 @@ export default function PendingTransfersSection({ transfers }) {
   const handleMarkTransferred = async (transfer) => {
     setMarkingId(transfer.id);
     try {
-      // Find the matching open PatientVisit and promote it to transferred_in
-      const matchingVisits = await base44.entities.PatientVisit.filter({ patient_id: transfer.patient_id });
-      const openVisit = matchingVisits?.filter(v => v.discharge_status !== "discharged")
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))[0];
-      if (openVisit) {
-        await base44.entities.PatientVisit.update(openVisit.id, {
+      // Find the matching Patient record and promote it to transferred_in immediately
+      const matchingPatients = await base44.entities.Patient.filter({ patient_id: transfer.patient_id });
+      if (matchingPatients?.length > 0) {
+        await base44.entities.Patient.update(matchingPatients[0].id, {
           transfer_status: "transferred_in",
           transfer_date: new Date().toISOString().split("T")[0],
         });
@@ -74,9 +72,7 @@ export default function PendingTransfersSection({ transfers }) {
                 </button>
               </div>
             </div>
-            <p className="text-xs text-white/50 mb-1">
-        {[t.age_years && `${t.age_years}y`, t.age_months && `${t.age_months}mo`, t.age_weeks && `${t.age_weeks}wk`].filter(Boolean).join(" ") || "Age?"} • {t.sex || "?"} • {t.species} • {t.breed}
-      </p>
+            <p className="text-xs text-white/50 mb-1">{t.age || "?"} • {t.sex || "?"} • {t.species} • {t.breed}</p>
             <p className="text-xs text-white/70 mb-1">{t.requesting_service} → {receivingLabel(t)}</p>
             {t.problem_list?.length > 0 && (
               <p className="text-[11px] text-white/60 mb-1">
