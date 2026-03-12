@@ -339,27 +339,23 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
           {/* Schedule Discharge Picker */}
           {showScheduleDischarge && (
-            <div className="rounded-xl border border-green-400/25 bg-green-500/8 p-3 space-y-2">
-              <p className="text-xs font-semibold text-green-200">Schedule Discharge Time</p>
-              <input
-                type="datetime-local"
-                value={scheduleDateTime}
-                onChange={e => setScheduleDateTime(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/20 text-sm text-white focus:outline-none"
-              />
-              <div className="flex gap-2">
-                <button
-                  onClick={handleScheduleDischarge}
-                  disabled={!scheduleDateTime || actionLoading === "schedule"}
-                  className="flex-1 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-xs font-medium transition-colors disabled:opacity-50"
-                >
-                  {actionLoading === "schedule" ? <Loader2 className="w-3.5 h-3.5 animate-spin inline" /> : "Confirm Schedule"}
-                </button>
-                <button onClick={() => setShowScheduleDischarge(false)} className="px-4 py-2 rounded-lg bg-white/8 text-white/50 text-xs hover:bg-white/12">
-                  Cancel
-                </button>
-              </div>
-            </div>
+            <DischargeDatePicker
+              calendarViewMonth={calendarViewMonth}
+              setCalendarViewMonth={setCalendarViewMonth}
+              calendarDate={calendarDate}
+              setCalendarDate={setCalendarDate}
+              scheduleTime={scheduleTime}
+              setScheduleTime={setScheduleTime}
+              onConfirm={() => {
+                const [h, m] = scheduleTime.split(":").map(Number);
+                const dt = new Date(calendarDate);
+                dt.setHours(h, m, 0, 0);
+                setScheduleDateTime(dt.toISOString());
+                handleScheduleDischargeFromPicker(dt);
+              }}
+              onCancel={() => setShowScheduleDischarge(false)}
+              actionLoading={actionLoading}
+            />
           )}
 
           {/* Transfer Form */}
