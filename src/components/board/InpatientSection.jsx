@@ -44,13 +44,30 @@ export default function InpatientSection({ patients, compact = false }) {
               <button
                 key={p.id}
                 onClick={() => setSelectedPatient(p)}
-                className="w-full text-left p-2.5 rounded-lg bg-gradient-to-br from-white/15 to-white/10 border border-white/20 hover:from-white/20 hover:to-white/15 transition-colors text-[11px]"
+                className={`w-full text-left p-2.5 rounded-lg border hover:opacity-90 transition-colors text-[11px] ${
+                  p.transfer_type === "double"
+                    ? "bg-gradient-to-br from-red-500/15 to-red-500/8 border-red-400/25"
+                    : "bg-gradient-to-br from-white/15 to-white/10 border-white/20 hover:from-white/20 hover:to-white/15"
+                }`}
               >
-                <div className="font-semibold text-white">{p.name}</div>
+                <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                  <span className="font-semibold text-white">{p.name}</span>
+                  <TransferBadge patient={p} />
+                  {!p.primary_clinician && (
+                    <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/25 border border-amber-400/35 text-amber-200">
+                      <UserX className="w-2.5 h-2.5" /> No Clinician
+                    </span>
+                  )}
+                  {p.discharge_status === "scheduled" && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-green-500/20 border border-green-400/30 text-green-200">
+                      DC Scheduled
+                    </span>
+                  )}
+                </div>
                 <div className="text-white/70 text-[10px]">{signalment(p)}</div>
                 {p.problem_list?.length > 0 && (
                   <div className="text-[9px] text-white/50 mt-0.5">
-                    {p.problem_list.slice(0, 1).map((prob, i) => prob).join(", ")}
+                    {p.problem_list.slice(0, 1).join(", ")}
                     {p.problem_list.length > 1 && ` +${p.problem_list.length - 1}`}
                   </div>
                 )}
