@@ -33,7 +33,7 @@ export default function PendingTransfersSection({ transfers }) {
       <div className="flex items-center gap-2 mb-4">
         <ArrowLeftRight className="w-5 h-5 text-white/70" />
         <h2 className="text-sm font-semibold text-white">
-          Pending Transfers <span className="text-white/50 font-normal">({transfers.length})</span>
+          Upcoming Transfers <span className="text-white/50 font-normal">({transfers.length})</span>
         </h2>
       </div>
 
