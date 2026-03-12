@@ -133,7 +133,7 @@ export default function EducationalRounds() {
 
   // Get rounds for this week
   const weekRounds = allRounds.filter(r => {
-    const rDate = new Date(r.date);
+    const rDate = parseLocalDate(r.date);
     return rDate >= weekStart && rDate <= weekEnd && r.approval_status !== "cancelled";
   });
 
