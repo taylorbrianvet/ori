@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format, parseISO } from "date-fns";
-import { Users } from "lucide-react";
+import { Users, AlertCircle, UserX, ArrowLeftRight } from "lucide-react";
 import PatientDetailModal from "./PatientDetailModal";
 
 export default function InpatientSection({ patients, compact = false }) {
