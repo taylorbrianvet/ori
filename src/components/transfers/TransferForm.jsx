@@ -31,6 +31,8 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
   const [saving, setSaving] = useState(false);
   const [searchPatientId, setSearchPatientId] = useState("");
   const [isSearchingPatient, setIsSearchingPatient] = useState(false);
+  const [searchResult, setSearchResult] = useState(null); // { id, name, patient_id, species, breed, sex, age_years, age_months, age_weeks }
+  const [selectedPatient, setSelectedPatient] = useState(null); // locked-in patient after "Transfer Patient" click
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -44,28 +46,21 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
       if (globalPatients && globalPatients.length > 0) {
         const patient = globalPatients[0];
         const ageComponents = calculateAgeComponents(patient.birthdate);
-        setForm(prevForm => ({
-          ...prevForm,
-          patient_name: patient.name,
+        setSearchResult({
+          id: patient.id,
+          name: patient.name,
           patient_id: patient.patient_id,
           species: patient.species,
           breed: patient.breed || "",
           sex: patient.sex || "",
-          age_years: ageComponents.years.toString(),
-          age_months: ageComponents.months.toString(),
-          age_weeks: ageComponents.weeks.toString(),
-          global_patient_id: patient.id,
-        }));
-        toast.success(`Patient ${patient.name} (${patient.patient_id}) found and pre-filled.`);
-        setSearchPatientId("");
+          age_years: ageComponents.years,
+          age_months: ageComponents.months,
+          age_weeks: ageComponents.weeks,
+        });
+        toast.success(`Patient ${patient.name} found.`);
       } else {
-        toast.info(`No patient found with ID: ${idToSearch}. Please enter details manually.`);
-        setForm(prevForm => ({
-          ...prevForm,
-          patient_id: idToSearch,
-          global_patient_id: "",
-        }));
-        setSearchPatientId("");
+        toast.info(`No patient found with ID: ${idToSearch}. You can fill the form manually.`);
+        setSearchResult(null);
       }
     } catch (error) {
       console.error("Error searching GlobalPatient:", error);
@@ -73,6 +68,19 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
     } finally {
       setIsSearchingPatient(false);
     }
+  };
+
+  const handleTransferPatient = () => {
+    if (!searchResult) return;
+    setSelectedPatient(searchResult);
+    setSearchResult(null);
+    setSearchPatientId("");
+  };
+
+  const handleCancelPatientSelection = () => {
+    setSelectedPatient(null);
+    setSearchResult(null);
+    setSearchPatientId("");
   };
 
   const addProblem = () => {
@@ -93,12 +101,17 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
     // Create one InterserviceTransfer record with all receiving services
     const transferData = {
       ...form,
-      age_years: form.age_years ? parseFloat(form.age_years) : undefined,
-      age_months: form.age_months ? parseFloat(form.age_months) : undefined,
-      age_weeks: form.age_weeks ? parseFloat(form.age_weeks) : undefined,
+      age_years: selectedPatient ? selectedPatient.age_years : (form.age_years ? parseFloat(form.age_years) : undefined),
+      age_months: selectedPatient ? selectedPatient.age_months : (form.age_months ? parseFloat(form.age_months) : undefined),
+      age_weeks: selectedPatient ? selectedPatient.age_weeks : (form.age_weeks ? parseFloat(form.age_weeks) : undefined),
+      patient_name: selectedPatient ? selectedPatient.name : form.patient_name,
+      patient_id: selectedPatient ? selectedPatient.patient_id : form.patient_id,
+      species: selectedPatient ? selectedPatient.species : form.species,
+      breed: selectedPatient ? selectedPatient.breed : form.breed,
+      sex: selectedPatient ? selectedPatient.sex : form.sex,
       receiving_service: form.receiving_services[0] || "",
       receiving_services: form.receiving_services,
-      global_patient_id: form.global_patient_id || undefined,
+      global_patient_id: selectedPatient ? selectedPatient.id : (form.global_patient_id || undefined),
     };
     const created = await base44.entities.InterserviceTransfer.create(transferData);
     // Trigger backend sync to upsert GlobalPatient + PatientVisit
@@ -127,29 +140,82 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
     <div className="glass-card p-5 space-y-4">
       <h2 className="text-sm font-semibold text-white mb-1">New Transfer</h2>
 
-      {/* Patient search */}
-      <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-        <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Search Existing Patient by ID</label>
-        <div className="flex gap-2">
-          <input
-            className="flex-1 px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-            placeholder="Enter patient ID (e.g., 123456)"
-            value={searchPatientId}
-            onChange={e => setSearchPatientId(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') handleSearchPatient(); }}
-          />
-          <button
-            type="button"
-            onClick={handleSearchPatient}
-            disabled={!searchPatientId.trim() || isSearchingPatient}
-            className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-sm text-white hover:bg-white/16 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 whitespace-nowrap"
-          >
-            {isSearchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : "Search"}
-          </button>
-        </div>
-      </div>
+      {!selectedPatient ? (
+        <>
+          {/* Patient search */}
+          <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+            <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Search Existing Patient by ID</label>
+            <div className="flex gap-2">
+              <input
+                className="flex-1 px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                placeholder="Enter patient ID (e.g., 123456)"
+                value={searchPatientId}
+                onChange={e => setSearchPatientId(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleSearchPatient(); }}
+              />
+              <button
+                type="button"
+                onClick={handleSearchPatient}
+                disabled={!searchPatientId.trim() || isSearchingPatient}
+                className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-sm text-white hover:bg-white/16 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 whitespace-nowrap"
+              >
+                {isSearchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : "Search"}
+              </button>
+            </div>
+          </div>
 
-      {/* Patient info row */}
+          {/* Search result card */}
+          {searchResult && (
+            <div className="p-4 rounded-xl bg-white/8 border border-white/20">
+              <p className="text-xs text-white/50 mb-2">Patient found:</p>
+              <div className="space-y-1 mb-3">
+                <p className="text-sm font-semibold text-white">{searchResult.name}</p>
+                <p className="text-xs text-white/60">ID: {searchResult.patient_id} | {searchResult.species} {searchResult.breed} | {searchResult.sex}</p>
+                <p className="text-xs text-white/60">Age: {searchResult.age_years}y {searchResult.age_months}mo {searchResult.age_weeks}w</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleTransferPatient}
+                  className="flex-1 px-3 py-2 rounded-xl bg-green-500/20 border border-green-400/50 text-sm text-green-300 hover:bg-green-500/30 transition-colors"
+                >
+                  Transfer This Patient
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSearchResult(null); setSearchPatientId(""); }}
+                  className="px-3 py-2 rounded-xl bg-white/8 border border-white/20 text-sm text-white hover:bg-white/12 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Selected patient locked in */}
+          <div className="p-4 rounded-xl bg-blue-500/15 border border-blue-400/30">
+            <p className="text-xs text-blue-300 mb-2">Patient selected:</p>
+            <div className="space-y-1 mb-2">
+              <p className="text-sm font-semibold text-white">{selectedPatient.name}</p>
+              <p className="text-xs text-white/60">ID: {selectedPatient.patient_id} | {selectedPatient.species} {selectedPatient.breed} | {selectedPatient.sex}</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleCancelPatientSelection}
+              className="text-xs text-blue-300 hover:text-blue-200 transition-colors"
+            >
+              Change Patient
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Form only visible when patient is selected OR search not used */}
+      {selectedPatient || (!searchResult && !selectedPatient) ? (
+        <>
+          {/* Patient info row */}
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient Name <span className="text-red-400">*</span></label>
@@ -332,6 +398,8 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
         Submit Transfer
       </button>
+        </>
+      ) : null}
     </div>
   );
 }
