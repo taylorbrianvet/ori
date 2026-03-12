@@ -1,5 +1,38 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
+// Helper to calculate age components from birthdate
+function calculateAgeComponents(birthdateStr) {
+  if (!birthdateStr) return { years: 0, months: 0, weeks: 0 };
+
+  const birthdate = new Date(birthdateStr);
+  const today = new Date();
+
+  let years = today.getFullYear() - birthdate.getFullYear();
+  let months = today.getMonth() - birthdate.getMonth();
+  let days = today.getDate() - birthdate.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  const totalWeeks = Math.floor(
+    (today.getTime() - birthdate.getTime()) / (1000 * 60 * 60 * 24 * 7)
+  );
+
+  return {
+    years: Math.max(0, years),
+    months: Math.max(0, months),
+    weeks: totalWeeks,
+  };
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -87,6 +120,9 @@ Deno.serve(async (req) => {
 
     const openVisit = existingVisits?.find(v => v.discharge_status !== "discharged");
 
+    // Calculate age components from GlobalPatient birthdate
+    const ageComps = calculateAgeComponents(globalPatient.birthdate);
+
     let patientVisit;
     if (openVisit) {
       // Update the open visit with latest transfer info
@@ -96,6 +132,9 @@ Deno.serve(async (req) => {
         species: transfer.species,
         breed: transfer.breed,
         sex: normalizedSex,
+        age_years: ageComps.years,
+        age_months: ageComps.months,
+        age_weeks: ageComps.weeks,
         problem_list: transfer.problem_list || [],
         service: primaryService,
         assigned_services: receivingServices,
@@ -116,6 +155,9 @@ Deno.serve(async (req) => {
         species: transfer.species,
         breed: transfer.breed,
         sex: normalizedSex,
+        age_years: ageComps.years,
+        age_months: ageComps.months,
+        age_weeks: ageComps.weeks,
         problem_list: transfer.problem_list || [],
         service: primaryService,
         assigned_services: receivingServices,
