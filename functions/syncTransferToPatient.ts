@@ -183,19 +183,22 @@ Deno.serve(async (req) => {
 
     // ── 3. Write back IDs to the InterserviceTransfer record ─────────────────
     if (transfer.id) {
-      await base44.asServiceRole.entities.InterserviceTransfer.update(transfer.id, {
-        global_patient_id: globalPatient.id,
-        patient_visit_id: patientVisit.id,
-      });
+      const updateData = {};
+      if (globalPatient) updateData.global_patient_id = globalPatient.id;
+      if (patientVisit) updateData.patient_visit_id = patientVisit.id;
+      if (Object.keys(updateData).length > 0) {
+        await base44.asServiceRole.entities.InterserviceTransfer.update(transfer.id, updateData);
+      }
     }
 
     return Response.json({
       success: true,
       patient_id: transfer.patient_id,
-      global_patient_id: globalPatient.id,
-      patient_visit_id: patientVisit.id,
+      global_patient_id: globalPatient?.id || null,
+      patient_visit_id: patientVisit?.id || null,
       transfer_status: transferStatus,
       transfer_type: transferType,
+      message: !globalPatient ? "New patient transfer deferred — will sync at 6 AM transfer window" : "Transfer synced",
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
