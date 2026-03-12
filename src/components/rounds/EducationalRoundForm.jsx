@@ -27,15 +27,22 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
   const [saving, setSaving] = useState(false);
   const [deptDropdown, setDeptDropdown] = useState(false);
 
+  // Match staff whose department contains or is contained by any selected department label
+  const deptMatches = (staffDept) =>
+    (formData.departments || []).some(d =>
+      staffDept?.toLowerCase().includes(d.toLowerCase()) ||
+      d.toLowerCase().includes(staffDept?.toLowerCase())
+    );
+
   // Get residents for selected departments
   const selectedDeptResidents = staffList
-    .filter(s => (formData.departments || []).includes(s.department) && s.role === "Resident")
+    .filter(s => deptMatches(s.department) && s.role === "Resident")
     .map(s => s.first_name + " " + s.last_name)
     .sort();
 
   // Get faculty for selected departments
   const selectedDeptFaculty = staffList
-    .filter(s => (formData.departments || []).includes(s.department) && s.role === "Faculty")
+    .filter(s => deptMatches(s.department) && s.role === "Faculty")
     .map(s => s.first_name + " " + s.last_name)
     .sort();
 
