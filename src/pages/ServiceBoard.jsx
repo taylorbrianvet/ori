@@ -67,14 +67,19 @@ export default function ServiceBoard() {
 
   // Filter data for selected service
   const inpatients = patients.filter(
-    p => p.service === selectedService && p.patient_type === "Inpatient"
+    p => p.service === selectedService &&
+    p.patient_type === "Inpatient" &&
+    p.transfer_status === "transferred_in" &&
+    (p.discharge_status === "active" || p.discharge_status === "scheduled")
   );
 
   const woundPatients = woundCases.filter(w => w.service === selectedService);
 
-  const pendingTransfers = transfers.filter(
-    t => !t.already_transferred && t.receiving_service === selectedService
-  );
+  const pendingTransfers = transfers.filter(t => {
+    if (t.already_transferred) return false;
+    if (t.receiving_services?.length > 0) return t.receiving_services.includes(selectedService);
+    return t.receiving_service === selectedService;
+  });
 
   const pendingDiagnostics = diagnostics.filter(
     d => d.requesting_service === selectedService && !d.diagnostic_complete
