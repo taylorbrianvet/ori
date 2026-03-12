@@ -39,12 +39,12 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const { data: surgeries = [] } = useQuery({
     queryKey: ["surgical-logs", patient.id],
-    queryFn: () => base44.entities.SurgicalLogEntry.filter({ patient_id: patient.id }),
+    queryFn: () => base44.entities.SurgicalLogEntry.filter({ patient_visit_id: patient.id }),
   });
 
   const { data: notes = [], refetch: refetchNotes } = useQuery({
     queryKey: ["patient-notes", patient.id],
-    queryFn: () => base44.entities.PatientNote.filter({ patient_id: patient.id }),
+    queryFn: () => base44.entities.PatientNote.filter({ patient_visit_id: patient.id }),
   });
 
   const { data: staffList = [] } = useQuery({
@@ -54,7 +54,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const { data: patientDiagnostics = [], refetch: refetchDiagnostics } = useQuery({
     queryKey: ["patient-diagnostics", patient.id],
-    queryFn: () => base44.entities.Diagnostic.filter({ patient_id: patient.patient_id }),
+    queryFn: () => base44.entities.Diagnostic.filter({ global_patient_id: patient.global_patient_id }),
   });
 
   const eligibleClinicians = staffList
@@ -62,8 +62,8 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     .map(s => `${s.first_name} ${s.last_name}`);
 
   const refreshPatient = async () => {
-    queryClient.invalidateQueries({ queryKey: ["patients"] });
-    const updated = await base44.entities.Patient.filter({ patient_id: patient.patient_id });
+    queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
+    const updated = await base44.entities.PatientVisit.filter({ global_patient_id: patient.global_patient_id });
     if (updated?.length > 0) setPatient(updated[0]);
   };
 
@@ -72,7 +72,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     setIsSubmitting(true);
     const me = await base44.auth.me();
     await base44.entities.PatientNote.create({
-      patient_id: patient.id,
+      patient_visit_id: patient.id,
       note_date: new Date().toISOString().split("T")[0],
       content: newNote,
       clinician: me?.full_name || "Unknown",
@@ -85,29 +85,29 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
   const handleAssignClinician = async () => {
     if (!clinicianInput.trim()) return;
     setAssigningClinician(true);
-    await base44.entities.Patient.update(patient.id, { primary_clinician: clinicianInput.trim() });
+    await base44.entities.PatientVisit.update(patient.id, { primary_clinician: clinicianInput.trim() });
     setPatient(p => ({ ...p, primary_clinician: clinicianInput.trim() }));
     setShowClinicianEdit(false);
-    queryClient.invalidateQueries({ queryKey: ["patients"] });
+    queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     toast.success("Clinician assigned");
     setAssigningClinician(false);
   };
 
   const handleDischarge = async () => {
     setActionLoading("discharge");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "discharged",
       scheduled_discharge_time: new Date().toISOString(),
     });
     toast.success(`${patient.name} discharged`);
-    queryClient.invalidateQueries({ queryKey: ["patients"] });
+    queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     onClose();
   };
 
   const handleScheduleDischarge = async () => {
     if (!scheduleDateTime) return;
     setActionLoading("schedule");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "scheduled",
       scheduled_discharge_time: new Date(scheduleDateTime).toISOString(),
     });
@@ -119,7 +119,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleScheduleDischargeFromPicker = async (dt) => {
     setActionLoading("schedule");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "scheduled",
       scheduled_discharge_time: dt.toISOString(),
     });
@@ -131,7 +131,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleReadmit = async () => {
     setActionLoading("readmit");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "active",
       scheduled_discharge_time: null,
     });
@@ -142,9 +142,9 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleServiceSwitch = async (newService) => {
     setActionLoading("switch");
-    await base44.entities.Patient.update(patient.id, { service: newService });
+    await base44.entities.PatientVisit.update(patient.id, { service: newService });
     setPatient(p => ({ ...p, service: newService }));
-    queryClient.invalidateQueries({ queryKey: ["patients"] });
+    queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     toast.success(`Service switched to ${newService}`);
     setServiceSwitchConfirm(false);
     setPendingService(null);
@@ -159,9 +159,9 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     // Service admin should set this — for now uses first service in assigned_services
     const myStaff = staffList.find(s => s.email === me.email);
     const claimService = myStaff?.service || patient.assigned_services?.[0] || patient.service;
-    await base44.entities.Patient.update(patient.id, { primary_service_claimed: claimService });
+    await base44.entities.PatientVisit.update(patient.id, { primary_service_claimed: claimService });
     setPatient(p => ({ ...p, primary_service_claimed: claimService }));
-    queryClient.invalidateQueries({ queryKey: ["patients"] });
+    queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     toast.success(`Primary service claimed: ${claimService}`);
     setActionLoading(null);
   };
