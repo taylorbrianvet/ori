@@ -97,15 +97,23 @@ export default function MyWorkspace() {
   const procedurePendingCount = myEntries.length - loggedCount;
 
   const myRounds = educationalRounds.filter(r => {
-    // Only show approved rounds
+    // Only show approved-for-logging rounds
     if (r.approval_status !== "approved") return false;
-    
-    // Check if user is in any of the departments and should attend
-    const userDeptMatches = r.departments?.some(dept => dept === staffRecord?.department);
-    if (!userDeptMatches) return false;
-    
+
+    // Department match: user's department contains or is contained by a round department
+    const userDept = staffRecord?.department || "";
+    const deptMatches = r.departments?.some(d =>
+      userDept.toLowerCase().includes(d.toLowerCase()) ||
+      d.toLowerCase().includes(userDept.toLowerCase())
+    );
+    if (!deptMatches) return false;
+
     if (r.attendance_everyone) return true;
-    if ((r.attendance || []).some(name => name.toLowerCase().includes(firstName))) return true;
+    // Match by full name first, fall back to first name
+    if ((r.attendance || []).some(name =>
+      name.toLowerCase() === userFullName.toLowerCase() ||
+      name.toLowerCase().includes(firstName)
+    )) return true;
     return false;
   });
 
