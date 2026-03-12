@@ -229,7 +229,7 @@ export default function TransferDetailModal({ transfers, onClose, onUpdated, buc
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-20 flex items-center justify-center p-4"
+            className="absolute inset-0 z-20 flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
             onClick={() => !deleting && setShowCancelConfirm(false)}
           >
             <motion.div
