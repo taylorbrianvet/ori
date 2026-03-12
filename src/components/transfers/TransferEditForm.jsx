@@ -75,6 +75,11 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
         updateData.breed = form.breed;
       }
       await base44.entities.InterserviceTransfer.update(t.id, updateData);
+
+      // If toggling "already_transferred" ON, sync immediately to GlobalPatient and PatientVisit
+      if (form.already_transferred && !t.already_transferred) {
+        await base44.functions.invoke("syncTransferToPatient", { transfer_id: t.id });
+      }
     }
     toast.success("Transfer updated.");
     setSaving(false);
