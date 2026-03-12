@@ -54,6 +54,19 @@ export default function PendingTransfersSection({ transfers }) {
 
   const isDouble = (t) => (t.receiving_services?.length > 1);
 
+  const getAgeString = (transfer) => {
+    // If from global patient, use calculated age from birthdate
+    if (transfer.global_patient_id && globalPatientMap[transfer.global_patient_id]?.birthdate) {
+      return calculateCurrentAge(globalPatientMap[transfer.global_patient_id].birthdate);
+    }
+    // Otherwise use form age data
+    const parts = [];
+    if (transfer.age_years) parts.push(`${transfer.age_years}y`);
+    if (transfer.age_months) parts.push(`${transfer.age_months}m`);
+    if (transfer.age_weeks) parts.push(`${transfer.age_weeks}w`);
+    return parts.length > 0 ? parts.join(" ") : "?";
+  };
+
   return (
     <div className="glass-card p-4 mb-6">
       <div className="flex items-center gap-2 mb-4">
