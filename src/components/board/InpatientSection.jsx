@@ -10,6 +10,12 @@ export default function InpatientSection({ patients, compact = false }) {
     .filter(Boolean)
     .join(" • ");
 
+  const isOverdue = (p) => {
+    if (p.discharge_status !== "scheduled" || !p.scheduled_discharge_time) return false;
+    const s = /[Z+\-]\d*$/.test(p.scheduled_discharge_time) ? p.scheduled_discharge_time : p.scheduled_discharge_time + "Z";
+    return new Date(s) < new Date(Date.now() - 60 * 60 * 1000);
+  };
+
   const TransferBadge = ({ patient }) => {
     if (patient.transfer_type === "double") {
       return (
