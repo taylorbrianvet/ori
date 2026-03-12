@@ -26,25 +26,7 @@ export default function PendingTransfersSection({ transfers, onTransfersUpdated 
      enabled: globalPatientIds.length > 0,
    });
 
-  const handleMarkTransferred = async (transfer) => {
-    setMarkingId(transfer.id);
-    try {
-      // Find the matching Patient record and promote it to transferred_in immediately
-      const matchingPatients = await base44.entities.Patient.filter({ patient_id: transfer.patient_id });
-      if (matchingPatients?.length > 0) {
-        await base44.entities.Patient.update(matchingPatients[0].id, {
-          transfer_status: "transferred_in",
-          transfer_date: new Date().toISOString().split("T")[0],
-        });
-      }
-      toast.success(`${transfer.patient_name} moved to inpatients`);
-      queryClient.invalidateQueries({ queryKey: ["interservice-transfers"] });
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
-    } catch (err) {
-      toast.error("Failed to update transfer status");
-    }
-    setMarkingId(null);
-  };
+
 
   const receivingLabel = (t) => {
     if (t.receiving_services?.length > 0) return t.receiving_services.join(" + ");
