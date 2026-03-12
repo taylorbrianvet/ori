@@ -160,7 +160,12 @@ export default function ServiceBoard() {
 
         {/* Center: Diagnostics */}
         <div>
-          <DiagnosticsSection diagnostics={pendingDiagnostics} compact />
+          <DiagnosticsBoard
+            diagnostics={pendingDiagnostics}
+            staffList={staffList}
+            selectedService={selectedService}
+            compact
+          />
         </div>
 
         {/* Right: Wound Patients */}
