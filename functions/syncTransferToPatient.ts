@@ -68,49 +68,57 @@ Deno.serve(async (req) => {
       transferDate = tomorrow.toISOString().split("T")[0];
     }
 
-    // ── 1. Upsert GlobalPatient ──────────────────────────────────────────────
-    const existingGlobal = await base44.asServiceRole.entities.GlobalPatient.filter({ patient_id: transfer.patient_id });
+    // ── 1. Check for existing GlobalPatient ──────────────────────────────────
+     const existingGlobal = await base44.asServiceRole.entities.GlobalPatient.filter({ patient_id: transfer.patient_id });
 
-    let globalPatient;
-    if (existingGlobal && existingGlobal.length > 0) {
-      // Keep existing demographic record — only update mutable fields if provided
-      globalPatient = existingGlobal[0];
-      const updates = {};
-      if (transfer.patient_name) updates.name = transfer.patient_name;
-      if (transfer.species) updates.species = transfer.species;
-      if (transfer.breed) updates.breed = transfer.breed;
-      if (normalizedSex) updates.sex = normalizedSex;
-      if (Object.keys(updates).length > 0) {
-        await base44.asServiceRole.entities.GlobalPatient.update(globalPatient.id, updates);
-        globalPatient = { ...globalPatient, ...updates };
-      }
-    } else {
-      // Calculate birthdate from age fields
-      let birthdate = null;
-      const ageYears = transfer.age_years || 0;
-      const ageMonths = transfer.age_months || 0;
-      const ageWeeks = transfer.age_weeks || 0;
-      if (ageYears > 0 || ageMonths > 0 || ageWeeks > 0) {
-        const bd = new Date();
-        bd.setFullYear(bd.getFullYear() - ageYears);
-        bd.setMonth(bd.getMonth() - ageMonths);
-        bd.setDate(bd.getDate() - (ageWeeks * 7));
-        birthdate = bd.toISOString().split("T")[0];
-      }
+     let globalPatient;
+     if (existingGlobal && existingGlobal.length > 0) {
+       // Patient exists in system — use existing record
+       globalPatient = existingGlobal[0];
+       // Only update mutable fields if provided
+       const updates = {};
+       if (transfer.patient_name) updates.name = transfer.patient_name;
+       if (transfer.species) updates.species = transfer.species;
+       if (transfer.breed) updates.breed = transfer.breed;
+       if (normalizedSex) updates.sex = normalizedSex;
+       if (Object.keys(updates).length > 0) {
+         await base44.asServiceRole.entities.GlobalPatient.update(globalPatient.id, updates);
+         globalPatient = { ...globalPatient, ...updates };
+       }
+     } else {
+       // NEW PATIENT: Only create GlobalPatient if already marked as transferred (at 6 AM trigger)
+       // Otherwise, return null and PatientVisit will use local data
+       if (!transfer.already_transferred) {
+         // Defer creation — this transfer is "upcoming" and will be synced at 6 AM
+         globalPatient = null;
+       } else {
+         // Calculate birthdate from age fields
+         let birthdate = null;
+         const ageYears = transfer.age_years || 0;
+         const ageMonths = transfer.age_months || 0;
+         const ageWeeks = transfer.age_weeks || 0;
+         if (ageYears > 0 || ageMonths > 0 || ageWeeks > 0) {
+           const bd = new Date();
+           bd.setFullYear(bd.getFullYear() - ageYears);
+           bd.setMonth(bd.getMonth() - ageMonths);
+           bd.setDate(bd.getDate() - (ageWeeks * 7));
+           birthdate = bd.toISOString().split("T")[0];
+         }
 
-      globalPatient = await base44.asServiceRole.entities.GlobalPatient.create({
-        patient_id: transfer.patient_id,
-        name: transfer.patient_name,
-        species: transfer.species,
-        breed: transfer.breed,
-        sex: normalizedSex,
-        age_years: ageYears || undefined,
-        age_months: ageMonths || undefined,
-        age_weeks: ageWeeks || undefined,
-        birthdate: birthdate || undefined,
-        infectious_status: "Negative",
-      });
-    }
+         globalPatient = await base44.asServiceRole.entities.GlobalPatient.create({
+           patient_id: transfer.patient_id,
+           name: transfer.patient_name,
+           species: transfer.species,
+           breed: transfer.breed,
+           sex: normalizedSex,
+           age_years: ageYears || undefined,
+           age_months: ageMonths || undefined,
+           age_weeks: ageWeeks || undefined,
+           birthdate: birthdate || undefined,
+           infectious_status: "Negative",
+         });
+       }
+     }
 
     // ── 2. Find or create open PatientVisit ──────────────────────────────────
     // An "open" visit is one whose discharge_status is NOT "discharged"
