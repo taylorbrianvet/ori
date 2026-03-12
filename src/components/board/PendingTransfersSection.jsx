@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { ArrowLeftRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { calculateCurrentAge } from "../shared/ageCalculator";
 
 export default function PendingTransfersSection({ transfers }) {
   const [markingId, setMarkingId] = useState(null);
