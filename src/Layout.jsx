@@ -31,7 +31,7 @@ const navItems = [
   { name: "Home", page: "Home", icon: Home },
   { name: "Services", page: "Services", icon: Stethoscope },
   { name: "Service Board", page: "ServiceBoard", icon: BookOpen },
-  { name: "On Call", page: "OnCall", icon: Phone },
+  { name: "On-Call", page: "OnCall", icon: Phone },
   { name: "Ed. Rounds", page: "EducationalRounds", icon: GraduationCap },
   { name: "Transfers", page: "Transfers", icon: ArrowLeftRight },
   { name: "Resources", page: "Resources", icon: BookOpen },
