@@ -147,6 +147,9 @@ export default function ServiceBoard() {
       {/* Clinic Team Section */}
       <ClinicTeamSection schedules={todaySchedules} />
 
+      {/* Discharged Today */}
+      <DischargedTodaySection patients={dischargedToday} />
+
       {/* Three Column Layout */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* Left: Inpatients */}
