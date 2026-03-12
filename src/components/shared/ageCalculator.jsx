@@ -62,6 +62,12 @@ export function calculateAgeComponents(birthdateStr) {
   if (!birthdateStr) return { years: 0, months: 0, weeks: 0 };
 
   const birthdate = new Date(birthdateStr);
+  
+  // Check if date is valid
+  if (isNaN(birthdate.getTime())) {
+    return { years: 0, months: 0, weeks: 0 };
+  }
+
   const today = new Date();
 
   let years = today.getFullYear() - birthdate.getFullYear();
@@ -86,6 +92,6 @@ export function calculateAgeComponents(birthdateStr) {
   return {
     years: Math.max(0, years),
     months: Math.max(0, months),
-    weeks: totalWeeks,
+    weeks: Math.max(0, totalWeeks),
   };
 }
