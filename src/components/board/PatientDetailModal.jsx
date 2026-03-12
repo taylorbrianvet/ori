@@ -383,6 +383,47 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
             </div>
           )}
 
+          {/* Diagnostic Request Form */}
+          {showDiagnosticForm && (
+            <DiagnosticForm
+              staffList={staffList}
+              prefillService={patient.service || ""}
+              prefillPatient={{ patient_id: patient.patient_id || "", patient_name: patient.name }}
+              onSaved={() => { setShowDiagnosticForm(false); refetchDiagnostics(); queryClient.invalidateQueries({ queryKey: ["diagnostics"] }); }}
+              onCancel={() => setShowDiagnosticForm(false)}
+            />
+          )}
+
+          {/* Patient Diagnostics */}
+          {patientDiagnostics.length > 0 && (
+            <div>
+              <p className="text-[10px] text-white/40 uppercase font-semibold mb-2">Diagnostics</p>
+              <div className="space-y-1.5">
+                {patientDiagnostics.map(d => {
+                  const status = d.status || (d.diagnostic_complete ? "completed" : d.sample_collected ? "processing" : "submitted");
+                  const statusColors = {
+                    submitted: "bg-blue-500/15 text-blue-300 border-blue-400/25",
+                    processing: "bg-amber-500/15 text-amber-300 border-amber-400/25",
+                    completed: "bg-green-500/15 text-green-300 border-green-400/25",
+                    cleared: "bg-white/8 text-white/35 border-white/10",
+                  };
+                  return (
+                    <div key={d.id} className={`rounded-lg p-2.5 border flex items-center justify-between gap-2 ${statusColors[status] || statusColors.submitted}`}>
+                      <div className="flex items-center gap-2 min-w-0">
+                        {d.request_category === "Imaging" ? <Scan className="w-3 h-3 flex-shrink-0" /> : <FlaskConical className="w-3 h-3 flex-shrink-0" />}
+                        <div className="min-w-0">
+                          <span className="text-xs font-medium text-white truncate block">{d.diagnostic_type}</span>
+                          {d.location && <span className="text-[10px] text-white/40">{d.location}</span>}
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-medium capitalize flex-shrink-0">{status}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Surgeries */}
           {surgeries.length > 0 && (
             <div>
