@@ -1,14 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import { format, parseISO } from "date-fns";
 import { Users, AlertCircle, UserX, ArrowLeftRight } from "lucide-react";
+import { calculateCurrentAge } from "@/components/shared/ageCalculator";
 import PatientDetailModal from "./PatientDetailModal";
 
 export default function InpatientSection({ patients, compact = false }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
 
-  const signalment = (p) => [p.age_years && `${p.age_years}y`, p.sex, p.species]
-    .filter(Boolean)
-    .join(" • ");
+  // Fetch all GlobalPatients for the patients list
+  const globalPatientIds = useMemo(() => [...new Set(patients.map(p => p.global_patient_id).filter(Boolean))], [patients]);
+  const { data: globalPatients = [] } = useQuery({
+    queryKey: ["global-patients-batch", globalPatientIds.join(",")],
+    queryFn: () => globalPatientIds.length > 0 
+      ? Promise.all(globalPatientIds.map(id => base44.entities.GlobalPatient.filter({ id }).then(r => r?.[0])))
+      : [],
+    enabled: globalPatientIds.length > 0,
+  });
+
+  const globalPatientMap = useMemo(() => 
+    Object.fromEntries(globalPatients.map(gp => [gp?.id, gp])),
+    [globalPatients]
+  );
+
+  const signalment = (p) => {
+    const globalPatient = globalPatientMap[p.global_patient_id];
+    const ageDisplay = globalPatient?.birthdate ? calculateCurrentAge(globalPatient.birthdate) : (p.age_years && `${p.age_years}y`);
+    return [ageDisplay, p.sex, p.species]
+      .filter(Boolean)
+      .join(" • ");
+  };
 
   const isOverdue = (p) => {
     if (p.discharge_status !== "scheduled" || !p.scheduled_discharge_time) return false;
