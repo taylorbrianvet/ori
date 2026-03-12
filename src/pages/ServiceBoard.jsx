@@ -102,8 +102,8 @@ export default function ServiceBoard() {
   );
 
   const todaySchedules = schedules.filter(s => {
-    const today = new Date().toISOString().split("T")[0];
-    return s.service === selectedService && s.date === today;
+    const todayStr = new Date().toISOString().split("T")[0];
+    return s.service === selectedService && s.date === todayStr;
   });
 
   return (
@@ -147,9 +147,6 @@ export default function ServiceBoard() {
       {/* Clinic Team Section */}
       <ClinicTeamSection schedules={todaySchedules} />
 
-      {/* Discharged Today */}
-      <DischargedTodaySection patients={dischargedToday} />
-
       {/* Three Column Layout */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* Left: Inpatients */}
@@ -167,6 +164,9 @@ export default function ServiceBoard() {
           <WoundPatientsSection woundCases={woundPatients} compact />
         </div>
       </div>
+
+      {/* Discharged Today */}
+      <DischargedTodaySection patients={dischargedToday} />
 
       {/* Bottom: Pending Transfers */}
       {pendingTransfers.length > 0 && (
