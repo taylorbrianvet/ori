@@ -38,8 +38,8 @@ export default function ServiceBoard() {
     const unsub = base44.entities.Patient.subscribe(() => {
       queryClient.invalidateQueries({ queryKey: ["patients"] });
     });
-    return unsub;
-  }, [queryClient]);
+    return () => { if (typeof unsub === "function") unsub(); };
+  }, []);
 
   const handleServiceChange = (service) => {
     setSelectedService(service);
