@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Plus, X, ArrowLeftRight, Search } from "lucide-react";
+import { Plus, X, ArrowLeftRight, Search, Mail, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1551076805-e1869033e561?w=1600&q=80";
 import PageContainer from "../components/shared/PageContainer";
@@ -99,6 +100,7 @@ export default function Transfers() {
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState("today");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sendingEmail, setSendingEmail] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: transfers = [] } = useQuery({
@@ -137,6 +139,20 @@ export default function Transfers() {
   const previousByService = useMemo(() => groupByService(filteredPrevious), [filteredPrevious]);
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["interservice-transfers"] });
+
+  const handleSendTransferEmail = async () => {
+    setSendingEmail(true);
+    try {
+      await base44.functions.invoke("sendTransferEmails", {});
+      toast.success("Transfer email workflow executed successfully!");
+      refresh();
+    } catch (error) {
+      toast.error("Failed to execute transfer email workflow");
+      console.error(error);
+    } finally {
+      setSendingEmail(false);
+    }
+  };
 
   const tabCounts = {
     today: today.length,
@@ -177,20 +193,28 @@ export default function Transfers() {
       </div>
 
       <PageContainer>
-        {/* New Transfer Button */}
-        <div className="flex justify-end mb-5 -mt-2">
-          <button
-            onClick={() => setShowForm(v => !v)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium border transition-colors ${
-              showForm
-                ? "bg-white/10 border-white/20 text-white/70"
-                : "bg-white/12 hover:bg-white/18 border-white/20 text-white"
-            }`}
-          >
-            {showForm ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-            {showForm ? "Close" : "New Transfer"}
-          </button>
-        </div>
+        {/* Action Buttons */}
+          <div className="flex gap-2 justify-end mb-5 -mt-2">
+            <button
+              onClick={handleSendTransferEmail}
+              disabled={sendingEmail}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium border bg-white/12 hover:bg-white/18 border-white/20 text-white transition-colors disabled:opacity-50"
+            >
+              {sendingEmail ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+              {sendingEmail ? "Sending..." : "Send Transfer Email"}
+            </button>
+            <button
+              onClick={() => setShowForm(v => !v)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium border transition-colors ${
+                showForm
+                  ? "bg-white/10 border-white/20 text-white/70"
+                  : "bg-white/12 hover:bg-white/18 border-white/20 text-white"
+              }`}
+            >
+              {showForm ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+              {showForm ? "Close" : "New Transfer"}
+            </button>
+          </div>
 
         {/* Form */}
         <AnimatePresence>
