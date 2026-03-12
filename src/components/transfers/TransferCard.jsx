@@ -21,7 +21,10 @@ export default function TransferCard({ transfers, transfer, onUpdated, bucket })
   // Support both grouped and single transfer
   const transferGroup = transfers || (transfer ? [transfer] : []);
   const primaryTransfer = transferGroup[0];
-  const isDoubleTransfer = transferGroup.length > 1;
+  const isDoubleTransfer = transferGroup.some(t => {
+    const receivingServices = t.receiving_services?.length > 0 ? t.receiving_services : (t.receiving_service ? [t.receiving_service] : []);
+    return receivingServices.length > 1;
+  });
 
   const ageString = [
     primaryTransfer.age_years && `${primaryTransfer.age_years}y`,
@@ -83,21 +86,19 @@ export default function TransferCard({ transfers, transfer, onUpdated, bucket })
           {transferGroup.map((t, idx) => {
             const receivingServices = t.receiving_services?.length > 0 ? t.receiving_services : (t.receiving_service ? [t.receiving_service] : []);
             return (
-              <div key={idx} className="space-y-2">
-                <div className="flex items-center gap-2 text-xs">
+              <div key={idx} className="space-y-1.5">
+                <div className="flex items-center gap-2 text-xs flex-wrap">
                   <span className="px-2.5 py-1 rounded-lg bg-white/8 border border-white/12 text-white/65 font-medium">{t.requesting_service}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
-                </div>
-                <div className="flex flex-wrap gap-2 pl-2">
                   {receivingServices.map((svc, svcIdx) => (
-                    <span key={svcIdx} className="px-2.5 py-1 rounded-lg bg-white/12 border border-white/18 text-white/85 font-medium text-xs">
+                    <span key={svcIdx} className="px-2.5 py-1 rounded-lg bg-white/12 border border-white/18 text-white/85 font-medium">
                       {svc}
                     </span>
                   ))}
+                  {t.estimate && (
+                    <span className="ml-auto text-white/60 font-medium">${Number(t.estimate).toLocaleString()}</span>
+                  )}
                 </div>
-                {t.estimate && (
-                  <span className="text-white/60 font-medium text-xs">${Number(t.estimate).toLocaleString()}</span>
-                )}
               </div>
             );
           })}
