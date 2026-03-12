@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, UserX, AlertCircle, ArrowLeftRight, Calendar, LogOut, RotateCcw, Stethoscope, Loader2, CheckCircle2, Beaker, FlaskConical, Scan } from "lucide-react";
+import { X, UserX, AlertCircle, ArrowLeftRight, Calendar, LogOut, RotateCcw, Stethoscope, Loader2, CheckCircle2, Beaker, FlaskConical, Scan, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format, parseISO } from "date-fns";
