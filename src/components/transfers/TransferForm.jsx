@@ -233,10 +233,12 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
                     placeholder="e.g. Buddy" value={form.patient_name} onChange={e => set("patient_name", e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID <span className="text-red-400">*</span></label>
-                  <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
-                    placeholder="e.g. 123456" value={form.patient_id} onChange={e => set("patient_id", e.target.value)} />
-                </div>
+                   <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID <span className="text-red-400">*</span></label>
+                   <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
+                     placeholder="e.g. 123456" value={form.patient_id} 
+                     onChange={e => set("patient_id", e.target.value)}
+                     onBlur={() => handleCheckPatientId(form.patient_id)} />
+                 </div>
               </div>
 
               <div className="grid grid-cols-4 gap-3">
