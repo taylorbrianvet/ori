@@ -68,14 +68,14 @@ Deno.serve(async (req) => {
       transferDate = tomorrow.toISOString().split("T")[0];
     }
 
-    // ── 1. Check for existing GlobalPatient ──────────────────────────────────
+    // ── 1. Upsert GlobalPatient (only if already_transferred OR patient exists) ─
      const existingGlobal = await base44.asServiceRole.entities.GlobalPatient.filter({ patient_id: transfer.patient_id });
 
-     let globalPatient;
+     let globalPatient = null;
+
      if (existingGlobal && existingGlobal.length > 0) {
-       // Patient exists in system — use existing record
+       // Patient already exists — update
        globalPatient = existingGlobal[0];
-       // Only update mutable fields if provided
        const updates = {};
        if (transfer.patient_name) updates.name = transfer.patient_name;
        if (transfer.species) updates.species = transfer.species;
@@ -85,40 +85,34 @@ Deno.serve(async (req) => {
          await base44.asServiceRole.entities.GlobalPatient.update(globalPatient.id, updates);
          globalPatient = { ...globalPatient, ...updates };
        }
-     } else {
-       // NEW PATIENT: Only create GlobalPatient if already marked as transferred (at 6 AM trigger)
-       // Otherwise, return null and PatientVisit will use local data
-       if (!transfer.already_transferred) {
-         // Defer creation — this transfer is "upcoming" and will be synced at 6 AM
-         globalPatient = null;
-       } else {
-         // Calculate birthdate from age fields
-         let birthdate = null;
-         const ageYears = transfer.age_years || 0;
-         const ageMonths = transfer.age_months || 0;
-         const ageWeeks = transfer.age_weeks || 0;
-         if (ageYears > 0 || ageMonths > 0 || ageWeeks > 0) {
-           const bd = new Date();
-           bd.setFullYear(bd.getFullYear() - ageYears);
-           bd.setMonth(bd.getMonth() - ageMonths);
-           bd.setDate(bd.getDate() - (ageWeeks * 7));
-           birthdate = bd.toISOString().split("T")[0];
-         }
-
-         globalPatient = await base44.asServiceRole.entities.GlobalPatient.create({
-           patient_id: transfer.patient_id,
-           name: transfer.patient_name,
-           species: transfer.species,
-           breed: transfer.breed,
-           sex: normalizedSex,
-           age_years: ageYears || undefined,
-           age_months: ageMonths || undefined,
-           age_weeks: ageWeeks || undefined,
-           birthdate: birthdate || undefined,
-           infectious_status: "Negative",
-         });
+     } else if (transfer.already_transferred) {
+       // NEW patient marked as already_transferred — create immediately
+       let birthdate = null;
+       const ageYears = transfer.age_years || 0;
+       const ageMonths = transfer.age_months || 0;
+       const ageWeeks = transfer.age_weeks || 0;
+       if (ageYears > 0 || ageMonths > 0 || ageWeeks > 0) {
+         const bd = new Date();
+         bd.setFullYear(bd.getFullYear() - ageYears);
+         bd.setMonth(bd.getMonth() - ageMonths);
+         bd.setDate(bd.getDate() - (ageWeeks * 7));
+         birthdate = bd.toISOString().split("T")[0];
        }
+
+       globalPatient = await base44.asServiceRole.entities.GlobalPatient.create({
+         patient_id: transfer.patient_id,
+         name: transfer.patient_name,
+         species: transfer.species,
+         breed: transfer.breed,
+         sex: normalizedSex,
+         age_years: ageYears || undefined,
+         age_months: ageMonths || undefined,
+         age_weeks: ageWeeks || undefined,
+         birthdate: birthdate || undefined,
+         infectious_status: "Negative",
+       });
      }
+     // else: new patient NOT already_transferred — skip creation, defer to 6 AM
 
     // ── 2. Find or create open PatientVisit (only if GlobalPatient exists) ──
     let patientVisit = null;
