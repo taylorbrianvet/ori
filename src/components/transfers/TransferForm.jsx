@@ -45,27 +45,18 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
       return;
     }
     setSaving(true);
-    // Write to patient table if patient_id not found
-    const existing = await base44.entities.Patient.filter({ patient_id: form.patient_id });
-    if (!existing || existing.length === 0) {
-      await base44.entities.Patient.create({
-        name: form.patient_name,
-        patient_id: form.patient_id,
-        species: form.species,
-        breed: form.breed,
-        sex: form.sex === "MI" ? "Male Intact" : form.sex === "MC" ? "Male Neutered" : form.sex === "FI" ? "Female Intact" : "Female Spayed",
-        problem_list: form.problem_list,
-        service: form.requesting_service,
-        patient_type: "Inpatient",
-      });
-    }
-    // Create a transfer for each receiving service
-    for (const service of form.receiving_services) {
-      await base44.entities.InterserviceTransfer.create({
-        ...form,
-        receiving_service: service,
-      });
-    }
+    // Create one InterserviceTransfer record with all receiving services
+    const transferData = {
+      ...form,
+      age_years: form.age_years ? parseFloat(form.age_years) : undefined,
+      age_months: form.age_months ? parseFloat(form.age_months) : undefined,
+      age_weeks: form.age_weeks ? parseFloat(form.age_weeks) : undefined,
+      receiving_service: form.receiving_services[0] || "",
+      receiving_services: form.receiving_services,
+    };
+    const created = await base44.entities.InterserviceTransfer.create(transferData);
+    // Trigger backend sync to upsert GlobalPatient + PatientVisit
+    await base44.functions.invoke("syncTransferToPatient", { data: { ...transferData, id: created.id } });
     toast.success("Transfer submitted.");
     setForm(EMPTY);
     setProblemInput("");
