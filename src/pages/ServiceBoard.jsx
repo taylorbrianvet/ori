@@ -81,6 +81,14 @@ export default function ServiceBoard() {
     p.discharge_status !== "discharged"
   );
 
+  const today = new Date().toISOString().split("T")[0];
+  const dischargedToday = patients.filter(p => {
+    if (p.service !== selectedService || p.discharge_status !== "discharged") return false;
+    if (!p.scheduled_discharge_time) return false;
+    const dcDate = new Date(p.scheduled_discharge_time).toISOString().split("T")[0];
+    return dcDate === today;
+  });
+
   const woundPatients = woundCases.filter(w => w.service === selectedService);
 
   const pendingTransfers = transfers.filter(t => {
