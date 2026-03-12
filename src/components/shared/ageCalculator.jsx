@@ -85,13 +85,12 @@ export function calculateAgeComponents(birthdateStr) {
     months += 12;
   }
 
-  const totalWeeks = Math.floor(
-    (today.getTime() - birthdate.getTime()) / (1000 * 60 * 60 * 24 * 7)
-  );
+  // Calculate remaining weeks (only the fractional week component after years/months)
+  const remainingWeeks = Math.floor(days / 7);
 
   return {
     years: Math.max(0, years),
     months: Math.max(0, months),
-    weeks: Math.max(0, totalWeeks),
+    weeks: Math.max(0, remainingWeeks),
   };
 }
