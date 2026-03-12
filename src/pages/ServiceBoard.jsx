@@ -102,7 +102,7 @@ export default function ServiceBoard() {
   });
 
   const pendingDiagnostics = diagnostics.filter(
-    d => d.requesting_service === selectedService && !d.diagnostic_complete
+    d => d.requesting_service === selectedService && d.status !== "cleared" && !d.diagnostic_complete
   );
 
   const todaySchedules = schedules.filter(s => {
