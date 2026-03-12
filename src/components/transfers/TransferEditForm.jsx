@@ -67,9 +67,9 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
       if (!isFromGlobalPatient) {
         updateData.patient_name = form.patient_name;
         updateData.patient_id = form.patient_id;
-        updateData.age_years = form.age_years;
-        updateData.age_months = form.age_months;
-        updateData.age_weeks = form.age_weeks;
+        updateData.age_years = form.age_years ? parseFloat(form.age_years) : undefined;
+        updateData.age_months = form.age_months ? parseFloat(form.age_months) : undefined;
+        updateData.age_weeks = form.age_weeks ? parseFloat(form.age_weeks) : undefined;
         updateData.sex = form.sex;
         updateData.species = form.species;
         updateData.breed = form.breed;
