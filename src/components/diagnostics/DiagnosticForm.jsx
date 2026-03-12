@@ -23,10 +23,10 @@ const SAMPLE_TYPES = ["Blood", "Urine", "Tissue", "Fluid", "Swab", "Aspirate", "
 // Sample types that require a location field
 const LOCATION_SAMPLE_TYPES = ["Tissue", "Fluid", "Swab", "Aspirate"];
 
-export default function DiagnosticForm({ staffList = [], prefillService = "", onSaved, onCancel }) {
+export default function DiagnosticForm({ staffList = [], prefillService = "", prefillPatient = null, onSaved, onCancel }) {
   const [form, setForm] = useState({
-    patient_id: "",
-    patient_name: "",
+    patient_id: prefillPatient?.patient_id || "",
+    patient_name: prefillPatient?.patient_name || "",
     request_category: "",
     diagnostic_type: "",
     sample_type: "",
