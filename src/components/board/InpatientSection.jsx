@@ -64,9 +64,14 @@ export default function InpatientSection({ patients, compact = false }) {
                       <UserX className="w-2.5 h-2.5" /> No Clinician
                     </span>
                   )}
-                  {p.discharge_status === "scheduled" && (
+                  {p.discharge_status === "scheduled" && !isOverdue(p) && (
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-green-500/20 border border-green-400/30 text-green-200">
                       DC Scheduled
+                    </span>
+                  )}
+                  {isOverdue(p) && (
+                    <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-orange-500/25 border border-orange-400/35 text-orange-200 animate-pulse">
+                      <AlertCircle className="w-2.5 h-2.5" /> DC Overdue
                     </span>
                   )}
                 </div>
