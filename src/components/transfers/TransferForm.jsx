@@ -42,6 +42,7 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
     if (!idToCheck) return;
 
     setIsSearchingPatient(true);
+    setSearchAttempted(true);
     try {
       const globalPatients = await base44.entities.GlobalPatient.filter({ patient_id: idToCheck });
       if (globalPatients && globalPatients.length > 0) {
@@ -59,9 +60,14 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
           age_weeks: ageComponents.weeks,
         });
         toast.success(`Patient ${patient.name} found. Use this patient or continue with manual entry.`);
+      } else {
+        setSearchResult(null);
+        // Pre-fill the patient ID in the form for manual entry
+        set("patient_id", idToCheck);
       }
     } catch (error) {
       console.error("Error searching GlobalPatient:", error);
+      setSearchResult(null);
     } finally {
       setIsSearchingPatient(false);
     }
