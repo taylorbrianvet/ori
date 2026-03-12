@@ -35,8 +35,8 @@ export default function ServiceBoard() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const unsub = base44.entities.Patient.subscribe(() => {
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    const unsub = base44.entities.PatientVisit.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     });
     return () => { if (typeof unsub === "function") unsub(); };
   }, []);
@@ -48,9 +48,9 @@ export default function ServiceBoard() {
     setShowServiceMenu(false);
   };
 
-  const { data: patients = [] } = useQuery({
-    queryKey: ["patients"],
-    queryFn: () => base44.entities.Patient.list(),
+  const { data: patientVisits = [] } = useQuery({
+    queryKey: ["patient-visits"],
+    queryFn: () => base44.entities.PatientVisit.list(),
   });
 
   const { data: woundCases = [] } = useQuery({
@@ -79,14 +79,14 @@ export default function ServiceBoard() {
   });
 
   // Filter data for selected service
-  const inpatients = patients.filter(
+  const inpatients = patientVisits.filter(
     p => (p.service === selectedService || p.assigned_services?.includes(selectedService)) &&
     p.patient_type === "Inpatient" &&
     p.discharge_status !== "discharged"
   );
 
   const today = new Date().toISOString().split("T")[0];
-  const dischargedToday = patients.filter(p => {
+  const dischargedToday = patientVisits.filter(p => {
     if (p.service !== selectedService || p.discharge_status !== "discharged") return false;
     if (!p.scheduled_discharge_time) return false;
     const dcDate = new Date(p.scheduled_discharge_time).toISOString().split("T")[0];
@@ -107,9 +107,9 @@ export default function ServiceBoard() {
   sixAmTomorrow.setDate(sixAmTomorrow.getDate() + 1);
 
   const promotedPatientIds = new Set(
-    patients
+    patientVisits
       .filter(p => p.patient_type === "Inpatient" && p.discharge_status !== "discharged" && p.transfer_status === "transferred_in")
-      .map(p => p.patient_id)
+      .map(p => p.global_patient_id)
       .filter(Boolean)
   );
 
@@ -119,7 +119,7 @@ export default function ServiceBoard() {
     // Must be within current 6AM→6AM window
     if (created < sixAmToday || created >= sixAmTomorrow) return false;
     // Hide if the patient has already been promoted to transferred_in
-    if (t.patient_id && promotedPatientIds.has(t.patient_id)) return false;
+    if (t.global_patient_id && promotedPatientIds.has(t.global_patient_id)) return false;
     if (t.receiving_services?.length > 0) return t.receiving_services.includes(selectedService);
     return t.receiving_service === selectedService;
   });
