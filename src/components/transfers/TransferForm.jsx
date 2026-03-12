@@ -119,6 +119,9 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
             {SEX_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
         <div>
           <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Species</label>
           <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
@@ -127,9 +130,6 @@ export default function TransferForm({ staffList = [], onSaved, prefill = null }
             {SPECIES.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Breed <span className="text-red-400">*</span></label>
           <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/35"
