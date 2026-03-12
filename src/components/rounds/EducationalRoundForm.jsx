@@ -443,11 +443,11 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           </div>
         )}
 
-        {/* Approval helper text */}
-        {round?.id && formData.approval_status === "scheduled" && (
+        {/* Helper text */}
+        {round?.id && (formData.approval_status === "scheduled" || formData.approval_status === "completed") && (
           <div className="text-[11px] text-white/40 space-y-0.5 -mt-1">
-            {!isPastRoundDate && <p>• Round date must be in the past before approving</p>}
-            {!facultySelected && <p>• At least one faculty member must be marked as present</p>}
+            {!isPastRoundDate && <p>• Round date must be in the past to complete or approve</p>}
+            {isPastRoundDate && !facultySelected && <p>• Select at least one faculty member present to approve for logging</p>}
             {canApproveForLogging && <p className="text-green-400">✓ Ready to approve for resident logging</p>}
           </div>
         )}
@@ -458,8 +458,8 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
             Close
           </button>
 
-          {/* Scheduled → Cancel */}
-          {round?.id && formData.approval_status === "scheduled" && (
+          {/* Cancel — available on scheduled or completed */}
+          {round?.id && (formData.approval_status === "scheduled" || formData.approval_status === "completed") && (
             <button
               onClick={handleCancel}
               disabled={saving}
@@ -469,8 +469,19 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
             </button>
           )}
 
-          {/* Scheduled → Approve for Logging */}
-          {round?.id && formData.approval_status === "scheduled" && (
+          {/* Mark as Completed (event happened, not yet approved for logging) */}
+          {round?.id && formData.approval_status === "scheduled" && isPastRoundDate && (
+            <button
+              onClick={() => handleStatusChange("completed")}
+              disabled={saving}
+              className="px-4 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/45 text-amber-200 text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              Mark Completed
+            </button>
+          )}
+
+          {/* Approve for Logging — available from scheduled or completed */}
+          {round?.id && (formData.approval_status === "scheduled" || formData.approval_status === "completed") && (
             <button
               onClick={() => handleStatusChange("approved")}
               disabled={saving || !canApproveForLogging}
@@ -481,24 +492,15 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
             </button>
           )}
 
-          {/* Approved → Complete (close logging) */}
+          {/* Undo Approval → back to completed */}
           {round?.id && formData.approval_status === "approved" && (
-            <>
-              <button
-                onClick={() => handleStatusChange("scheduled")}
-                disabled={saving}
-                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white/60 text-sm font-medium transition-colors disabled:opacity-50"
-              >
-                Undo Approval
-              </button>
-              <button
-                onClick={() => handleStatusChange("completed")}
-                disabled={saving}
-                className="px-4 py-2 rounded-lg bg-amber-600/40 hover:bg-amber-600/55 text-amber-200 text-sm font-medium transition-colors disabled:opacity-50"
-              >
-                Mark Completed
-              </button>
-            </>
+            <button
+              onClick={() => handleStatusChange("completed")}
+              disabled={saving}
+              className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white/60 text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              Undo Approval
+            </button>
           )}
 
           {/* Save / Create */}
