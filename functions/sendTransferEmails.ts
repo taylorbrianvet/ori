@@ -22,7 +22,23 @@ Deno.serve(async (req) => {
     // Get all transfers
     const allTransfers = await base44.asServiceRole.entities.InterserviceTransfer.list();
 
-    // Filter to only those submitted in the previous 6am–6am window
+    // Get upcoming transfers (submitted since today 6am) — these will be moved to "today" bucket
+    const upcomingTransfers = allTransfers.filter(t => {
+      if (!t.created_date) return false;
+      const s = /[Z+\-]\d*$/.test(t.created_date) ? t.created_date : t.created_date + "Z";
+      const created = new Date(s);
+      return created >= todaySixAmUTC; // Submitted after today 6am = upcoming
+    });
+
+    // Move upcoming transfers to "today" bucket by updating created_date to yesterday 6am
+    // This will cause them to appear in today's bucket on next page load
+    for (const t of upcomingTransfers) {
+      await base44.asServiceRole.entities.InterserviceTransfer.update(t.id, {
+        created_date: yesterdaySixAmUTC.toISOString()
+      });
+    }
+
+    // Filter to only those in the previous 6am–6am window (after moving upcoming)
     const transfers = allTransfers.filter(t => {
       if (!t.created_date) return false;
       const s = /[Z+\-]\d*$/.test(t.created_date) ? t.created_date : t.created_date + "Z";
@@ -143,10 +159,28 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Sync transferred patients to inpatients on ServiceBoard
+    // For each transfer, find or create PatientVisit with transfer_status="transferred_in"
+    for (const t of transfers) {
+      // Find existing PatientVisit for this patient
+      const existingVisits = await base44.asServiceRole.entities.PatientVisit.filter({
+        patient_id: t.patient_id
+      });
+
+      if (existingVisits?.length > 0) {
+        // Update first matching visit
+        await base44.asServiceRole.entities.PatientVisit.update(existingVisits[0].id, {
+          transfer_status: "transferred_in",
+          transfer_date: new Date().toISOString().split("T")[0]
+        });
+      }
+    }
+
     return Response.json({
       success: true,
       window: `${yesterdaySixAmUTC.toISOString()} → ${todaySixAmUTC.toISOString()}`,
       transfers_count: transfers.length,
+      upcoming_moved: upcomingTransfers.length,
       recipients_count: emailList.length
     });
 
