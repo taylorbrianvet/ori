@@ -120,62 +120,65 @@ Deno.serve(async (req) => {
        }
      }
 
-    // ── 2. Find or create open PatientVisit ──────────────────────────────────
-    // An "open" visit is one whose discharge_status is NOT "discharged"
-    const existingVisits = await base44.asServiceRole.entities.PatientVisit.filter({
-      global_patient_id: globalPatient.id,
-    });
+    // ── 2. Find or create open PatientVisit (only if GlobalPatient exists) ──
+    let patientVisit = null;
 
-    const openVisit = existingVisits?.find(v => v.discharge_status !== "discharged");
-
-    // Calculate age components from GlobalPatient birthdate
-    const ageComps = calculateAgeComponents(globalPatient.birthdate);
-
-    let patientVisit;
-    if (openVisit) {
-      // Update the open visit with latest transfer info
-      await base44.asServiceRole.entities.PatientVisit.update(openVisit.id, {
-        name: transfer.patient_name,
-        patient_id: transfer.patient_id,
-        species: transfer.species,
-        breed: transfer.breed,
-        sex: normalizedSex,
-        age_years: ageComps.years,
-        age_months: ageComps.months,
-        age_weeks: ageComps.weeks,
-        problem_list: transfer.problem_list || [],
-        service: primaryService,
-        assigned_services: receivingServices,
-        transfer_status: transferStatus,
-        transfer_type: transferType,
-        transfer_date: transferDate,
-        patient_type: "Inpatient",
-        // Don't overwrite an existing clinician assignment
-        ...(openVisit.primary_clinician ? {} : { primary_clinician: transfer.requesting_clinician || "" }),
-      });
-      patientVisit = { ...openVisit, id: openVisit.id };
-    } else {
-      // No open visit — create a new one (re-admission or first ever visit)
-      patientVisit = await base44.asServiceRole.entities.PatientVisit.create({
+    if (globalPatient) {
+      // GlobalPatient exists — link to PatientVisit
+      const existingVisits = await base44.asServiceRole.entities.PatientVisit.filter({
         global_patient_id: globalPatient.id,
-        name: transfer.patient_name,
-        patient_id: transfer.patient_id,
-        species: transfer.species,
-        breed: transfer.breed,
-        sex: normalizedSex,
-        age_years: ageComps.years,
-        age_months: ageComps.months,
-        age_weeks: ageComps.weeks,
-        problem_list: transfer.problem_list || [],
-        service: primaryService,
-        assigned_services: receivingServices,
-        transfer_status: transferStatus,
-        transfer_type: transferType,
-        transfer_date: transferDate,
-        patient_type: "Inpatient",
-        primary_clinician: transfer.requesting_clinician || "",
-        discharge_status: "active",
       });
+
+      const openVisit = existingVisits?.find(v => v.discharge_status !== "discharged");
+
+      // Calculate age components from GlobalPatient birthdate
+      const ageComps = calculateAgeComponents(globalPatient.birthdate);
+
+      if (openVisit) {
+        // Update the open visit with latest transfer info
+        await base44.asServiceRole.entities.PatientVisit.update(openVisit.id, {
+          name: transfer.patient_name,
+          patient_id: transfer.patient_id,
+          species: transfer.species,
+          breed: transfer.breed,
+          sex: normalizedSex,
+          age_years: ageComps.years,
+          age_months: ageComps.months,
+          age_weeks: ageComps.weeks,
+          problem_list: transfer.problem_list || [],
+          service: primaryService,
+          assigned_services: receivingServices,
+          transfer_status: transferStatus,
+          transfer_type: transferType,
+          transfer_date: transferDate,
+          patient_type: "Inpatient",
+          // Don't overwrite an existing clinician assignment
+          ...(openVisit.primary_clinician ? {} : { primary_clinician: transfer.requesting_clinician || "" }),
+        });
+        patientVisit = { ...openVisit, id: openVisit.id };
+      } else {
+        // No open visit — create a new one
+        patientVisit = await base44.asServiceRole.entities.PatientVisit.create({
+          global_patient_id: globalPatient.id,
+          name: transfer.patient_name,
+          patient_id: transfer.patient_id,
+          species: transfer.species,
+          breed: transfer.breed,
+          sex: normalizedSex,
+          age_years: ageComps.years,
+          age_months: ageComps.months,
+          age_weeks: ageComps.weeks,
+          problem_list: transfer.problem_list || [],
+          service: primaryService,
+          assigned_services: receivingServices,
+          transfer_status: transferStatus,
+          transfer_type: transferType,
+          transfer_date: transferDate,
+          patient_type: "Inpatient",
+          primary_clinician: transfer.requesting_clinician || "",
+          discharge_status: "active",
+        });
+      }
     }
 
     // ── 3. Write back IDs to the InterserviceTransfer record ─────────────────
