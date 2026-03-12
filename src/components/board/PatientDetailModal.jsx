@@ -15,6 +15,9 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
   const [showDiagnosticForm, setShowDiagnosticForm] = useState(false);
   const [showScheduleDischarge, setShowScheduleDischarge] = useState(false);
   const [scheduleDateTime, setScheduleDateTime] = useState("");
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [calendarViewMonth, setCalendarViewMonth] = useState(new Date());
+  const [scheduleTime, setScheduleTime] = useState("08:00");
   const [assigningClinician, setAssigningClinician] = useState(false);
   const [clinicianInput, setClinicianInput] = useState(patient.primary_clinician || "");
   const [showClinicianEdit, setShowClinicianEdit] = useState(!patient.primary_clinician);
