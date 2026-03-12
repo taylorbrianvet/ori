@@ -67,15 +67,19 @@ function normalizeService(svc) {
   return svc;
 }
 
-// Group a flat transfer list by receiving service, each service containing patient groups
+// Group a flat transfer list by receiving service (from receiving_services array), each service containing patient groups
 function groupByService(transferList) {
   const byService = {};
   transferList.forEach(t => {
-    const svc = normalizeService(t.receiving_service);
-    if (!byService[svc]) byService[svc] = {};
-    const key = t.patient_id || t.patient_name;
-    if (!byService[svc][key]) byService[svc][key] = [];
-    byService[svc][key].push(t);
+    // Use receiving_services array; fall back to receiving_service for backward compat
+    const receivingServices = t.receiving_services?.length > 0 ? t.receiving_services : (t.receiving_service ? [t.receiving_service] : []);
+    receivingServices.forEach(rcvService => {
+      const svc = normalizeService(rcvService);
+      if (!byService[svc]) byService[svc] = {};
+      const key = t.patient_id || t.patient_name;
+      if (!byService[svc][key]) byService[svc][key] = [];
+      byService[svc][key].push(t);
+    });
   });
   return Object.entries(byService)
     .sort(([a], [b]) => a.localeCompare(b))

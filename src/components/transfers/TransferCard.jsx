@@ -80,16 +80,29 @@ export default function TransferCard({ transfers, transfer, onUpdated, bucket })
 
         {/* Service arrows */}
         <div className="space-y-1.5 mb-3">
-          {transferGroup.map((t, idx) => (
-            <div key={idx} className="flex items-center gap-2 text-xs">
-              <span className="px-2.5 py-1 rounded-lg bg-white/8 border border-white/12 text-white/65 font-medium">{t.requesting_service}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
-              <span className="px-2.5 py-1 rounded-lg bg-white/12 border border-white/18 text-white/85 font-medium">{t.receiving_service}</span>
-              {t.estimate && (
-                <span className="ml-auto text-white/60 font-medium">${Number(t.estimate).toLocaleString()}</span>
-              )}
-            </div>
-          ))}
+          {transferGroup.map((t, idx) => {
+            const receivingServices = t.receiving_services?.length > 0 ? t.receiving_services : (t.receiving_service ? [t.receiving_service] : []);
+            const isDoubleTransfer = receivingServices.length > 1;
+            return (
+              <div key={idx} className="space-y-1.5">
+                {receivingServices.map((svc, svcIdx) => (
+                  <div key={svcIdx} className="flex items-center gap-2 text-xs">
+                    <span className="px-2.5 py-1 rounded-lg bg-white/8 border border-white/12 text-white/65 font-medium">{t.requesting_service}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
+                    <span className="px-2.5 py-1 rounded-lg bg-white/12 border border-white/18 text-white/85 font-medium">{svc}</span>
+                    {isDoubleTransfer && (
+                      <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 border border-red-400/30 text-red-200 font-medium">
+                        <AlertCircle className="w-2.5 h-2.5" /> Double Transfer
+                      </span>
+                    )}
+                    {svcIdx === 0 && t.estimate && (
+                      <span className="ml-auto text-white/60 font-medium">${Number(t.estimate).toLocaleString()}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
 
         {/* Problem list */}
