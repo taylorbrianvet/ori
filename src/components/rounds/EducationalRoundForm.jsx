@@ -436,56 +436,79 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
           </div>
         )}
 
+        {/* Status Badge (existing rounds only) */}
+        {round?.id && (
+          <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium ${statusCfg.bg} ${statusCfg.color}`}>
+            <span>Status: {statusCfg.label}</span>
+          </div>
+        )}
+
+        {/* Approval helper text */}
+        {round?.id && formData.approval_status === "scheduled" && (
+          <div className="text-[11px] text-white/40 space-y-0.5 -mt-1">
+            {!isPastRoundDate && <p>• Round date must be in the past before approving</p>}
+            {!facultySelected && <p>• At least one faculty member must be marked as present</p>}
+            {canApproveForLogging && <p className="text-green-400">✓ Ready to approve for resident logging</p>}
+          </div>
+        )}
+
         {/* Actions */}
-        <div className="flex gap-3 pt-4 border-t border-white/10">
-          <button onClick={onClose} className="flex-1 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-colors">
+        <div className="flex flex-wrap gap-2 pt-2 border-t border-white/10">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-colors">
             Close
           </button>
-          {round?.id && round.approval_status === "scheduled" && (
+
+          {/* Scheduled → Cancel */}
+          {round?.id && formData.approval_status === "scheduled" && (
             <button
               onClick={handleCancel}
               disabled={saving}
-              className="px-4 py-2 rounded-lg bg-red-600/30 hover:bg-red-600/40 text-red-300 text-sm font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-red-600/20 hover:bg-red-600/35 text-red-300 text-sm font-medium transition-colors disabled:opacity-50"
             >
               Cancel Round
             </button>
           )}
-          {round?.id && round.approval_status === "scheduled" && isPastRoundDate && (
+
+          {/* Scheduled → Approve for Logging */}
+          {round?.id && formData.approval_status === "scheduled" && (
             <button
-              onClick={() => handleCompleteOrApprove("completed")}
-              disabled={saving}
-              className="px-4 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/40 text-amber-300 text-sm font-medium transition-colors disabled:opacity-50"
+              onClick={() => handleStatusChange("approved")}
+              disabled={saving || !canApproveForLogging}
+              title={!canApproveForLogging ? (!isPastRoundDate ? "Round date must be in the past" : "Select at least one faculty member") : ""}
+              className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Complete
+              Approve for Logging
             </button>
           )}
-          {round?.id && round.approval_status === "scheduled" && canApproveForLogging && (
-            <button
-              onClick={() => handleCompleteOrApprove("approved")}
-              disabled={saving}
-              className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
-            >
-              Approve
-            </button>
+
+          {/* Approved → Complete (close logging) */}
+          {round?.id && formData.approval_status === "approved" && (
+            <>
+              <button
+                onClick={() => handleStatusChange("scheduled")}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white/60 text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                Undo Approval
+              </button>
+              <button
+                onClick={() => handleStatusChange("completed")}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg bg-amber-600/40 hover:bg-amber-600/55 text-amber-200 text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                Mark Completed
+              </button>
+            </>
           )}
-          {round?.id && (
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-          )}
-          {!round?.id && (
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
-            >
-              {saving ? "Saving..." : "Create Round"}
-            </button>
-          )}
+
+          {/* Save / Create */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
+          >
+            {saving ? "Saving..." : round?.id ? "Save Changes" : "Create Round"}
+          </button>
         </div>
       </div>
     </div>
