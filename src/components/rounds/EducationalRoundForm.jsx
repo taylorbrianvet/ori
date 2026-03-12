@@ -128,7 +128,7 @@ export default function EducationalRoundForm({ round, onClose, onSaved, staffLis
   // Check if today is past the scheduled date
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const roundDate = formData.date ? new Date(formData.date) : null;
+  const roundDate = formData.date ? (() => { const [y,m,d] = formData.date.split("-").map(Number); return new Date(y, m-1, d); })() : null;
   const isPastRoundDate = roundDate && roundDate < today;
 
   // Check if any Surgery faculty is selected
