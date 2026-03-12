@@ -32,6 +32,14 @@ export default function ServiceBoard() {
     return params.get("service") || saved || CLINICAL_SERVICES[0];
   });
   const [showServiceMenu, setShowServiceMenu] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const unsub = base44.entities.Patient.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    });
+    return unsub;
+  }, [queryClient]);
 
   const handleServiceChange = (service) => {
     setSelectedService(service);
