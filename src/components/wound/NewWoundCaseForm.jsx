@@ -238,8 +238,8 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
               </select>
             </div>
             <div>
-              <label className={labelCls}>Age (years)</label>
-              <input type="number" className={fieldCls} placeholder="e.g. 5" value={form.age_years} onChange={e => set("age_years", e.target.value)} />
+              <label className={labelCls}>Birthdate</label>
+              <input type="date" className={fieldCls} value={form.birthdate} onChange={e => set("birthdate", e.target.value)} />
             </div>
             <div>
               <label className={labelCls}>Weight (kg)</label>
@@ -262,6 +262,33 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
                 <option value="">Select…</option>
                 {clinicianOptions.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
+            </div>
+          </div>
+
+          {/* Problem List */}
+          <div>
+            <label className={labelCls}>Problem List</label>
+            <div className="space-y-2">
+              {form.problem_list.map((p, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    className={`${fieldCls} flex-1`}
+                    placeholder="e.g. Thermal burn, Infection"
+                    value={p}
+                    onChange={e => setProblem(i, e.target.value)}
+                  />
+                  {form.problem_list.length > 1 && (
+                    <button type="button" onClick={() => removeProblem(i)}
+                      className="w-10 h-10 rounded-xl bg-white/8 hover:bg-red-500/20 text-white/40 hover:text-red-400 flex items-center justify-center transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button type="button" onClick={addProblem}
+                className="flex items-center gap-2 text-xs text-white/50 hover:text-white transition-colors py-1">
+                <Plus className="w-3.5 h-3.5" /> Add problem
+              </button>
             </div>
           </div>
 
@@ -290,12 +317,6 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
                 <Plus className="w-3.5 h-3.5" /> Add wound location
               </button>
             </div>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className={labelCls}>Initial Notes / History</label>
-            <textarea className={`${fieldCls} resize-none`} rows={2} placeholder="Brief case history…" value={form.notes} onChange={e => set("notes", e.target.value)} />
           </div>
 
           <div className="flex gap-3 pt-1">
