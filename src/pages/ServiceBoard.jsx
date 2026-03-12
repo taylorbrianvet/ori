@@ -69,8 +69,7 @@ export default function ServiceBoard() {
   const inpatients = patients.filter(
     p => p.service === selectedService &&
     p.patient_type === "Inpatient" &&
-    p.transfer_status === "transferred_in" &&
-    (p.discharge_status === "active" || p.discharge_status === "scheduled")
+    p.discharge_status !== "discharged"
   );
 
   const woundPatients = woundCases.filter(w => w.service === selectedService);
