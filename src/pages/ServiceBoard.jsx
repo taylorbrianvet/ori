@@ -95,13 +95,20 @@ export default function ServiceBoard() {
 
   const woundPatients = woundCases.filter(w => w.service === selectedService);
 
-  // Upcoming transfers: not yet transferred AND no matching inpatient already exists
-  const inpatientPatientIds = new Set(patients.filter(p => p.patient_type === "Inpatient" && p.discharge_status !== "discharged").map(p => p.patient_id).filter(Boolean));
+  // Upcoming transfers: not yet transferred AND patient transfer_status is still pending
+  // A Patient record is created immediately on transfer submission, but stays "pending_transfer"
+  // until 6 AM the next morning when processDailyTransfers promotes it to "transferred_in".
+  const promotedPatientIds = new Set(
+    patients
+      .filter(p => p.patient_type === "Inpatient" && p.discharge_status !== "discharged" && p.transfer_status === "transferred_in")
+      .map(p => p.patient_id)
+      .filter(Boolean)
+  );
 
   const pendingTransfers = transfers.filter(t => {
     if (t.already_transferred) return false;
-    // Hide if a matching inpatient already exists (i.e. patient has been moved to inpatients)
-    if (t.patient_id && inpatientPatientIds.has(t.patient_id)) return false;
+    // Hide if the patient has already been promoted to transferred_in
+    if (t.patient_id && promotedPatientIds.has(t.patient_id)) return false;
     if (t.receiving_services?.length > 0) return t.receiving_services.includes(selectedService);
     return t.receiving_service === selectedService;
   });
