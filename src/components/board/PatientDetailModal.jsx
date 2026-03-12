@@ -159,8 +159,11 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     // Service admin should set this — for now uses first service in assigned_services
     const myStaff = staffList.find(s => s.email === me.email);
     const claimService = myStaff?.service || patient.assigned_services?.[0] || patient.service;
-    await base44.entities.PatientVisit.update(patient.id, { primary_service_claimed: claimService });
-    setPatient(p => ({ ...p, primary_service_claimed: claimService }));
+    await base44.entities.PatientVisit.update(patient.id, {
+      primary_service_claimed: claimService,
+      assigned_services: [claimService],
+    });
+    setPatient(p => ({ ...p, primary_service_claimed: claimService, assigned_services: [claimService] }));
     queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     toast.success(`Primary service claimed: ${claimService}`);
     setActionLoading(null);
