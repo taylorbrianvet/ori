@@ -118,14 +118,11 @@ Deno.serve(async (req) => {
     let patientVisit = null;
 
     if (globalPatient) {
-      // GlobalPatient exists — link to PatientVisit
       const existingVisits = await base44.asServiceRole.entities.PatientVisit.filter({
         global_patient_id: globalPatient.id,
       });
 
       const openVisit = existingVisits?.find(v => v.discharge_status !== "discharged");
-
-      // Calculate age components from GlobalPatient birthdate
       const ageComps = calculateAgeComponents(globalPatient.birthdate);
 
       if (openVisit) {
@@ -146,7 +143,6 @@ Deno.serve(async (req) => {
           transfer_type: transferType,
           transfer_date: transferDate,
           patient_type: "Inpatient",
-          // Don't overwrite an existing clinician assignment
           ...(openVisit.primary_clinician ? {} : { primary_clinician: transfer.requesting_clinician || "" }),
         });
         patientVisit = { ...openVisit, id: openVisit.id };
