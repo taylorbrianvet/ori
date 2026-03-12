@@ -279,15 +279,16 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
         />
       </div>
 
-      <label className="flex items-center gap-3 cursor-pointer">
-        <div
-          onClick={() => set("already_transferred", !form.already_transferred)}
-          className={`w-10 h-5.5 rounded-full border transition-colors flex items-center px-0.5 ${form.already_transferred ? "bg-green-500/40 border-green-400/50" : "bg-white/8 border-white/20"}`}
-        >
-          <div className={`w-4 h-4 rounded-full transition-transform ${form.already_transferred ? "translate-x-4 bg-green-300" : "translate-x-0 bg-white/30"}`} />
-        </div>
-        <span className="text-xs text-white/55">Patient already transferred</span>
-      </label>
+      <label className="flex items-center gap-3" style={{ cursor: form.already_transferred || primary.already_transferred ? "not-allowed" : "pointer" }}>
+         <div
+           onClick={() => !form.already_transferred && !primary.already_transferred && set("already_transferred", !form.already_transferred)}
+           className={`w-10 h-5.5 rounded-full border transition-colors flex items-center px-0.5 ${form.already_transferred ? "bg-green-500/40 border-green-400/50" : "bg-white/8 border-white/20"} ${(form.already_transferred || primary.already_transferred) ? "opacity-60" : ""}`}
+           style={{ cursor: form.already_transferred || primary.already_transferred ? "not-allowed" : "pointer" }}
+         >
+           <div className={`w-4 h-4 rounded-full transition-transform ${form.already_transferred ? "translate-x-4 bg-green-300" : "translate-x-0 bg-white/30"}`} />
+         </div>
+         <span className="text-xs text-white/55">{form.already_transferred || primary.already_transferred ? "Patient already transferred (locked)" : "Patient already transferred"}</span>
+       </label>
 
       <div className="flex gap-3 pt-1">
         <button onClick={onClose} className="flex-1 py-2 rounded-xl text-xs font-medium bg-white/6 border border-white/12 text-white/50 hover:text-white hover:bg-white/10 transition-colors">
