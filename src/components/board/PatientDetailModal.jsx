@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, UserX, AlertCircle, ArrowLeftRight, Calendar, LogOut, RotateCcw, Stethoscope, Loader2, CheckCircle2, Beaker, FlaskConical, Scan, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { X, UserX, AlertCircle, ArrowLeftRight, Calendar, LogOut, RotateCcw, Stethoscope, Loader2, CheckCircle2, Beaker, FlaskConical, Scan, ChevronLeft, ChevronRight, Clock, ChevronDown } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format, parseISO } from "date-fns";
@@ -23,6 +23,17 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
   const [clinicianInput, setClinicianInput] = useState(patient.primary_clinician || "");
   const [showClinicianEdit, setShowClinicianEdit] = useState(!patient.primary_clinician);
   const [actionLoading, setActionLoading] = useState(null);
+  const [showServiceSwitch, setShowServiceSwitch] = useState(false);
+  const [serviceSwitchConfirm, setServiceSwitchConfirm] = useState(false);
+  const [pendingService, setPendingService] = useState(null);
+
+  const ALL_SERVICES = [
+    "Anesthesia - Small Animal","Anesthesia - Large Animal","Cardiology","Clinical Pathology",
+    "Dermatology","Emergency","Critical Care","Internal Medicine","Interventional Radiology",
+    "Neurology","Nutrition","Medical Oncology","Radiation Oncology","Ophthalmology",
+    "Orthopedic Surgery","Primary Care","General Surgery","Radiology - Imaging",
+    "Radiology - Ultrasound","Soft Tissue Surgery"
+  ];
 
   const queryClient = useQueryClient();
 
@@ -129,6 +140,18 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     setActionLoading(null);
   };
 
+  const handleServiceSwitch = async (newService) => {
+    setActionLoading("switch");
+    await base44.entities.Patient.update(patient.id, { service: newService });
+    setPatient(p => ({ ...p, service: newService }));
+    queryClient.invalidateQueries({ queryKey: ["patients"] });
+    toast.success(`Service switched to ${newService}`);
+    setServiceSwitchConfirm(false);
+    setPendingService(null);
+    setShowServiceSwitch(false);
+    setActionLoading(null);
+  };
+
   const handleClaimService = async () => {
     const me = await base44.auth.me();
     if (!me) return;
@@ -143,7 +166,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     setActionLoading(null);
   };
 
-  const isDoubleTransfer = patient.transfer_type === "double";
+  const isDoubleTransfer = patient.transfer_type === "double" && !patient.primary_service_claimed;
   const isScheduled = patient.discharge_status === "scheduled";
   const isDischarged = patient.discharge_status === "discharged";
 
@@ -269,7 +292,30 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
           {/* Patient Info */}
           <div className="bg-white/5 rounded-xl p-3 border border-white/10">
             <div className="grid grid-cols-2 gap-2 text-xs text-white/60">
-              <div>Service: <span className="font-semibold text-white">{patient.service}</span></div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>Service: <span className="font-semibold text-white">{patient.service}</span></span>
+                <div className="relative">
+                  <button
+                    onClick={() => setShowServiceSwitch(v => !v)}
+                    className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-md bg-white/10 hover:bg-white/18 text-white/50 hover:text-white/80 transition-colors border border-white/10"
+                  >
+                    Switch <ChevronDown className="w-2.5 h-2.5" />
+                  </button>
+                  {showServiceSwitch && (
+                    <div className="absolute left-0 top-full mt-1 w-52 bg-[#0d1a3a]/95 backdrop-blur border border-white/20 rounded-lg shadow-xl z-50 max-h-52 overflow-y-auto">
+                      {ALL_SERVICES.filter(s => s !== patient.service).map(s => (
+                        <button
+                          key={s}
+                          onClick={() => { setPendingService(s); setServiceSwitchConfirm(true); setShowServiceSwitch(false); }}
+                          className="w-full text-left px-3 py-2 text-xs text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
               <div>Status: <span className="font-semibold text-white capitalize">{patient.discharge_status || "active"}</span></div>
               {patient.team && <div>Team: <span className="font-semibold text-white">{patient.team}</span></div>}
               {isScheduled && scheduledTime && (
@@ -348,6 +394,31 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
               {actionLoading === "readmit" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
               Re-admit Patient
             </button>
+          )}
+
+          {/* Service Switch Confirmation */}
+          {serviceSwitchConfirm && pendingService && (
+            <div className="rounded-xl border border-amber-400/30 bg-amber-500/10 p-4">
+              <p className="text-sm font-semibold text-amber-200 mb-1">Switch Service?</p>
+              <p className="text-xs text-white/60 mb-3">
+                Switching to <span className="font-semibold text-white">{pendingService}</span> bypasses the transfer portal. Are you sure you want to proceed?
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleServiceSwitch(pendingService)}
+                  disabled={actionLoading === "switch"}
+                  className="px-3 py-1.5 rounded-lg bg-amber-500/30 hover:bg-amber-500/45 text-amber-200 text-xs font-medium disabled:opacity-50 transition-colors"
+                >
+                  {actionLoading === "switch" ? <Loader2 className="w-3.5 h-3.5 animate-spin inline" /> : "Yes, Switch"}
+                </button>
+                <button
+                  onClick={() => { setServiceSwitchConfirm(false); setPendingService(null); }}
+                  className="px-3 py-1.5 rounded-lg bg-white/8 text-white/50 text-xs hover:bg-white/12 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Schedule Discharge Picker */}

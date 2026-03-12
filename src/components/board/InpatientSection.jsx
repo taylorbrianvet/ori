@@ -17,7 +17,7 @@ export default function InpatientSection({ patients, compact = false }) {
   };
 
   const TransferBadge = ({ patient }) => {
-    if (patient.transfer_type === "double") {
+    if (patient.transfer_type === "double" && !patient.primary_service_claimed) {
       return (
         <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/20 border border-red-400/30 text-red-200">
           <AlertCircle className="w-2.5 h-2.5" /> Double Tx
@@ -51,7 +51,7 @@ export default function InpatientSection({ patients, compact = false }) {
                 key={p.id}
                 onClick={() => setSelectedPatient(p)}
                 className={`w-full text-left p-2.5 rounded-lg border hover:opacity-90 transition-colors text-[11px] ${
-                  p.transfer_type === "double"
+                  p.transfer_type === "double" && !p.primary_service_claimed
                     ? "bg-gradient-to-br from-red-500/15 to-red-500/8 border-red-400/25"
                     : "bg-gradient-to-br from-white/15 to-white/10 border-white/20 hover:from-white/20 hover:to-white/15"
                 }`}

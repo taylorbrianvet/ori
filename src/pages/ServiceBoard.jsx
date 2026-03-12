@@ -80,7 +80,7 @@ export default function ServiceBoard() {
 
   // Filter data for selected service
   const inpatients = patients.filter(
-    p => p.service === selectedService &&
+    p => (p.service === selectedService || p.assigned_services?.includes(selectedService)) &&
     p.patient_type === "Inpatient" &&
     p.discharge_status !== "discharged"
   );
@@ -95,9 +95,17 @@ export default function ServiceBoard() {
 
   const woundPatients = woundCases.filter(w => w.service === selectedService);
 
-  // Upcoming transfers: not yet transferred AND patient transfer_status is still pending
-  // A Patient record is created immediately on transfer submission, but stays "pending_transfer"
-  // until 6 AM the next morning when processDailyTransfers promotes it to "transferred_in".
+  // Upcoming transfers: only show transfers submitted within the current 6AM→6AM window
+  // and whose patient has not yet been promoted to "transferred_in".
+  const now = new Date();
+  // Calculate today's 6AM in America/Chicago by using local offset logic
+  const sixAmToday = new Date(now);
+  sixAmToday.setHours(6, 0, 0, 0);
+  // If it's before 6AM today, the window started at 6AM yesterday
+  if (now < sixAmToday) sixAmToday.setDate(sixAmToday.getDate() - 1);
+  const sixAmTomorrow = new Date(sixAmToday);
+  sixAmTomorrow.setDate(sixAmTomorrow.getDate() + 1);
+
   const promotedPatientIds = new Set(
     patients
       .filter(p => p.patient_type === "Inpatient" && p.discharge_status !== "discharged" && p.transfer_status === "transferred_in")
@@ -106,7 +114,10 @@ export default function ServiceBoard() {
   );
 
   const pendingTransfers = transfers.filter(t => {
-    if (t.already_transferred) return false;
+    if (!t.created_date) return false;
+    const created = new Date(t.created_date);
+    // Must be within current 6AM→6AM window
+    if (created < sixAmToday || created >= sixAmTomorrow) return false;
     // Hide if the patient has already been promoted to transferred_in
     if (t.patient_id && promotedPatientIds.has(t.patient_id)) return false;
     if (t.receiving_services?.length > 0) return t.receiving_services.includes(selectedService);
