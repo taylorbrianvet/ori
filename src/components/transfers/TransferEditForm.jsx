@@ -54,7 +54,13 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
   const handleSave = async () => {
     setSaving(true);
     for (const t of transfers) {
-      const updateData = {
+      await base44.entities.InterserviceTransfer.update(t.id, {
+        patient_name: form.patient_name,
+        patient_id: form.patient_id,
+        age: form.age,
+        sex: form.sex,
+        species: form.species,
+        breed: form.breed,
         location: form.location,
         problem_list: form.problem_list,
         requesting_service: form.requesting_service,
@@ -62,21 +68,7 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
         estimate: form.estimate ? parseFloat(form.estimate) : null,
         notes: form.notes,
         already_transferred: form.already_transferred,
-      };
-
-      // Only allow patient demographic edits if NOT from GlobalPatient
-      if (!isFromGlobalPatient) {
-        updateData.patient_name = form.patient_name;
-        updateData.patient_id = form.patient_id;
-        updateData.age_years = form.age_years ? parseFloat(form.age_years) : undefined;
-        updateData.age_months = form.age_months ? parseFloat(form.age_months) : undefined;
-        updateData.age_weeks = form.age_weeks ? parseFloat(form.age_weeks) : undefined;
-        updateData.sex = form.sex;
-        updateData.species = form.species;
-        updateData.breed = form.breed;
-      }
-
-      await base44.entities.InterserviceTransfer.update(t.id, updateData);
+      });
     }
     toast.success("Transfer updated.");
     setSaving(false);
@@ -92,58 +84,123 @@ export default function TransferEditForm({ transfers, onClose, onSaved }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient Name</label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
-            value={form.patient_name} onChange={e => set("patient_name", e.target.value)} />
+      {isFromGlobalPatient ? (
+        <div className="p-3 rounded-xl bg-blue-500/15 border border-blue-400/30 space-y-2">
+          <p className="text-xs text-blue-300 font-semibold">Patient from Global Registry</p>
+          <p className="text-xs text-blue-200/70">Patient demographics are locked. To edit patient info, create a new transfer.</p>
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient Name</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.patient_name}</div>
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.patient_id}</div>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age (yrs)</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.age_years}</div>
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Months</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.age_months}</div>
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Weeks</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.age_weeks}</div>
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.sex}</div>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Species</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.species}</div>
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Breed</label>
+              <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-sm text-white/50">{form.breed}</div>
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
+              <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                value={form.location} onChange={e => set("location", e.target.value)}>
+                <option value="">—</option>
+                {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+          </div>
         </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID</label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
-            value={form.patient_id} onChange={e => set("patient_id", e.target.value)} />
-        </div>
-      </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient Name</label>
+              <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
+                value={form.patient_name} onChange={e => set("patient_name", e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Patient ID</label>
+              <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
+                value={form.patient_id} onChange={e => set("patient_id", e.target.value)} />
+            </div>
+          </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age</label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
-            value={form.age} onChange={e => set("age", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.sex} onChange={e => set("sex", e.target.value)}>
-            <option value="">—</option>
-            {SEX_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Species</label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.species} onChange={e => set("species", e.target.value)}>
-            <option value="">—</option>
-            {SPECIES.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-      </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Age (yrs)</label>
+              <input type="number" min="0" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
+                value={form.age_years} onChange={e => set("age_years", e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Months</label>
+              <input type="number" min="0" max="11" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
+                value={form.age_months} onChange={e => set("age_months", e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Weeks</label>
+              <input type="number" min="0" max="3" className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
+                value={form.age_weeks} onChange={e => set("age_weeks", e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Sex</label>
+              <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                value={form.sex} onChange={e => set("sex", e.target.value)}>
+                <option value="">—</option>
+                {SEX_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Breed</label>
-          <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
-            value={form.breed} onChange={e => set("breed", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
-          <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
-            value={form.location} onChange={e => set("location", e.target.value)}>
-            <option value="">—</option>
-            {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
-        </div>
-      </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Species</label>
+              <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                value={form.species} onChange={e => set("species", e.target.value)}>
+                <option value="">—</option>
+                {SPECIES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Breed</label>
+              <input className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/20 text-sm text-white focus:outline-none focus:border-white/35"
+                value={form.breed} onChange={e => set("breed", e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-1.5">Location</label>
+              <select className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/20 text-sm text-white focus:outline-none"
+                value={form.location} onChange={e => set("location", e.target.value)}>
+                <option value="">—</option>
+                {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Problem list */}
       <div>
