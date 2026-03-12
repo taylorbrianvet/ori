@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import { ArrowRight, AlertCircle, MapPin, Clock } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
+import { calculateCurrentAge } from "./ageCalculator";
 import TransferDetailModal from "./TransferDetailModal";
 
 function formatLocalTime(isoString) {
@@ -24,16 +27,33 @@ export default function TransferCard({ transfers, transfer, onUpdated, bucket })
     new Map(allTransfers.map(t => [t.id, t])).values()
   );
   const primaryTransfer = transferGroup[0];
+
+  // Fetch GlobalPatient to get birthdate for dynamic age calculation
+  const { data: globalPatient } = useQuery({
+    queryKey: ["global-patient", primaryTransfer?.global_patient_id],
+    queryFn: () => primaryTransfer?.global_patient_id 
+      ? base44.entities.GlobalPatient.filter({ id: primaryTransfer.global_patient_id }).then(r => r?.[0])
+      : null,
+    enabled: !!primaryTransfer?.global_patient_id,
+  });
+
   const isDoubleTransfer = transferGroup.some(t => {
     const receivingServices = t.receiving_services?.length > 0 ? t.receiving_services : (t.receiving_service ? [t.receiving_service] : []);
     return receivingServices.length > 1;
   });
 
-  const ageString = [
-    primaryTransfer.age_years && `${primaryTransfer.age_years}y`,
-    primaryTransfer.age_months && `${primaryTransfer.age_months}m`,
-    primaryTransfer.age_weeks && `${primaryTransfer.age_weeks}w`,
-  ].filter(Boolean).join(" ");
+  // Use dynamic age from GlobalPatient birthdate if available, otherwise fall back to transfer data
+  const ageString = useMemo(() => {
+    if (globalPatient?.birthdate) {
+      return calculateCurrentAge(globalPatient.birthdate);
+    }
+    // Fallback to transfer data
+    return [
+      primaryTransfer.age_years && `${primaryTransfer.age_years}y`,
+      primaryTransfer.age_months && `${primaryTransfer.age_months}m`,
+      primaryTransfer.age_weeks && `${primaryTransfer.age_weeks}w`,
+    ].filter(Boolean).join(" ");
+  }, [globalPatient?.birthdate, primaryTransfer]);
 
   const signalment = [
     ageString,
