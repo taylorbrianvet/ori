@@ -1,13 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { ArrowLeftRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeftRight, AlertCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { toast } from "sonner";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { calculateCurrentAge } from "../shared/ageCalculator";
+import TransferDetailModal from "./TransferDetailModal";
 
-export default function PendingTransfersSection({ transfers }) {
-   const [markingId, setMarkingId] = useState(null);
-   const queryClient = useQueryClient();
+export default function PendingTransfersSection({ transfers, onTransfersUpdated }) {
+   const [selectedTransfer, setSelectedTransfer] = useState(null);
 
    // Fetch all global patients referenced by transfers to get birthdates
    const globalPatientIds = useMemo(() => 
