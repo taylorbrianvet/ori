@@ -59,7 +59,10 @@ export default function PendingTransfersSection({ transfers, onTransfersUpdated 
 
       <div className="space-y-2">
         {transfers.map(t => (
-          <div key={t.id} className={`p-3 rounded-lg border ${isDouble(t) ? "bg-red-500/8 border-red-400/25" : "bg-white/6 border-white/12"}`}>
+          <button 
+            key={t.id} 
+            onClick={() => setSelectedTransfer(t)}
+            className={`w-full text-left p-3 rounded-lg border transition-all ${isDouble(t) ? "bg-red-500/8 border-red-400/25 hover:bg-red-500/15" : "bg-white/6 border-white/12 hover:bg-white/10"}`}>
             <div className="flex items-start justify-between gap-2 mb-1">
               <div className="flex items-center gap-2">
                 <div className="font-semibold text-white text-sm">{t.patient_name}</div>
@@ -69,21 +72,9 @@ export default function PendingTransfersSection({ transfers, onTransfersUpdated 
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] px-2 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-200">
-                  Upcoming
-                </span>
-                <button
-                  onClick={() => handleMarkTransferred(t)}
-                  disabled={markingId === t.id}
-                  className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-green-500/20 border border-green-400/30 text-green-200 hover:bg-green-500/35 transition-colors disabled:opacity-50"
-                >
-                  {markingId === t.id
-                    ? <Loader2 className="w-3 h-3 animate-spin" />
-                    : <CheckCircle2 className="w-3 h-3" />}
-                  Mark Transferred
-                </button>
-              </div>
+              <span className="text-[10px] px-2 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-200">
+                Upcoming
+              </span>
             </div>
             <p className="text-xs text-white/50 mb-1">{getAgeString(t)} • {t.sex || "?"} • {t.species} • {t.breed}</p>
             <p className="text-xs text-white/70 mb-1">{t.requesting_service} → {receivingLabel(t)}</p>
@@ -94,9 +85,18 @@ export default function PendingTransfersSection({ transfers, onTransfersUpdated 
               </p>
             )}
             {t.estimate && <p className="text-xs text-white/60 mt-1">Est: ${t.estimate.toLocaleString()}</p>}
-          </div>
+          </button>
         ))}
       </div>
+
+      {selectedTransfer && (
+        <TransferDetailModal 
+          transfers={[selectedTransfer]}
+          onClose={() => setSelectedTransfer(null)}
+          onUpdated={onTransfersUpdated}
+          bucket="upcoming"
+        />
+      )}
     </div>
   );
 }
