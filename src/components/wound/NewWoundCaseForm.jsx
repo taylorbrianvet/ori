@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { X, Plus, Trash2, Loader2, AlertTriangle, ChevronRight } from "lucide-react";
@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { createPageUrl } from "@/utils";
+import { calculateAgeComponents } from "../shared/ageCalculator";
 
 const SERVICES = [
   "Soft Tissue Surgery", "Orthopedic Surgery", "Neurology", "Dermatology",
@@ -21,20 +22,29 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
     patient_case_number: "",
     species: "",
     breed: "",
-    age_years: "",
+    birthdate: "", // ISO date for dynamic age calculation
     weight_kg: "",
     sex: "",
     service: "",
     primary_clinician: "",
-    notes: "",
+    problem_list: [""],
     wound_locations: [""],
   });
   const [saving, setSaving] = useState(false);
-  const [existingCases, setExistingCases] = useState(null); // null = no conflict, array = conflict found
+  const [existingCases, setExistingCases] = useState(null);
 
   const { data: staffList = [] } = useQuery({
     queryKey: ["staff-all"],
     queryFn: () => base44.entities.Staff.list(),
+  });
+
+  // Fetch GlobalPatient to check if patient exists
+  const { data: existingGlobalPatient } = useQuery({
+    queryKey: ["global-patient-by-id", form.patient_case_number],
+    queryFn: () => form.patient_case_number
+      ? base44.entities.GlobalPatient.filter({ patient_id: form.patient_case_number }).then(r => r?.[0])
+      : null,
+    enabled: !!form.patient_case_number,
   });
 
   const clinicianOptions = staffList
@@ -42,6 +52,19 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
     .map(s => `${s.first_name} ${s.last_name}`);
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  const setProblem = (i, val) => {
+    const arr = [...form.problem_list];
+    arr[i] = val;
+    set("problem_list", arr);
+  };
+
+  const addProblem = () => set("problem_list", [...form.problem_list, ""]);
+
+  const removeProblem = (i) => {
+    const arr = form.problem_list.filter((_, idx) => idx !== i);
+    set("problem_list", arr.length === 0 ? [""] : arr);
+  };
 
   const setWound = (i, val) => {
     const arr = [...form.wound_locations];
@@ -89,52 +112,75 @@ export default function NewWoundCaseForm({ onClose, onSuccess }) {
 
   const doCreate = async () => {
     const wounds = form.wound_locations.filter(w => w.trim());
+    const problems = form.problem_list.filter(p => p.trim());
     setSaving(true);
     try {
-      // Check for existing patient by case number
-      let patient_id = null;
-      if (form.patient_case_number) {
-        const existing = await base44.entities.Patient.filter({ patient_id: form.patient_case_number });
-        if (existing.length > 0) {
-          patient_id = existing[0].id;
-        } else {
-          const newPatient = await base44.entities.Patient.create({
-            name: form.patient_name,
-            patient_id: form.patient_case_number,
-            species: form.species,
-            breed: form.breed || undefined,
-            age_years: form.age_years ? parseFloat(form.age_years) : undefined,
-            weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : undefined,
-            sex: form.sex || undefined,
-            service: form.service || undefined,
-            patient_type: "Inpatient",
-          });
-          patient_id = newPatient.id;
-        }
+      let globalPatientId = null;
+      let globalPatient = existingGlobalPatient;
+
+      // Create or update GlobalPatient
+      if (!globalPatient && form.birthdate) {
+        globalPatient = await base44.entities.GlobalPatient.create({
+          patient_id: form.patient_case_number || form.patient_name,
+          name: form.patient_name,
+          birthdate: form.birthdate,
+          species: form.species,
+          breed: form.breed || undefined,
+          sex: form.sex || undefined,
+        });
+      }
+
+      globalPatientId = globalPatient?.id;
+
+      // Calculate age components from birthdate
+      const ageComponents = form.birthdate ? calculateAgeComponents(form.birthdate) : { years: 0, months: 0, weeks: 0 };
+
+      // Create PatientVisit for wound case
+      let patientVisitId = null;
+      if (globalPatientId) {
+        const patientVisit = await base44.entities.PatientVisit.create({
+          global_patient_id: globalPatientId,
+          name: form.patient_name,
+          patient_id: form.patient_case_number,
+          species: form.species,
+          breed: form.breed || undefined,
+          sex: form.sex || undefined,
+          age_years: ageComponents.years,
+          age_months: ageComponents.months,
+          age_weeks: ageComponents.weeks,
+          weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : undefined,
+          patient_type: "Inpatient",
+          service: form.service,
+          primary_clinician: form.primary_clinician || undefined,
+          problem_list: problems,
+          discharge_status: "active",
+          is_wound_patient: true,
+        });
+        patientVisitId = patientVisit.id;
       }
 
       // Initialize wound_statuses map
       const wound_statuses = {};
       wounds.forEach(w => { wound_statuses[w] = "active"; });
 
+      // Create WoundCase
       const woundCase = await base44.entities.WoundCase.create({
-        patient_id: patient_id || undefined,
         patient_name: form.patient_name,
         patient_case_number: form.patient_case_number || undefined,
         species: form.species,
         breed: form.breed || undefined,
-        age_years: form.age_years ? parseFloat(form.age_years) : undefined,
+        age_years: ageComponents.years,
         weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : undefined,
         sex: form.sex || undefined,
         service: form.service,
         primary_clinician: form.primary_clinician || undefined,
+        problem_list: problems,
         wound_locations: wounds,
         wound_statuses,
-        notes: form.notes || undefined,
         status: "active",
       });
 
-      toast.success("Wound case created.");
+      toast.success("Wound case created and patient visit synced.");
       onSuccess(woundCase);
     } finally {
       setSaving(false);
