@@ -24,8 +24,12 @@ export default function DischargedTodaySection({ patients }) {
 
   const formatDischargeTime = (isoString) => {
     if (!isoString) return null;
-    const s = /[Z+\-]\d*$/.test(isoString) ? isoString : isoString + "Z";
-    return format(new Date(s), "h:mm a");
+    try {
+      const s = /[Z+\-]\d*$/.test(isoString) ? isoString : isoString + "Z";
+      return format(new Date(s), "h:mm a");
+    } catch {
+      return null;
+    }
   };
 
   return (
