@@ -63,8 +63,10 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const refreshPatient = async () => {
     queryClient.invalidateQueries({ queryKey: ["patients"] });
-    const updated = await base44.entities.Patient.filter({ patient_id: patient.patient_id });
-    if (updated?.length > 0) setPatient(updated[0]);
+    const updated = await base44.entities.PatientVisit.filter({ patient_id: patient.patient_id });
+    const open = updated?.filter(v => v.discharge_status !== "discharged")
+      .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))[0];
+    if (open) setPatient(open);
   };
 
   const handleAddNote = async () => {
@@ -85,7 +87,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
   const handleAssignClinician = async () => {
     if (!clinicianInput.trim()) return;
     setAssigningClinician(true);
-    await base44.entities.Patient.update(patient.id, { primary_clinician: clinicianInput.trim() });
+    await base44.entities.PatientVisit.update(patient.id, { primary_clinician: clinicianInput.trim() });
     setPatient(p => ({ ...p, primary_clinician: clinicianInput.trim() }));
     setShowClinicianEdit(false);
     queryClient.invalidateQueries({ queryKey: ["patients"] });
@@ -95,8 +97,9 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleDischarge = async () => {
     setActionLoading("discharge");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "discharged",
+      patient_type: "Discharged",
       scheduled_discharge_time: new Date().toISOString(),
     });
     toast.success(`${patient.name} discharged`);
@@ -107,7 +110,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
   const handleScheduleDischarge = async () => {
     if (!scheduleDateTime) return;
     setActionLoading("schedule");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "scheduled",
       scheduled_discharge_time: new Date(scheduleDateTime).toISOString(),
     });
@@ -119,7 +122,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleScheduleDischargeFromPicker = async (dt) => {
     setActionLoading("schedule");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "scheduled",
       scheduled_discharge_time: dt.toISOString(),
     });
@@ -131,8 +134,9 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleReadmit = async () => {
     setActionLoading("readmit");
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "active",
+      patient_type: "Inpatient",
       scheduled_discharge_time: null,
     });
     toast.success(`${patient.name} re-admitted`);
@@ -142,7 +146,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleServiceSwitch = async (newService) => {
     setActionLoading("switch");
-    await base44.entities.Patient.update(patient.id, { service: newService });
+    await base44.entities.PatientVisit.update(patient.id, { service: newService });
     setPatient(p => ({ ...p, service: newService }));
     queryClient.invalidateQueries({ queryKey: ["patients"] });
     toast.success(`Service switched to ${newService}`);
@@ -159,8 +163,13 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     // Service admin should set this — for now uses first service in assigned_services
     const myStaff = staffList.find(s => s.email === me.email);
     const claimService = myStaff?.service || patient.assigned_services?.[0] || patient.service;
-    await base44.entities.Patient.update(patient.id, { primary_service_claimed: claimService });
-    setPatient(p => ({ ...p, primary_service_claimed: claimService }));
+    // Narrow assigned_services to only the claiming service (removes Double Transfer status)
+    await base44.entities.PatientVisit.update(patient.id, {
+      primary_service_claimed: claimService,
+      assigned_services: [claimService],
+      service: claimService,
+    });
+    setPatient(p => ({ ...p, primary_service_claimed: claimService, assigned_services: [claimService], service: claimService }));
     queryClient.invalidateQueries({ queryKey: ["patients"] });
     toast.success(`Primary service claimed: ${claimService}`);
     setActionLoading(null);
