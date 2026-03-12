@@ -72,7 +72,7 @@ function StudentScheduleTab({ rotationBlocks, currentUser }) {
 }
 
 const TABS = [
-  { id: "current", label: "On Call", icon: Phone },
+  { id: "current", label: "On-Call", icon: Phone },
   { id: "edit", label: "Edit Schedule", icon: Edit3 },
   { id: "student", label: "Student Schedule", icon: Users },
 ];
@@ -107,7 +107,7 @@ export default function OnCall() {
   return (
     <PageContainer>
       <PageHeader
-        title="On Call"
+        title="On-Call"
         subtitle={format(new Date(), "EEEE, MMMM d, yyyy") + " · Shifts 8:00 AM → 8:00 AM"}
       />
 
