@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { ArrowRight, AlertCircle, MapPin, Clock } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
-import { calculateCurrentAge } from "@/components/shared/ageCalculator";
+import { calculateCurrentAge } from "../shared/ageCalculator";
 import TransferDetailModal from "./TransferDetailModal";
 
 function formatLocalTime(isoString) {

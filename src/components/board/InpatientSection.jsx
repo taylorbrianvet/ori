@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format, parseISO } from "date-fns";
 import { Users, AlertCircle, UserX, ArrowLeftRight } from "lucide-react";
-import { calculateCurrentAge } from "@/components/shared/ageCalculator";
+import { calculateCurrentAge } from "../shared/ageCalculator";
 import PatientDetailModal from "./PatientDetailModal";
 
 export default function InpatientSection({ patients, compact = false }) {
