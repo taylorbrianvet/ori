@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { CalendarClock, ChevronLeft, ChevronRight, Plus, ArrowUpCircle, Loader2, Clock, Stethoscope, X } from "lucide-react";
-import { format, addDays, subDays, parseISO, isSameDay } from "date-fns";
+import { format, addDays, subDays, isSameDay } from "date-fns";
 import { base44 } from "@/api/base44Client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import NewAppointmentForm from "./NewAppointmentForm";
+import AppointmentDetailModal from "./AppointmentDetailModal";
 
 const APPOINTMENT_REASON_COLORS = {
   Surgery: "bg-red-500/15 border-red-400/25 text-red-200",
