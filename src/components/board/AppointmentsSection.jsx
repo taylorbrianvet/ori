@@ -16,7 +16,7 @@ const APPOINTMENT_REASON_COLORS = {
   Other: "bg-white/8 border-white/15 text-white/65",
 };
 
-function AppointmentCard({ appt, onAdmit, admitting }) {
+function AppointmentCard({ appt, onAdmit, admitting, onClick }) {
   const timeStr = appt.appointment_datetime
     ? (() => {
         const s = /[Z+\-]\d*$/.test(appt.appointment_datetime)
