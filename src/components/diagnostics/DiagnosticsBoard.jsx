@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Beaker, Plus, ChevronDown, ChevronUp, CheckCircle2, Clock, Loader2, FlaskConical, Scan } from "lucide-react";
+import { Beaker, Plus, CheckCircle2, Loader2, FlaskConical, Scan } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import DiagnosticForm from "./DiagnosticForm";
+import DiagnosticDetailModal from "./DiagnosticDetailModal";
 
 const STATUS_CONFIG = {
   submitted: { label: "Submitted", color: "bg-blue-500/20 text-blue-300 border-blue-400/30" },
