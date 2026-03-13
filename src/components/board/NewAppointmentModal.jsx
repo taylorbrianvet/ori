@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { base44 } from "@/api/base44Client";
 import { Loader2, X } from "lucide-react";
 import { format } from "date-fns";
@@ -122,7 +123,7 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
     }
   };
 
-  return (
+  return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -325,6 +326,7 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
           )}
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }
