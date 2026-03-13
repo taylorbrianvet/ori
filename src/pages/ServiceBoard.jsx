@@ -80,14 +80,14 @@ export default function ServiceBoard() {
 
   // Filter data for selected service
   const inpatients = patientVisits.filter(
-    p => (p.service === selectedService || p.assigned_services?.includes(selectedService)) &&
+    p => p.involved_services?.includes(selectedService) &&
     p.patient_type === "Inpatient" &&
     p.discharge_status !== "discharged"
   );
 
   const today = new Date().toISOString().split("T")[0];
   const dischargedToday = patientVisits.filter(p => {
-    if (p.service !== selectedService || p.discharge_status !== "discharged") return false;
+    if (!p.involved_services?.includes(selectedService) || p.discharge_status !== "discharged") return false;
     if (!p.scheduled_discharge_time) return false;
     const dcDate = new Date(p.scheduled_discharge_time).toISOString().split("T")[0];
     return dcDate === today;
