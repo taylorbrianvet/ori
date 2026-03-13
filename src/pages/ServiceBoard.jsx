@@ -143,10 +143,10 @@ export default function ServiceBoard() {
     <PageContainer>
       {/* Header with Service Switcher */}
       <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-white/35 uppercase tracking-widest">Service Board</span>
-          <span className="text-white/20">·</span>
-          <h1 className="text-sm font-semibold text-white">{selectedService}</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-base font-medium text-white/35 uppercase tracking-widest">Service Board</span>
+          <span className="text-white/20 text-lg">·</span>
+          <h1 className="text-xl font-semibold text-white">{selectedService}</h1>
         </div>
         <div className="flex items-center gap-3">
           <ClinicTeamSection schedules={todaySchedules} inline />
