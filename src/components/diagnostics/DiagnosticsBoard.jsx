@@ -134,20 +134,18 @@ export default function DiagnosticsBoard({ diagnostics = [], staffList = [], sel
               <p className="text-[11px] text-white/30 text-center">No pending diagnostics</p>
             </div>
           ) : (
-            <div className="space-y-2 flex-1 overflow-y-auto">
+            <div className="space-y-1.5 flex-1 overflow-y-auto">
               {active.map(d => (
                 <DiagnosticCard
                   key={d.id}
                   diagnostic={d}
-                  onStatusChange={handleStatusChange}
-                  onClearRequest={setClearTarget}
+                  onClick={() => setSelectedDiagnostic(d)}
                 />
               ))}
             </div>
           )}
         </div>
 
-        {/* Form modal overlay when in compact mode */}
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
             <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -161,12 +159,10 @@ export default function DiagnosticsBoard({ diagnostics = [], staffList = [], sel
           </div>
         )}
 
-        {clearTarget && (
-          <ClearConfirmModal
-            diagnostic={clearTarget}
-            onConfirm={handleClearConfirm}
-            onCancel={() => setClearTarget(null)}
-            loading={clearLoading}
+        {selectedDiagnostic && (
+          <DiagnosticDetailModal
+            diagnostic={selectedDiagnostic}
+            onClose={() => setSelectedDiagnostic(null)}
           />
         )}
       </>
