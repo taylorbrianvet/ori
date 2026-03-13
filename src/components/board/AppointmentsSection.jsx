@@ -66,7 +66,7 @@ function AppointmentCard({ appt, onAdmit, admitting, onClick }) {
       )}
 
       <button
-        onClick={() => onAdmit(appt)}
+        onClick={e => { e.stopPropagation(); onAdmit(appt); }}
         disabled={admitting === appt.id}
         className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-green-500/20 border border-green-400/30 text-green-200 text-[11px] font-medium hover:bg-green-500/35 transition-colors disabled:opacity-50"
       >
