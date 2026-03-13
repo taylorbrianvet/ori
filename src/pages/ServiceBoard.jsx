@@ -146,7 +146,9 @@ export default function ServiceBoard() {
         <div className="flex items-center gap-3">
           <span className="text-base font-medium text-white/35 uppercase tracking-widest">Service Board</span>
           <span className="text-white/20 text-lg">·</span>
-          <h1 className="text-xl font-semibold text-white uppercase tracking-wide">{selectedService}</h1>
+          <h1 className="text-xl font-semibold text-white">{selectedService}</h1>
+          <span className="text-white/20 text-lg">·</span>
+          <span className="text-sm text-white/45 font-medium">{new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}</span>
         </div>
         <div className="flex items-center gap-3">
           <ClinicTeamSection schedules={todaySchedules} inline />
