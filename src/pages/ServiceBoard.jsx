@@ -180,32 +180,33 @@ export default function ServiceBoard() {
       {/* Clinic Team Section */}
       <ClinicTeamSection schedules={todaySchedules} />
 
-      {/* Three Column Layout */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        {/* Left: Inpatients */}
-        <div>
-          <InpatientSection patients={inpatients} compact />
-        </div>
+      {/* Main Layout: Left two columns + Right appointments column */}
+      <div className="grid grid-cols-3 gap-4 mb-6 items-start">
+        {/* Left two columns stacked */}
+        <div className="col-span-2 flex flex-col gap-4">
+          {/* Top row: Inpatients + Diagnostics */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <InpatientSection patients={inpatients} compact />
+            </div>
+            <div>
+              <DiagnosticsBoard
+                diagnostics={pendingDiagnostics}
+                staffList={staffList}
+                selectedService={selectedService}
+                compact
+              />
+            </div>
+          </div>
 
-        {/* Center: Diagnostics */}
-        <div>
-          <DiagnosticsBoard
-            diagnostics={pendingDiagnostics}
-            staffList={staffList}
-            selectedService={selectedService}
-            compact
-          />
-        </div>
-
-        {/* Right: Wound Patients */}
-        <div>
+          {/* Wound Patients horizontal under the two left columns */}
           <WoundPatientsSection woundCases={woundPatients} compact />
         </div>
-      </div>
 
-      {/* Appointments Row */}
-      <div className="mb-6">
-        <AppointmentsSection appointments={appointments} selectedService={selectedService} />
+        {/* Right: Appointments extending down */}
+        <div className="col-span-1">
+          <AppointmentsSection appointments={appointments} selectedService={selectedService} />
+        </div>
       </div>
 
       {/* Discharged Today */}
