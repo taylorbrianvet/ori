@@ -84,6 +84,7 @@ export default function AppointmentsSection({ appointments, selectedService }) {
   const [viewDate, setViewDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [admitting, setAdmitting] = useState(null);
+  const [selectedAppt, setSelectedAppt] = useState(null);
   const queryClient = useQueryClient();
 
   // Filter appointments for the viewed date
