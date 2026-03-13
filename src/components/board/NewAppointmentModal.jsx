@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { base44 } from "@/api/base44Client";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, Calendar as CalendarIcon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const APPOINTMENT_TYPES = ["Surgery", "Recheck", "Consult", "Tech Appointment", "General Appointment", "Other"];
 const SPECIES = ["Canine", "Feline", "Equine", "Bovine", "Avian", "Exotic", "Other"];
@@ -29,8 +31,18 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
     appointment_clinician: "",
     reason_for_visit: "",
   });
+  const [selectedDate, setSelectedDate] = useState(defaultDate || new Date());
+  const [selectedTime, setSelectedTime] = useState("08:00");
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
+
+  const handleDateTimeChange = (date, time) => {
+    const dateStr = format(date, "yyyy-MM-dd");
+    const datetimeStr = `${dateStr}T${time}`;
+    set("appointment_datetime", datetimeStr);
+    setSelectedDate(date);
+    setSelectedTime(time);
+  };
 
   // Auto-search when patient ID changes
   useEffect(() => {
@@ -263,12 +275,35 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-white/50 mb-1">Date & Time *</label>
-                  <input
-                    type="datetime-local"
-                    value={form.appointment_datetime}
-                    onChange={e => set("appointment_datetime", e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white focus:outline-none text-xs"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white focus:outline-none text-xs text-left flex items-center gap-2 hover:bg-black/40 transition-colors">
+                        <CalendarIcon className="w-3.5 h-3.5 text-white/50 flex-shrink-0" />
+                        <span>{format(selectedDate, "MMM d, yyyy")} at {selectedTime}</span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <div className="p-4 space-y-3 bg-slate-950 rounded-lg border border-white/15">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={(date) => {
+                            if (date) handleDateTimeChange(date, selectedTime);
+                          }}
+                          className="text-white"
+                        />
+                        <div className="flex items-center gap-2 border-t border-white/10 pt-3">
+                          <Clock className="w-3.5 h-3.5 text-white/50 flex-shrink-0" />
+                          <input
+                            type="time"
+                            value={selectedTime}
+                            onChange={e => handleDateTimeChange(selectedDate, e.target.value)}
+                            className="flex-1 px-2 py-1 rounded bg-black/30 border border-white/15 text-white text-xs focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div>
                   <label className="block text-xs text-white/50 mb-1">Appointment Type</label>
