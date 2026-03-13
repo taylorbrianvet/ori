@@ -472,7 +472,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
           {showDiagnosticForm && (
             <DiagnosticForm
               staffList={staffList}
-              prefillService={patient.service || ""}
+              prefillService={patient.involved_services?.[0] || ""}
               prefillPatient={{ patient_id: patient.patient_id || "", patient_name: patient.name }}
               onSaved={() => { setShowDiagnosticForm(false); refetchDiagnostics(); queryClient.invalidateQueries({ queryKey: ["diagnostics"] }); }}
               onCancel={() => setShowDiagnosticForm(false)}
