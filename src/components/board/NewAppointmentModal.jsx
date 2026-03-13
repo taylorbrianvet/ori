@@ -16,6 +16,7 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
   const [foundPatient, setFoundPatient] = useState(null);
   const [showFullForm, setShowFullForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [clinicians, setClinicians] = useState([]);
 
   const defaultDateStr = defaultDate ? `${format(defaultDate, "yyyy-MM-dd")}T08:00` : "";
 
@@ -43,6 +44,21 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
     setSelectedDate(date);
     setSelectedTime(time);
   };
+
+  // Fetch clinicians on mount
+  useEffect(() => {
+    const fetchClinicians = async () => {
+      try {
+        const staff = await base44.entities.Staff.list();
+        const filtered = staff.filter(s => ["Faculty", "Resident", "Intern"].includes(s.role));
+        const names = filtered.map(s => `${s.first_name} ${s.last_name}`).sort();
+        setClinicians([...new Set(names)]);
+      } catch (err) {
+        console.error("Failed to fetch clinicians:", err);
+      }
+    };
+    fetchClinicians();
+  }, []);
 
   // Auto-search when patient ID changes
   useEffect(() => {
@@ -326,12 +342,14 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
               {/* Clinician */}
               <div>
                 <label className="block text-xs text-white/50 mb-1">Clinician</label>
-                <input
+                <select
                   value={form.appointment_clinician}
                   onChange={e => set("appointment_clinician", e.target.value)}
-                  placeholder="Optional"
-                  className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-xs"
-                />
+                  className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white focus:outline-none text-xs"
+                >
+                  <option value="">Select clinician...</option>
+                  {clinicians.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
 
               {/* Reason for Visit */}
