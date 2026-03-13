@@ -17,6 +17,16 @@ export default function ClinicTeamSection({ schedules, inline }) {
 
   const uniqueClinicians = [...new Set(allClinicians)].filter(Boolean);
   
+  if (inline) {
+    if (uniqueClinicians.length === 0) return null;
+    return (
+      <div className="flex items-center gap-1.5">
+        <Users className="w-3 h-3 text-white/30 flex-shrink-0" />
+        <span className="text-[10px] text-white/45 truncate max-w-[240px]">{uniqueClinicians.join(", ")}</span>
+      </div>
+    );
+  }
+
   if (uniqueClinicians.length === 0) {
     return (
       <div className="glass-card p-2 mb-4">
