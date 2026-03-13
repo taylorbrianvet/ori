@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { ArrowLeftRight, AlertCircle } from "lucide-react";
+import { ArrowLeftRight, AlertCircle, Dog, Cat } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { calculateCurrentAge } from "../shared/ageCalculator";
@@ -7,6 +7,12 @@ import TransferDetailModal from "../transfers/TransferDetailModal";
 
 export default function PendingTransfersSection({ transfers, onTransfersUpdated }) {
    const [selectedTransfer, setSelectedTransfer] = useState(null);
+
+   const SpeciesIcon = ({ species }) => {
+     if (species === "Canine") return <Dog className="w-3.5 h-3.5 text-blue-400" />;
+     if (species === "Feline") return <Cat className="w-3.5 h-3.5 text-orange-400" />;
+     return null;
+   };
 
    // Fetch all global patients referenced by transfers to get birthdates
    const globalPatientIds = useMemo(() => 
@@ -65,7 +71,10 @@ export default function PendingTransfersSection({ transfers, onTransfersUpdated 
             className={`w-full text-left p-3 rounded-lg border transition-all ${isDouble(t) ? "bg-red-500/8 border-red-400/25 hover:bg-red-500/15" : "bg-white/6 border-white/12 hover:bg-white/10"}`}>
             <div className="flex items-start justify-between gap-2 mb-1">
               <div className="flex items-center gap-2">
-                <div className="font-semibold text-white text-sm">{t.patient_name}</div>
+                <div className="flex items-center gap-2">
+                  <SpeciesIcon species={t.species} />
+                  <span className="font-semibold text-white text-sm">{t.patient_name}</span>
+                </div>
                 {isDouble(t) && (
                   <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 border border-red-400/30 text-red-200">
                     <AlertCircle className="w-3 h-3" /> Double

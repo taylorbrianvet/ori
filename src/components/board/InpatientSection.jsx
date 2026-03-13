@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format, parseISO } from "date-fns";
-import { Users, AlertCircle, UserX, ArrowLeftRight } from "lucide-react";
+import { Users, AlertCircle, UserX, ArrowLeftRight, Dog, Cat } from "lucide-react";
 import { calculateCurrentAge } from "../shared/ageCalculator";
 import PatientDetailModal from "./PatientDetailModal";
 
@@ -23,6 +23,12 @@ export default function InpatientSection({ patients, compact = false }) {
     Object.fromEntries(globalPatients.map(gp => [gp?.id, gp])),
     [globalPatients]
   );
+
+  const SpeciesIcon = ({ species }) => {
+    if (species === "Canine") return <Dog className="w-3.5 h-3.5 text-blue-400" />;
+    if (species === "Feline") return <Cat className="w-3.5 h-3.5 text-orange-400" />;
+    return null;
+  };
 
   const signalment = (p) => {
     const globalPatient = globalPatientMap[p.global_patient_id];
@@ -79,6 +85,7 @@ export default function InpatientSection({ patients, compact = false }) {
                 }`}
               >
                 <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                  <SpeciesIcon species={p.species} />
                   <span className="font-semibold text-white">{p.name}</span>
                   <TransferBadge patient={p} />
                   {!p.primary_clinician && (
@@ -133,7 +140,10 @@ export default function InpatientSection({ patients, compact = false }) {
               onClick={() => setSelectedPatient(p)}
               className="w-full text-left p-3 rounded-lg bg-white/6 border border-white/12 hover:bg-white/10 transition-colors"
             >
-              <div className="font-semibold text-white text-sm">{p.name}</div>
+              <div className="flex items-center gap-2">
+                <SpeciesIcon species={p.species} />
+                <span className="font-semibold text-white text-sm">{p.name}</span>
+              </div>
               <p className="text-xs text-white/50">{signalment(p)}</p>
               {p.primary_clinician && (
                 <p className="text-xs text-white/50 mt-1">Clinician: {p.primary_clinician}</p>

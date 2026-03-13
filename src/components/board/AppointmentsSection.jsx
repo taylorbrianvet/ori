@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CalendarClock, ChevronLeft, ChevronRight, Plus, Clock, X } from "lucide-react";
+import { CalendarClock, ChevronLeft, ChevronRight, Plus, Clock, X, Dog, Cat } from "lucide-react";
 import { format, addDays, subDays, isSameDay } from "date-fns";
 import { base44 } from "@/api/base44Client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,6 +28,12 @@ function AppointmentCard({ appt, onClick }) {
 
   const reasonColor = APPOINTMENT_REASON_COLORS[appt.appointment_reason] || APPOINTMENT_REASON_COLORS.Other;
 
+  const SpeciesIcon = ({ species }) => {
+    if (species === "Canine") return <Dog className="w-3 h-3 text-blue-400" />;
+    if (species === "Feline") return <Cat className="w-3 h-3 text-orange-400" />;
+    return null;
+  };
+
   return (
     <div
       className={`rounded-lg border px-3 py-2 cursor-pointer hover:brightness-110 transition-all ${reasonColor}`}
@@ -36,6 +42,7 @@ function AppointmentCard({ appt, onClick }) {
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
+            <SpeciesIcon species={appt.species} />
             <p className="text-xs font-semibold text-white truncate">{appt.name}</p>
             {appt.patient_id && (
               <span className="text-[9px] text-white/35 font-mono flex-shrink-0">#{appt.patient_id}</span>

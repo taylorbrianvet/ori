@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import { Activity } from "lucide-react";
+import { Activity, Dog, Cat } from "lucide-react";
 import PatientDetailModal from "./PatientDetailModal";
 
 export default function WoundPatientsSection({ woundCases, compact = false }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
+
+  const SpeciesIcon = ({ species }) => {
+    if (species === "Canine") return <Dog className="w-3.5 h-3.5 text-blue-400" />;
+    if (species === "Feline") return <Cat className="w-3.5 h-3.5 text-orange-400" />;
+    return null;
+  };
 
   if (compact) {
     return (
@@ -23,7 +29,10 @@ export default function WoundPatientsSection({ woundCases, compact = false }) {
                 onClick={() => setSelectedPatient({ id: w.patient_id, name: w.patient_name, species: w.species })}
                 className="w-full text-left p-2.5 rounded-lg bg-gradient-to-br from-white/15 to-white/10 border border-white/20 hover:from-white/20 hover:to-white/15 transition-colors text-[11px]"
               >
-                <div className="font-semibold text-white">{w.patient_name}</div>
+                <div className="flex items-center gap-2">
+                  <SpeciesIcon species={w.species} />
+                  <span className="font-semibold text-white">{w.patient_name}</span>
+                </div>
                 <div className="text-white/70 text-[10px]">{w.species}</div>
                 {w.wound_locations?.length > 0 && (
                   <div className="text-[9px] text-white/50 mt-0.5">
@@ -60,7 +69,10 @@ export default function WoundPatientsSection({ woundCases, compact = false }) {
               onClick={() => setSelectedPatient({ id: w.patient_id, name: w.patient_name, species: w.species })}
               className="w-full text-left p-3 rounded-lg bg-white/6 border border-white/12 hover:bg-white/10 transition-colors"
             >
-              <div className="font-semibold text-white text-sm">{w.patient_name}</div>
+              <div className="flex items-center gap-2">
+                <SpeciesIcon species={w.species} />
+                <span className="font-semibold text-white text-sm">{w.patient_name}</span>
+              </div>
               <p className="text-xs text-white/50">{w.species}</p>
             </button>
           ))}
