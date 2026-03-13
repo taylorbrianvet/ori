@@ -180,9 +180,14 @@ export default function ServiceBoard() {
       {/* Clinic Team Section */}
       <ClinicTeamSection schedules={todaySchedules} />
 
-      {/* Main Layout: Left two columns + Right appointments column */}
+      {/* Main Layout: Left appointments + Right clinical columns */}
       <div className="grid grid-cols-3 gap-4 mb-6 items-start">
-        {/* Left two columns stacked */}
+        {/* Left: Appointments extending down */}
+        <div className="col-span-1">
+          <AppointmentsSection appointments={appointments} selectedService={selectedService} />
+        </div>
+
+        {/* Right two columns stacked */}
         <div className="col-span-2 flex flex-col gap-4">
           {/* Top row: Inpatients + Diagnostics */}
           <div className="grid grid-cols-5 gap-4">
@@ -199,13 +204,8 @@ export default function ServiceBoard() {
             </div>
           </div>
 
-          {/* Wound Patients horizontal under the two left columns */}
+          {/* Wound Patients horizontal under the two right columns */}
           <WoundPatientsSection woundCases={woundPatients} compact />
-        </div>
-
-        {/* Right: Appointments extending down */}
-        <div className="col-span-1">
-          <AppointmentsSection appointments={appointments} selectedService={selectedService} />
         </div>
       </div>
 
