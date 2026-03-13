@@ -84,6 +84,7 @@ export default function DiagnosticsBoard({ diagnostics = [], staffList = [], sel
   const [showForm, setShowForm] = useState(false);
   const [clearTarget, setClearTarget] = useState(null);
   const [clearLoading, setClearLoading] = useState(false);
+  const [selectedDiagnostic, setSelectedDiagnostic] = useState(null);
   const queryClient = useQueryClient();
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["diagnostics"] });
