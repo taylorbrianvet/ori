@@ -186,7 +186,7 @@ export default function ServiceBoard() {
       {/* Main Layout: Left appointments + Middle patient stack + Right diagnostics */}
       <div className="grid grid-cols-12 gap-4 mb-6 items-start">
         {/* Left: Appointments */}
-        <div className="col-span-3">
+        <div className="col-span-4">
           <AppointmentsSection appointments={appointments} selectedService={selectedService} />
         </div>
 
@@ -200,7 +200,7 @@ export default function ServiceBoard() {
         </div>
 
         {/* Right: Diagnostics (can extend downward) */}
-        <div className="col-span-4">
+        <div className="col-span-3">
           <DiagnosticsBoard
             diagnostics={pendingDiagnostics}
             staffList={staffList}
