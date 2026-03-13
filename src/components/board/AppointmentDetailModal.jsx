@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Clock, Stethoscope, CalendarClock, ArrowUpCircle, Loader2, Pencil, Check, Trash2, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { base44 } from "@/api/base44Client";
