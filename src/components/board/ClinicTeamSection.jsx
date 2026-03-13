@@ -1,7 +1,7 @@
 import React from "react";
 import { Users } from "lucide-react";
 
-export default function ClinicTeamSection({ schedules }) {
+export default function ClinicTeamSection({ schedules, inline }) {
   const allClinicians = [];
 
   schedules.forEach(s => {
