@@ -142,8 +142,8 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
 
   const handleServiceSwitch = async (newService) => {
     setActionLoading("switch");
-    await base44.entities.PatientVisit.update(patient.id, { service: newService });
-    setPatient(p => ({ ...p, service: newService }));
+    await base44.entities.PatientVisit.update(patient.id, { involved_services: [newService] });
+    setPatient(p => ({ ...p, involved_services: [newService] }));
     queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     toast.success(`Service switched to ${newService}`);
     setServiceSwitchConfirm(false);
@@ -156,14 +156,13 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
     const me = await base44.auth.me();
     if (!me) return;
     setActionLoading("claim");
-    // Service admin should set this — for now uses first service in assigned_services
     const myStaff = staffList.find(s => s.email === me.email);
-    const claimService = myStaff?.service || patient.assigned_services?.[0] || patient.service;
+    const claimService = myStaff?.service || patient.involved_services?.[0];
     await base44.entities.PatientVisit.update(patient.id, {
       primary_service_claimed: claimService,
-      assigned_services: [claimService],
+      involved_services: [claimService],
     });
-    setPatient(p => ({ ...p, primary_service_claimed: claimService, assigned_services: [claimService] }));
+    setPatient(p => ({ ...p, primary_service_claimed: claimService, involved_services: [claimService] }));
     queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     toast.success(`Primary service claimed: ${claimService}`);
     setActionLoading(null);
