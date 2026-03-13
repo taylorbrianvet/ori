@@ -456,7 +456,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
                   species: patient.species,
                   breed: patient.breed || "",
                   problem_list: patient.problem_list || [],
-                  requesting_service: patient.service || "",
+                  requesting_service: patient.involved_services?.[0] || "",
                   requesting_clinician: patient.primary_clinician || "",
                 }}
                 onSaved={() => {
