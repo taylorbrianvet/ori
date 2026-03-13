@@ -6,8 +6,8 @@ export default function WoundPatientsSection({ woundCases, compact = false }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   const SpeciesIcon = ({ species }) => {
-    if (species === "Canine") return <Dog className="w-3.5 h-3.5 text-blue-400" />;
-    if (species === "Feline") return <Cat className="w-3.5 h-3.5 text-orange-400" />;
+    if (species === "Canine") return <Dog className="w-4 h-4 text-blue-500 flex-shrink-0" />;
+    if (species === "Feline") return <Cat className="w-4 h-4 text-orange-500 flex-shrink-0" />;
     return null;
   };
 

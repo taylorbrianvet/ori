@@ -29,8 +29,8 @@ function AppointmentCard({ appt, onClick }) {
   const reasonColor = APPOINTMENT_REASON_COLORS[appt.appointment_reason] || APPOINTMENT_REASON_COLORS.Other;
 
   const SpeciesIcon = ({ species }) => {
-    if (species === "Canine") return <Dog className="w-3 h-3 text-blue-400" />;
-    if (species === "Feline") return <Cat className="w-3 h-3 text-orange-400" />;
+    if (species === "Canine") return <Dog className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />;
+    if (species === "Feline") return <Cat className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />;
     return null;
   };
 
