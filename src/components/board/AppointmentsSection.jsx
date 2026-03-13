@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CalendarClock, ChevronLeft, ChevronRight, Plus, ArrowUpCircle, Loader2, Clock, Stethoscope, X } from "lucide-react";
+import { CalendarClock, ChevronLeft, ChevronRight, Plus, Clock, X } from "lucide-react";
 import { format, addDays, subDays, isSameDay } from "date-fns";
 import { base44 } from "@/api/base44Client";
 import { useQueryClient } from "@tanstack/react-query";
