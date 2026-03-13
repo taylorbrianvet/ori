@@ -184,10 +184,16 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
 
           {/* Found patient confirmation */}
           {foundPatient && (
-            <div className="p-3 rounded-lg bg-green-500/10 border border-green-400/20">
+            <div className="p-3 rounded-lg bg-green-500/10 border border-green-400/20 space-y-1">
               <p className="text-xs text-green-200">
                 Found: <span className="font-semibold">{foundPatient.name}</span>
               </p>
+              <div className="text-xs text-green-200/80 space-y-0.5">
+                {foundPatient.species && <p>Species: {foundPatient.species}</p>}
+                {foundPatient.breed && <p>Breed: {foundPatient.breed}</p>}
+                {foundPatient.age_years && <p>Age: {foundPatient.age_years} years</p>}
+                {foundPatient.sex && <p>Sex: {foundPatient.sex}</p>}
+              </div>
             </div>
           )}
 
