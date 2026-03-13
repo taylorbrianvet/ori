@@ -185,11 +185,11 @@ export default function ServiceBoard() {
         {/* Left two columns stacked */}
         <div className="col-span-2 flex flex-col gap-4">
           {/* Top row: Inpatients + Diagnostics */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-5 gap-4">
+            <div className="col-span-3">
               <InpatientSection patients={inpatients} compact />
             </div>
-            <div>
+            <div className="col-span-2">
               <DiagnosticsBoard
                 diagnostics={pendingDiagnostics}
                 staffList={staffList}
