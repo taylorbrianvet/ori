@@ -13,12 +13,12 @@ export default function DischargedTodaySection({ patients }) {
 
   const handleReadmit = async (patient) => {
     setLoadingId(patient.id);
-    await base44.entities.Patient.update(patient.id, {
+    await base44.entities.PatientVisit.update(patient.id, {
       discharge_status: "active",
       scheduled_discharge_time: null,
     });
     toast.success(`${patient.name} re-admitted`);
-    queryClient.invalidateQueries({ queryKey: ["patients"] });
+    queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     setLoadingId(null);
   };
 
