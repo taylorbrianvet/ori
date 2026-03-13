@@ -273,7 +273,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
             <div className="rounded-xl border border-red-400/25 bg-red-500/8 p-3">
               <p className="text-xs font-semibold text-red-200 mb-1">Double Transfer</p>
               <p className="text-xs text-white/55 mb-2">
-                Services: {patient.assigned_services?.join(" + ") || "—"}
+                Services: {patient.involved_services?.join(" + ") || "—"}
               </p>
               {patient.primary_service_claimed ? (
                 <p className="text-xs text-green-300 flex items-center gap-1">
