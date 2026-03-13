@@ -142,43 +142,44 @@ export default function ServiceBoard() {
   return (
     <PageContainer>
       {/* Header with Service Switcher */}
-      <div className="mb-4 text-center">
-        <h1 className="text-3xl font-bold text-white tracking-tight mb-1">{selectedService}</h1>
-        <p className="text-sm text-white/50">Board</p>
-      </div>
-      <div className="mb-4 flex items-start justify-end">
-        <div className="relative">
-          <button
-            onClick={() => setShowServiceMenu(!showServiceMenu)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/8 border border-white/12 hover:bg-white/12 text-white/70 hover:text-white text-xs font-medium transition-colors"
-            title="Switch service"
-          >
-            Switch
-            <ChevronDown className="w-3 h-3" />
-          </button>
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-white/35 uppercase tracking-widest">Service Board</span>
+          <span className="text-white/20">·</span>
+          <h1 className="text-sm font-semibold text-white">{selectedService}</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <ClinicTeamSection schedules={todaySchedules} inline />
+          <div className="relative">
+            <button
+              onClick={() => setShowServiceMenu(!showServiceMenu)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/8 border border-white/12 hover:bg-white/12 text-white/70 hover:text-white text-xs font-medium transition-colors"
+              title="Switch service"
+            >
+              Switch
+              <ChevronDown className="w-3 h-3" />
+            </button>
 
-          {showServiceMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur border border-white/20 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
-              {CLINICAL_SERVICES.map(service => (
-                <button
-                  key={service}
-                  onClick={() => handleServiceChange(service)}
-                  className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                    selectedService === service
-                      ? "bg-white/20 text-white border-l-2 border-white"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
-                  }`}
-                >
-                  {service}
-                </button>
-              ))}
-            </div>
-          )}
+            {showServiceMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur border border-white/20 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
+                {CLINICAL_SERVICES.map(service => (
+                  <button
+                    key={service}
+                    onClick={() => handleServiceChange(service)}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                      selectedService === service
+                        ? "bg-white/20 text-white border-l-2 border-white"
+                        : "text-white/70 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    {service}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* Clinic Team Section */}
-      <ClinicTeamSection schedules={todaySchedules} />
 
       {/* Main Layout: Left appointments + Right clinical columns */}
       <div className="grid grid-cols-3 gap-4 mb-6 items-start">
