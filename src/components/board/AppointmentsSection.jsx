@@ -36,7 +36,7 @@ function AppointmentCard({ appt, onClick }) {
 
   return (
     <div
-      className={`rounded-lg border px-3 py-2 cursor-pointer hover:brightness-110 transition-all ${reasonColor}`}
+      className={`rounded-lg border px-3 py-2 cursor-pointer hover:brightness-110 transition-all ${reasonColor} flex flex-col`}
       onClick={onClick}
     >
       <div className="flex items-center justify-between gap-2">
@@ -64,6 +64,9 @@ function AppointmentCard({ appt, onClick }) {
           </div>
         )}
       </div>
+      {appt.appointment_notes && (
+        <p className="text-[9px] text-white/50 truncate mt-1">{appt.appointment_notes}</p>
+      )}
     </div>
   );
 }
