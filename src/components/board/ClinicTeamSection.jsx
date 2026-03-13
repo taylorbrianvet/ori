@@ -20,9 +20,11 @@ export default function ClinicTeamSection({ schedules, inline }) {
   if (inline) {
     if (uniqueClinicians.length === 0) return null;
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 flex-wrap justify-end">
         <Users className="w-3 h-3 text-white/30 flex-shrink-0" />
-        <span className="text-[10px] text-white/45 truncate max-w-[240px]">{uniqueClinicians.join(", ")}</span>
+        {uniqueClinicians.map((name, i) => (
+          <span key={i} className="text-[11px] text-white/50 bg-white/8 border border-white/10 rounded px-1.5 py-0.5">{name}</span>
+        ))}
       </div>
     );
   }
