@@ -168,8 +168,6 @@ export default function AppointmentsSection({ appointments, selectedService }) {
             <AppointmentCard
               key={appt.id}
               appt={appt}
-              onAdmit={handleAdmit}
-              admitting={admitting}
               onClick={() => setSelectedAppt(appt)}
             />
           ))}
