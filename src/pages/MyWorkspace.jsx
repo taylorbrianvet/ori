@@ -146,9 +146,18 @@ export default function MyWorkspace() {
           {/* Profile Header */}
           <div className="glass-card p-4">
             <div className="flex items-start justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-white">{currentUser?.full_name || "User"}</h2>
-                <p className="text-xs text-white/50 mt-0.5">{staffRecord?.department || "Staff"}</p>
+              <div className="flex items-center gap-4">
+                {staffRecord?.profile_image_url ? (
+                  <img src={staffRecord.profile_image_url} alt={currentUser?.full_name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-semibold text-white/60">{(currentUser?.full_name || "U").split(" ").map(n => n[0]).join("").toUpperCase()}</span>
+                  </div>
+                )}
+                <div>
+                  <h2 className="text-lg font-semibold text-white">{currentUser?.full_name || "User"}</h2>
+                  <p className="text-xs text-white/50 mt-0.5">{staffRecord?.department || "Staff"}</p>
+                </div>
               </div>
               <div className="text-right">
                 <div className="flex gap-4">
@@ -175,7 +184,7 @@ export default function MyWorkspace() {
                   : "text-white/50 hover:text-white/70"
               }`}
             >
-              <CalendarDays className="w-3.5 h-3.5 inline mr-1.5" />Clinic Schedule
+              <CalendarDays className="w-3.5 h-3.5 inline mr-1.5" />My Clinic Schedule
             </button>
             <button
               onClick={() => setActiveTab("notifications")}
