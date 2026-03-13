@@ -295,7 +295,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
           <div className="bg-white/5 rounded-xl p-3 border border-white/10">
             <div className="grid grid-cols-2 gap-2 text-xs text-white/60">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span>Service: <span className="font-semibold text-white">{patient.service}</span></span>
+                <span>Service: <span className="font-semibold text-white">{patient.involved_services?.join(", ") || "—"}</span></span>
                 <div className="relative">
                   <button
                     onClick={() => setShowServiceSwitch(v => !v)}
@@ -305,7 +305,7 @@ export default function PatientDetailModal({ patient: initialPatient, onClose })
                   </button>
                   {showServiceSwitch && (
                     <div className="absolute left-0 top-full mt-1 w-52 bg-[#0d1a3a]/95 backdrop-blur border border-white/20 rounded-lg shadow-xl z-50 max-h-52 overflow-y-auto">
-                      {ALL_SERVICES.filter(s => s !== patient.service).map(s => (
+                      {ALL_SERVICES.filter(s => !patient.involved_services?.includes(s)).map(s => (
                         <button
                           key={s}
                           onClick={() => { setPendingService(s); setServiceSwitchConfirm(true); setShowServiceSwitch(false); }}
