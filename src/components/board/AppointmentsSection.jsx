@@ -35,10 +35,20 @@ function AppointmentCard({ appt, onClick }) {
     >
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-white truncate">{appt.name}</p>
-          {appt.appointment_reason && (
-            <p className="text-[10px] text-white/50">{appt.appointment_reason}</p>
-          )}
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs font-semibold text-white truncate">{appt.name}</p>
+            {appt.patient_id && (
+              <span className="text-[9px] text-white/35 font-mono flex-shrink-0">#{appt.patient_id}</span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 mt-0.5">
+            {appt.appointment_reason && (
+              <span className="text-[10px] text-white/55">{appt.appointment_reason}</span>
+            )}
+            {appt.appointment_clinician && (
+              <span className="text-[10px] text-white/40 truncate">· {appt.appointment_clinician}</span>
+            )}
+          </div>
         </div>
         {timeStr && (
           <div className="flex items-center gap-1 flex-shrink-0 text-[10px] text-white/55">
