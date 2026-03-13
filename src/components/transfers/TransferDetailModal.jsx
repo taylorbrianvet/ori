@@ -73,7 +73,7 @@ export default function TransferDetailModal({ transfers, onClose, onUpdated, buc
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 10 }}
-        className="relative z-10 w-full max-w-lg glass-card overflow-hidden"
+        className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl border border-white/15 shadow-2xl" style={{ background: "rgba(10, 20, 60, 0.92)", backdropFilter: "blur(32px)" }}
         onClick={e => e.stopPropagation()}
       >
         {editing ? (
