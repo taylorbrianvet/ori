@@ -208,7 +208,7 @@ export default function DiagnosticsBoard({ diagnostics = [], staffList = [], sel
           </div>
           <div className="space-y-2">
             {pathology.map(d => (
-              <DiagnosticCard key={d.id} diagnostic={d} onStatusChange={handleStatusChange} onClearRequest={setClearTarget} />
+              <DiagnosticCard key={d.id} diagnostic={d} onClick={() => setSelectedDiagnostic(d)} />
             ))}
           </div>
         </div>
@@ -222,18 +222,16 @@ export default function DiagnosticsBoard({ diagnostics = [], staffList = [], sel
           </div>
           <div className="space-y-2">
             {imaging.map(d => (
-              <DiagnosticCard key={d.id} diagnostic={d} onStatusChange={handleStatusChange} onClearRequest={setClearTarget} />
+              <DiagnosticCard key={d.id} diagnostic={d} onClick={() => setSelectedDiagnostic(d)} />
             ))}
           </div>
         </div>
       )}
 
-      {clearTarget && (
-        <ClearConfirmModal
-          diagnostic={clearTarget}
-          onConfirm={handleClearConfirm}
-          onCancel={() => setClearTarget(null)}
-          loading={clearLoading}
+      {selectedDiagnostic && (
+        <DiagnosticDetailModal
+          diagnostic={selectedDiagnostic}
+          onClose={() => setSelectedDiagnostic(null)}
         />
       )}
     </div>
