@@ -4,7 +4,7 @@ import { format, addDays, subDays, isSameDay } from "date-fns";
 import { base44 } from "@/api/base44Client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import NewAppointmentForm from "./NewAppointmentForm";
+import NewAppointmentModal from "./NewAppointmentModal";
 import AppointmentDetailModal from "./AppointmentDetailModal";
 
 const APPOINTMENT_REASON_COLORS = {
@@ -159,20 +159,18 @@ export default function AppointmentsSection({ appointments, selectedService }) {
         </p>
       )}
 
-      {/* New Appointment Form */}
+      {/* New Appointment Modal */}
       {showForm && (
-        <div className="mb-3">
-          <NewAppointmentForm
-            selectedService={selectedService}
-            defaultDate={viewDate}
-            onSaved={() => {
-              setShowForm(false);
-              queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
-              toast.success("Appointment created");
-            }}
-            onCancel={() => setShowForm(false)}
-          />
-        </div>
+        <NewAppointmentModal
+          selectedService={selectedService}
+          defaultDate={viewDate}
+          onSaved={() => {
+            setShowForm(false);
+            queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
+            toast.success("Appointment created");
+          }}
+          onClose={() => setShowForm(false)}
+        />
       )}
 
       {/* Appointments list */}
