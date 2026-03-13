@@ -16,7 +16,7 @@ const APPOINTMENT_REASON_COLORS = {
   Other: "bg-white/8 border-white/15 text-white/65",
 };
 
-function AppointmentCard({ appt, onAdmit, admitting, onClick }) {
+function AppointmentCard({ appt, onClick }) {
   const timeStr = appt.appointment_datetime
     ? (() => {
         const s = /[Z+\-]\d*$/.test(appt.appointment_datetime)
@@ -30,52 +30,23 @@ function AppointmentCard({ appt, onAdmit, admitting, onClick }) {
 
   return (
     <div
-      className={`rounded-xl border p-3 space-y-2 cursor-pointer hover:brightness-110 transition-all ${reasonColor}`}
+      className={`rounded-lg border px-3 py-2 cursor-pointer hover:brightness-110 transition-all ${reasonColor}`}
       onClick={onClick}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-white truncate">{appt.name}</p>
-          <p className="text-[11px] text-white/50">
-            {[appt.species, appt.breed].filter(Boolean).join(" · ")}
-          </p>
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold text-white truncate">{appt.name}</p>
+          {appt.appointment_reason && (
+            <p className="text-[10px] text-white/50">{appt.appointment_reason}</p>
+          )}
         </div>
         {timeStr && (
-          <div className="flex items-center gap-1 flex-shrink-0 text-[11px] text-white/60">
+          <div className="flex items-center gap-1 flex-shrink-0 text-[10px] text-white/55">
             <Clock className="w-3 h-3" />
             {timeStr}
           </div>
         )}
       </div>
-
-      {appt.appointment_reason && (
-        <span className="inline-block text-[10px] px-2 py-0.5 rounded-full bg-black/20 border border-white/10 text-white/70">
-          {appt.appointment_reason}
-        </span>
-      )}
-
-      {appt.appointment_clinician && (
-        <div className="flex items-center gap-1 text-[11px] text-white/55">
-          <Stethoscope className="w-3 h-3" />
-          {appt.appointment_clinician}
-        </div>
-      )}
-
-      {appt.appointment_notes && (
-        <p className="text-[10px] text-white/40 line-clamp-2">{appt.appointment_notes}</p>
-      )}
-
-      <button
-        onClick={e => { e.stopPropagation(); onAdmit(appt); }}
-        disabled={admitting === appt.id}
-        className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-green-500/20 border border-green-400/30 text-green-200 text-[11px] font-medium hover:bg-green-500/35 transition-colors disabled:opacity-50"
-      >
-        {admitting === appt.id
-          ? <Loader2 className="w-3 h-3 animate-spin" />
-          : <ArrowUpCircle className="w-3 h-3" />
-        }
-        Admit as Inpatient
-      </button>
     </div>
   );
 }
