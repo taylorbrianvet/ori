@@ -287,6 +287,7 @@ export default function AppointmentDetailModal({ appt: initialAppt, selectedServ
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
