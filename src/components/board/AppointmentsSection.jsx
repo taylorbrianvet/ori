@@ -199,9 +199,18 @@ export default function AppointmentsSection({ appointments, selectedService }) {
               appt={appt}
               onAdmit={handleAdmit}
               admitting={admitting}
+              onClick={() => setSelectedAppt(appt)}
             />
           ))}
         </div>
+      )}
+
+      {selectedAppt && (
+        <AppointmentDetailModal
+          appt={selectedAppt}
+          selectedService={selectedService}
+          onClose={() => setSelectedAppt(null)}
+        />
       )}
     </div>
   );
