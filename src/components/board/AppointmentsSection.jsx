@@ -29,7 +29,10 @@ function AppointmentCard({ appt, onAdmit, admitting, onClick }) {
   const reasonColor = APPOINTMENT_REASON_COLORS[appt.appointment_reason] || APPOINTMENT_REASON_COLORS.Other;
 
   return (
-    <div className={`rounded-xl border p-3 space-y-2 ${reasonColor}`}>
+    <div
+      className={`rounded-xl border p-3 space-y-2 cursor-pointer hover:brightness-110 transition-all ${reasonColor}`}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-white truncate">{appt.name}</p>
