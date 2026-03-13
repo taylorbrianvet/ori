@@ -183,42 +183,35 @@ export default function ServiceBoard() {
         </div>
       </div>
 
-      {/* Main Layout: Left appointments + Right clinical columns */}
-      <div className="grid grid-cols-3 gap-4 mb-6 items-start">
-        {/* Left: Appointments extending down */}
-        <div className="col-span-1">
+      {/* Main Layout: Left appointments + Middle patient stack + Right diagnostics */}
+      <div className="grid grid-cols-12 gap-4 mb-6 items-start">
+        {/* Left: Appointments */}
+        <div className="col-span-3">
           <AppointmentsSection appointments={appointments} selectedService={selectedService} />
         </div>
 
-        {/* Right two columns stacked */}
-        <div className="col-span-2 flex flex-col gap-4">
-          {/* Top row: Inpatients + Diagnostics */}
-          <div className="grid grid-cols-5 gap-4">
-            <div className="col-span-3">
-              <InpatientSection patients={inpatients} compact />
-            </div>
-            <div className="col-span-2">
-              <DiagnosticsBoard
-                diagnostics={pendingDiagnostics}
-                staffList={staffList}
-                selectedService={selectedService}
-                compact
-              />
-            </div>
-          </div>
-
-          {/* Wound Patients horizontal under the two right columns */}
+        {/* Middle: Inpatients + Wound Patients + Pending Transfers (stacked) */}
+        <div className="col-span-5 flex flex-col gap-4">
+          <InpatientSection patients={inpatients} compact />
           <WoundPatientsSection woundCases={woundPatients} compact />
+          {pendingTransfers.length > 0 && (
+            <PendingTransfersSection transfers={pendingTransfers} />
+          )}
+        </div>
+
+        {/* Right: Diagnostics (can extend downward) */}
+        <div className="col-span-4">
+          <DiagnosticsBoard
+            diagnostics={pendingDiagnostics}
+            staffList={staffList}
+            selectedService={selectedService}
+            compact
+          />
         </div>
       </div>
 
       {/* Discharged Today */}
       <DischargedTodaySection patients={dischargedToday} />
-
-      {/* Bottom: Pending Transfers */}
-      {pendingTransfers.length > 0 && (
-        <PendingTransfersSection transfers={pendingTransfers} />
-      )}
     </PageContainer>
   );
 }
