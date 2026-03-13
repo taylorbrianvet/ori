@@ -87,7 +87,7 @@ export default function AppointmentDetailModal({ appt: initialAppt, selectedServ
 
   const handleCancel = async () => {
     setActionLoading("cancel");
-    await base44.entities.PatientVisit.update(appt.id, { discharge_status: "discharged" });
+    await base44.entities.PatientVisit.delete(appt.id);
     toast.success("Appointment cancelled");
     queryClient.invalidateQueries({ queryKey: ["patient-visits"] });
     onClose();
