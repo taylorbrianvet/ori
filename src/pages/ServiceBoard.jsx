@@ -203,6 +203,11 @@ export default function ServiceBoard() {
         </div>
       </div>
 
+      {/* Appointments Row */}
+      <div className="mb-6">
+        <AppointmentsSection appointments={appointments} selectedService={selectedService} />
+      </div>
+
       {/* Discharged Today */}
       <DischargedTodaySection patients={dischargedToday} />
 
