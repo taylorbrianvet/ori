@@ -86,6 +86,11 @@ export default function ServiceBoard() {
     p.discharge_status !== "discharged"
   );
 
+  const appointments = patientVisits.filter(
+    p => p.involved_services?.includes(selectedService) &&
+    p.patient_type === "Appointment"
+  );
+
   const today = new Date().toISOString().split("T")[0];
   const dischargedToday = patientVisits.filter(p => {
     if (!p.involved_services?.includes(selectedService) || p.discharge_status !== "discharged") return false;
