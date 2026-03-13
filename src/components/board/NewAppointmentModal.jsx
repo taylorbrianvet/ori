@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Loader2, X } from "lucide-react";
 import { format } from "date-fns";
@@ -8,17 +8,16 @@ const APPOINTMENT_TYPES = ["Surgery", "Recheck", "Consult", "Tech Appointment", 
 const SPECIES = ["Canine", "Feline", "Equine", "Bovine", "Avian", "Exotic", "Other"];
 
 export default function NewAppointmentModal({ selectedService, defaultDate, onSaved, onClose }) {
-  const [step, setStep] = useState("id-lookup"); // "id-lookup" or "form"
-  const [patientIdInput, setPatientIdInput] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState("");
-  const [globalPatient, setGlobalPatient] = useState(null);
+  const [patientId, setPatientId] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [foundPatient, setFoundPatient] = useState(null);
+  const [showFullForm, setShowFullForm] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const defaultDateStr = defaultDate ? `${format(defaultDate, "yyyy-MM-dd")}T08:00` : "";
 
   const [form, setForm] = useState({
     name: "",
-    patient_id: "",
     species: "Canine",
     breed: "",
     sex: "Female Spayed",
@@ -30,59 +29,58 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
     reason_for_visit: "",
   });
 
-  const [saving, setSaving] = useState(false);
-
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
-  const handlePatientIdSearch = async () => {
-    if (!patientIdInput.trim()) {
-      setSearchError("Please enter a patient ID");
+  // Auto-search when patient ID changes
+  useEffect(() => {
+    if (!patientId.trim()) {
+      setFoundPatient(null);
+      setShowFullForm(false);
       return;
     }
 
-    setSearchLoading(true);
-    setSearchError("");
+    const searchPatient = async () => {
+      setSearching(true);
+      try {
+        const existing = await base44.entities.GlobalPatient.filter({ 
+          patient_id: patientId.trim() 
+        });
 
-    try {
-      const existing = await base44.entities.GlobalPatient.filter({ 
-        patient_id: patientIdInput.trim() 
-      });
-
-      if (existing?.length > 0) {
-        const gp = existing[0];
-        setGlobalPatient(gp);
-        setForm(f => ({
-          ...f,
-          name: gp.name || "",
-          patient_id: gp.patient_id || "",
-          species: gp.species || "Canine",
-          breed: gp.breed || "",
-          sex: gp.sex || "Female Spayed",
-        }));
-      } else {
-        setSearchError("No patient found with this ID. Please fill in the form below.");
-        setForm(f => ({ ...f, patient_id: patientIdInput.trim() }));
+        if (existing?.length > 0) {
+          const gp = existing[0];
+          setFoundPatient(gp);
+          setShowFullForm(false);
+          set("name", gp.name || "");
+          set("species", gp.species || "Canine");
+          set("breed", gp.breed || "");
+          set("sex", gp.sex || "Female Spayed");
+        } else {
+          setFoundPatient(null);
+          setShowFullForm(true);
+          set("name", "");
+        }
+      } catch (err) {
+        setFoundPatient(null);
+        setShowFullForm(true);
+      } finally {
+        setSearching(false);
       }
+    };
 
-      setStep("form");
-    } catch (err) {
-      setSearchError("Error searching for patient. Please try again.");
-    } finally {
-      setSearchLoading(false);
-    }
-  };
+    const timer = setTimeout(searchPatient, 500);
+    return () => clearTimeout(timer);
+  }, [patientId]);
 
   const handleSave = async () => {
     if (!form.name.trim() || !form.appointment_datetime) return;
     setSaving(true);
 
     try {
-      // Create or retrieve GlobalPatient
-      let globalPatientId = globalPatient?.id;
+      let globalPatientId = foundPatient?.id;
 
-      if (!globalPatientId && form.patient_id.trim()) {
+      if (!globalPatientId && patientId.trim()) {
         const existing = await base44.entities.GlobalPatient.filter({ 
-          patient_id: form.patient_id.trim() 
+          patient_id: patientId.trim() 
         });
 
         if (existing?.length > 0) {
@@ -90,7 +88,7 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
         } else {
           const gp = await base44.entities.GlobalPatient.create({
             name: form.name.trim(),
-            patient_id: form.patient_id.trim(),
+            patient_id: patientId.trim(),
             species: form.species,
             breed: form.breed.trim() || undefined,
             sex: form.sex || undefined,
@@ -99,10 +97,9 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
         }
       }
 
-      // Create PatientVisit
       await base44.entities.PatientVisit.create({
         name: form.name.trim(),
-        patient_id: form.patient_id.trim() || undefined,
+        patient_id: patientId.trim() || undefined,
         global_patient_id: globalPatientId || undefined,
         species: form.species,
         breed: form.breed.trim() || undefined,
@@ -122,7 +119,6 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
       onSaved();
     } catch (err) {
       setSaving(false);
-      setSearchError("Error creating appointment. Please try again.");
     }
   };
 
@@ -132,12 +128,14 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+      onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         className="glass-panel rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="sticky top-0 z-10 glass-panel rounded-t-2xl px-6 py-4 border-b border-white/10 flex items-center justify-between">
@@ -151,89 +149,49 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
         </div>
 
         <div className="p-6 space-y-4">
-          {step === "id-lookup" && (
-            <div className="space-y-3">
-              <p className="text-sm text-white/70">Search for an existing patient by ID, or create a new appointment.</p>
-              <div>
-                <label className="block text-xs text-white/50 mb-2">Patient ID</label>
-                <input
-                  type="text"
-                  value={patientIdInput}
-                  onChange={e => {
-                    setPatientIdInput(e.target.value);
-                    setSearchError("");
-                  }}
-                  onKeyDown={e => e.key === "Enter" && handlePatientIdSearch()}
-                  placeholder="Enter patient ID"
-                  className="w-full px-3 py-2.5 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-sm"
-                />
-              </div>
-
-              {searchError && (
-                <p className="text-xs text-orange-300 bg-orange-500/10 p-2.5 rounded-lg border border-orange-400/20">
-                  {searchError}
-                </p>
+          {/* Patient ID input — always shown */}
+          <div>
+            <label className="block text-xs text-white/50 mb-2">Patient ID *</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={patientId}
+                onChange={e => setPatientId(e.target.value)}
+                placeholder="Enter patient ID"
+                className="w-full px-3 py-2.5 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-sm"
+                autoFocus
+              />
+              {searching && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <Loader2 className="w-4 h-4 text-white/40 animate-spin" />
+                </div>
               )}
+            </div>
+          </div>
 
-              <button
-                onClick={handlePatientIdSearch}
-                disabled={!patientIdInput.trim() || searchLoading}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 text-blue-200 text-sm font-medium disabled:opacity-50 transition-colors"
-              >
-                {searchLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                {searchLoading ? "Searching…" : "Search Patient"}
-              </button>
-
-              <div className="text-center">
-                <p className="text-xs text-white/40 mb-2">or</p>
-                <button
-                  onClick={() => {
-                    setStep("form");
-                    setPatientIdInput("");
-                    setSearchError("");
-                  }}
-                  className="text-sm text-orange-400 hover:text-orange-300 font-medium transition-colors"
-                >
-                  Create New Patient
-                </button>
-              </div>
+          {/* Found patient confirmation */}
+          {foundPatient && (
+            <div className="p-3 rounded-lg bg-green-500/10 border border-green-400/20">
+              <p className="text-xs text-green-200">
+                Found: <span className="font-semibold">{foundPatient.name}</span>
+              </p>
             </div>
           )}
 
-          {step === "form" && (
-            <div className="space-y-3">
-              {globalPatient && (
-                <div className="p-3 rounded-lg bg-green-500/10 border border-green-400/20">
-                  <p className="text-xs text-green-200">
-                    Found patient: <span className="font-semibold">{globalPatient.name}</span>
-                  </p>
-                </div>
-              )}
-
-              {/* Patient name + ID */}
+          {/* Full form — shown only if no match or user chooses to create new */}
+          {showFullForm && (
+            <>
+              {/* Patient name + Species */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs text-white/50 mb-1">Patient Name *</label>
+                  <label className="block text-xs text-white/50 mb-1">Name *</label>
                   <input
                     value={form.name}
                     onChange={e => set("name", e.target.value)}
-                    placeholder="e.g. Buddy"
+                    placeholder="Patient name"
                     className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-xs"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs text-white/50 mb-1">Patient ID</label>
-                  <input
-                    value={form.patient_id}
-                    onChange={e => set("patient_id", e.target.value)}
-                    placeholder="Optional"
-                    className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* Species + Breed */}
-              <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-white/50 mb-1">Species</label>
                   <select
@@ -244,6 +202,10 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
                     {SPECIES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
+              </div>
+
+              {/* Breed + Sex */}
+              <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-white/50 mb-1">Breed</label>
                   <input
@@ -253,10 +215,6 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
                     className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-xs"
                   />
                 </div>
-              </div>
-
-              {/* Sex + Age */}
-              <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-white/50 mb-1">Sex</label>
                   <select
@@ -269,6 +227,10 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Age + Weight */}
+              <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-white/50 mb-1">Age (years)</label>
                   <input
@@ -279,20 +241,23 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
                     className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-xs"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs text-white/50 mb-1">Weight (kg)</label>
+                  <input
+                    type="number"
+                    value={form.weight_kg}
+                    onChange={e => set("weight_kg", e.target.value)}
+                    placeholder="Optional"
+                    className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-xs"
+                  />
+                </div>
               </div>
+            </>
+          )}
 
-              {/* Weight */}
-              <div>
-                <label className="block text-xs text-white/50 mb-1">Weight (kg)</label>
-                <input
-                  type="number"
-                  value={form.weight_kg}
-                  onChange={e => set("weight_kg", e.target.value)}
-                  placeholder="Optional"
-                  className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/15 text-white placeholder:text-white/30 focus:outline-none text-xs"
-                />
-              </div>
-
+          {/* Appointment details — shown if patient found or full form visible */}
+          {(foundPatient || showFullForm) && (
+            <>
               {/* Date/Time + Appointment Type */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
@@ -350,17 +315,13 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
                   {saving ? "Creating…" : "Create Appointment"}
                 </button>
                 <button
-                  onClick={() => {
-                    setStep("id-lookup");
-                    setPatientIdInput("");
-                    setGlobalPatient(null);
-                  }}
+                  onClick={onClose}
                   className="px-4 py-2.5 rounded-lg bg-white/8 text-white/50 hover:bg-white/12 text-sm transition-colors"
                 >
-                  Back
+                  Cancel
                 </button>
               </div>
-            </div>
+            </>
           )}
         </div>
       </motion.div>
