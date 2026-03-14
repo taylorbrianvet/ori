@@ -59,6 +59,17 @@ export default {
       },
     },
   },
-  safelist: ["grid-cols-1", "grid-cols-2", "grid-cols-3"],
+  safelist: [
+    "grid-cols-1", "grid-cols-2", "grid-cols-3",
+    "text-orange-300", "text-amber-300", "text-rose-300", "text-sky-300",
+    "text-violet-300", "text-teal-300", "text-lime-300", "text-red-300",
+    "text-pink-300", "text-cyan-300", "text-indigo-300",
+    "bg-orange-500/15", "bg-amber-500/15", "bg-rose-500/15", "bg-sky-500/15",
+    "bg-violet-500/15", "bg-teal-500/15", "bg-lime-500/15", "bg-red-500/15",
+    "bg-pink-500/15", "bg-cyan-500/15", "bg-indigo-500/15",
+    "border-orange-400/25", "border-amber-400/25", "border-rose-400/25", "border-sky-400/25",
+    "border-violet-400/25", "border-teal-400/25", "border-lime-400/25", "border-red-400/25",
+    "border-pink-400/25", "border-cyan-400/25", "border-indigo-400/25",
+  ],
   plugins: [require("tailwindcss-animate")],
 }
