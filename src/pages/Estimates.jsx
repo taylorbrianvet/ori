@@ -146,7 +146,7 @@ export default function Estimates() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-[11px] uppercase tracking-wider text-white/40">
+              <tr className="border-b border-white/8 text-[11px] uppercase tracking-wider text-white/30">
                 <th className="text-left px-4 py-3 font-medium">Procedure</th>
                 <th className="text-left px-4 py-3 font-medium">Service</th>
                 <th className="text-right px-4 py-3 font-medium">Low Est.</th>
