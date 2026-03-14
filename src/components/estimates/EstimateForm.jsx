@@ -70,16 +70,23 @@ export default function EstimateForm({ estimate, allEstimates, serviceName, onSa
         </button>
       </div>
 
-      {/* Service (locked for new, editable for admins editing) */}
-      <div>
-        <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Service</label>
-        <input
-          value={form.service_name}
-          readOnly={isNew}
-          onChange={(e) => set("service_name", e.target.value)}
-          className={`w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/8 border-white/15 focus:outline-none focus:border-white/30 ${isNew ? "opacity-60 cursor-default" : ""}`}
-        />
-      </div>
+      {/* Service label (read-only display for new; editable input for edit) */}
+      {!isNew && (
+        <div>
+          <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Service</label>
+          <input
+            value={form.service_name}
+            onChange={(e) => set("service_name", e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/10 border-white/15 focus:outline-none focus:border-white/30 backdrop-blur"
+          />
+        </div>
+      )}
+      {isNew && form.service_name && (
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/8 border border-white/12">
+          <span className="text-[10px] text-white/40 uppercase tracking-wider">Service:</span>
+          <span className="text-sm text-white/80 font-medium">{form.service_name}</span>
+        </div>
+      )}
 
       {/* Procedure name */}
       <div>
