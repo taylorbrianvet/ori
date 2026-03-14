@@ -39,7 +39,7 @@ export default function Estimates() {
   const [staffProfile, setStaffProfile] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     base44.auth.me().then((u) => {
       setCurrentUser(u);
       if (u?.email) {
