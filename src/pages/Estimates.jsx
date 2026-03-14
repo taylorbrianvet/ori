@@ -78,13 +78,8 @@ export default function Estimates() {
   return (
     <PageContainer>
       {/* Header */}
-      <div className="flex items-start justify-between mb-5">
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Procedure Estimates</h1>
-          <p className="text-sm text-white/45 mt-0.5">
-            Approximate cost ranges for procedures across all services
-          </p>
-        </div>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-lg font-semibold text-white">Procedure Estimates</h1>
         {canAddNew && (
           <button
             onClick={() => setShowAddForm(true)}
@@ -198,6 +193,7 @@ export default function Estimates() {
             estimate={selectedEstimate}
             allEstimates={estimates}
             canEdit={canEditThisEstimate(selectedEstimate)}
+            isAdmin={currentUser?.role === "admin"}
             onClose={() => setSelectedEstimate(null)}
           />
         )}
