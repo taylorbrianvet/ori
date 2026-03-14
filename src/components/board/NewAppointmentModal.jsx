@@ -67,45 +67,70 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
     fetchClinicians();
   }, []);
 
-  // Auto-search when patient ID changes
+  // Live search as user types
   useEffect(() => {
-    if (!patientId.trim()) {
-      setFoundPatient(null);
-      setShowFullForm(false);
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowDropdown(false);
       return;
     }
 
-    const searchPatient = async () => {
+    const doSearch = async () => {
       setSearching(true);
       try {
-        const existing = await base44.entities.GlobalPatient.filter({ 
-          patient_id: patientId.trim() 
-        });
-
-        if (existing?.length > 0) {
-          const gp = existing[0];
-          setFoundPatient(gp);
-          setShowFullForm(false);
-          set("name", gp.name || "");
-          set("species", gp.species || "Canine");
-          set("breed", gp.breed || "");
-          set("sex", gp.sex || "Female Spayed");
-        } else {
-          setFoundPatient(null);
-          setShowFullForm(true);
-          set("name", "");
-        }
+        const all = await base44.entities.GlobalPatient.list();
+        const q = query.trim().toLowerCase();
+        const matches = all.filter(p =>
+          (p.patient_id || "").toLowerCase().includes(q) ||
+          (p.name || "").toLowerCase().includes(q)
+        ).slice(0, 8);
+        setSearchResults(matches);
+        setShowDropdown(true);
       } catch (err) {
-        setFoundPatient(null);
-        setShowFullForm(true);
+        setSearchResults([]);
       } finally {
         setSearching(false);
       }
     };
 
-    const timer = setTimeout(searchPatient, 500);
+    const timer = setTimeout(doSearch, 250);
     return () => clearTimeout(timer);
-  }, [patientId]);
+  }, [query]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const selectExistingPatient = (gp) => {
+    setSelectedPatient(gp);
+    setQuery(`${gp.patient_id} — ${gp.name}`);
+    setShowDropdown(false);
+    set("name", gp.name || "");
+    set("species", gp.species || "Canine");
+    set("breed", gp.breed || "");
+    set("sex", gp.sex || "Female Spayed");
+  };
+
+  const selectNewPatient = () => {
+    setSelectedPatient("new");
+    setShowDropdown(false);
+    set("name", "");
+  };
+
+  const clearSelection = () => {
+    setSelectedPatient(null);
+    setQuery("");
+    setSearchResults([]);
+    setShowDropdown(false);
+    set("name", "");
+  };
 
   const handleSave = async () => {
     if (!form.name.trim() || !form.appointment_datetime) return;
