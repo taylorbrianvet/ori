@@ -99,6 +99,18 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
     return () => clearTimeout(timer);
   }, [query]);
 
+  // Update dropdown position whenever it opens
+  const updateDropdownPos = useCallback(() => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showDropdown) updateDropdownPos();
+  }, [showDropdown, updateDropdownPos]);
+
   // Close dropdown on outside click
   useEffect(() => {
     const handler = (e) => {
