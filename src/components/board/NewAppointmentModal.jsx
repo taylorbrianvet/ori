@@ -243,43 +243,42 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
               )}
             </div>
 
-            {/* Dropdown */}
-            <AnimatePresence>
-              {showDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  className="absolute z-50 mt-1 w-full rounded-xl border border-white/15 bg-slate-900/95 backdrop-blur shadow-xl overflow-hidden"
-                >
-                  {searchResults.map(p => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onMouseDown={() => selectExistingPatient(p)}
-                      className="w-full text-left px-4 py-2.5 hover:bg-white/8 transition-colors flex items-center justify-between gap-3 border-b border-white/5 last:border-0"
-                    >
-                      <div>
-                        <p className="text-sm text-white font-medium">{p.name}</p>
-                        <p className="text-xs text-white/40">ID: {p.patient_id} · {p.species}{p.breed ? ` · ${p.breed}` : ""}</p>
-                      </div>
-                    </button>
-                  ))}
-                  {/* Always show "Create new patient" option */}
+            {/* Dropdown rendered via portal to escape overflow clipping */}
+            {showDropdown && createPortal(
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                style={{ position: "fixed", top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 9999 }}
+                className="rounded-xl border border-white/15 bg-slate-900 shadow-2xl overflow-hidden"
+              >
+                {searchResults.map(p => (
                   <button
+                    key={p.id}
                     type="button"
-                    onMouseDown={selectNewPatient}
-                    className="w-full text-left px-4 py-2.5 hover:bg-orange-500/10 transition-colors flex items-center gap-3"
+                    onMouseDown={() => selectExistingPatient(p)}
+                    className="w-full text-left px-4 py-2.5 hover:bg-white/8 transition-colors flex items-center justify-between gap-3 border-b border-white/5 last:border-0"
                   >
-                    <UserPlus className="w-4 h-4 text-orange-300 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-orange-200 font-medium">Create new patient</p>
-                      {query.trim() && <p className="text-xs text-white/35">Patient ID: {query.trim()}</p>}
+                      <p className="text-sm text-white font-medium">{p.name}</p>
+                      <p className="text-xs text-white/40">ID: {p.patient_id} · {p.species}{p.breed ? ` · ${p.breed}` : ""}</p>
                     </div>
                   </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                ))}
+                <button
+                  type="button"
+                  onMouseDown={selectNewPatient}
+                  className="w-full text-left px-4 py-2.5 hover:bg-orange-500/10 transition-colors flex items-center gap-3"
+                >
+                  <UserPlus className="w-4 h-4 text-orange-300 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-orange-200 font-medium">Create new patient</p>
+                    {query.trim() && <p className="text-xs text-white/35">Patient ID: {query.trim()}</p>}
+                  </div>
+                </button>
+              </motion.div>,
+              document.body
+            )}
           </div>
 
           {/* Selected existing patient chip */}
