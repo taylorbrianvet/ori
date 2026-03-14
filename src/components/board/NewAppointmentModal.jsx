@@ -138,24 +138,17 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
 
     try {
       let globalPatientId = foundPatient?.id;
+      const rawPatientId = foundPatient?.patient_id || (selectedPatient === "new" ? query.trim() : "");
 
-      if (!globalPatientId && patientId.trim()) {
-        const existing = await base44.entities.GlobalPatient.filter({ 
-          patient_id: patientId.trim() 
+      if (!globalPatientId && rawPatientId) {
+        const gp = await base44.entities.GlobalPatient.create({
+          name: form.name.trim(),
+          patient_id: rawPatientId,
+          species: form.species,
+          breed: form.breed.trim() || undefined,
+          sex: form.sex || undefined,
         });
-
-        if (existing?.length > 0) {
-          globalPatientId = existing[0].id;
-        } else {
-          const gp = await base44.entities.GlobalPatient.create({
-            name: form.name.trim(),
-            patient_id: patientId.trim(),
-            species: form.species,
-            breed: form.breed.trim() || undefined,
-            sex: form.sex || undefined,
-          });
-          globalPatientId = gp.id;
-        }
+        globalPatientId = gp.id;
       }
 
       await base44.entities.PatientVisit.create({
