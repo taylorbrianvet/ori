@@ -37,6 +37,11 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
   const [selectedDate, setSelectedDate] = useState(defaultDate || new Date());
   const [selectedTime, setSelectedTime] = useState("08:00");
 
+  // Derived state
+  const foundPatient = selectedPatient && selectedPatient !== "new" ? selectedPatient : null;
+  const showFullForm = selectedPatient === "new";
+  const patientId = foundPatient?.patient_id || (selectedPatient === "new" ? query : "");
+
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
   const handleDateTimeChange = (date, time) => {
