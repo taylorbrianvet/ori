@@ -68,6 +68,7 @@ import SurgicalLog from './pages/SurgicalLog';
 import Transfers from './pages/Transfers';
 import WoundCare from './pages/WoundCare';
 import WoundCaseDetail from './pages/WoundCaseDetail';
+import Estimates from './pages/Estimates';
 import __Layout from './Layout.jsx';
 
 
@@ -93,6 +94,7 @@ export const PAGES = {
     "Transfers": Transfers,
     "WoundCare": WoundCare,
     "WoundCaseDetail": WoundCaseDetail,
+    "Estimates": Estimates,
 }
 
 export const pagesConfig = {
