@@ -7,7 +7,7 @@ import EstimateForm from "./EstimateForm";
 
 const fmt = (n) => (n !== undefined && n !== null ? `$${n.toLocaleString()}` : "—");
 
-export default function EstimateDetailModal({ estimate, allEstimates, canEdit, onClose }) {
+export default function EstimateDetailModal({ estimate, allEstimates, canEdit, isAdmin, onClose }) {
   const [editing, setEditing] = useState(false);
   const queryClient = useQueryClient();
 
@@ -148,7 +148,7 @@ export default function EstimateDetailModal({ estimate, allEstimates, canEdit, o
                   </div>
                 )}
 
-                {canEdit && (
+                {isAdmin && (
                   <button
                     onClick={handleDelete}
                     className="w-full text-center text-[11px] text-red-400/50 hover:text-red-400 transition-colors pt-1"
