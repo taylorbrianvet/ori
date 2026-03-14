@@ -139,8 +139,11 @@ export default function EstimateDetailModal({ estimate, allEstimates, canEdit, i
                             <p className="text-[10px] text-white/40">{linked.service_name}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-xs font-mono text-green-300">{fmt(linked.estimate_low)}</p>
-                            <p className="text-[10px] font-mono text-orange-300">— {fmt(linked.estimate_high)}</p>
+                            <p className="text-xs font-mono text-white/70">
+                              <span className="text-green-300">{fmt(linked.estimate_low)}</span>
+                              <span className="text-white/35 mx-1">–</span>
+                              <span className="text-orange-300">{fmt(linked.estimate_high)}</span>
+                            </p>
                           </div>
                         </div>
                       ))}
