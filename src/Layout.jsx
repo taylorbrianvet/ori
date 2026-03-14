@@ -35,7 +35,7 @@ const navItems = [
   { name: "On-Call", page: "OnCall", icon: Phone },
   { name: "Ed. Rounds", page: "EducationalRounds", icon: GraduationCap },
   { name: "Transfers", page: "Transfers", icon: ArrowLeftRight },
-  { name: "Resources", page: "Resources", icon: BookOpen },
+  { name: "Pharmacy", page: "Pharmacy", icon: Pill },
 ];
 
 function UserAvatar({ user, staffProfile }) {
