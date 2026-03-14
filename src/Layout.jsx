@@ -339,6 +339,30 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   );
                 })}
+                <Link
+                  to={createPageUrl("Directory")}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    currentPageName === "Directory"
+                      ? "bg-white/15 text-white"
+                      : "text-white/55 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  <Users className={`w-[17px] h-[17px] ${currentPageName === "Directory" ? "text-orange-300" : "text-white/40"}`} />
+                  Directory
+                </Link>
+                <Link
+                  to={createPageUrl("Estimates")}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    currentPageName === "Estimates"
+                      ? "bg-white/15 text-white"
+                      : "text-white/55 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  <DollarSign className={`w-[17px] h-[17px] ${currentPageName === "Estimates" ? "text-orange-300" : "text-white/40"}`} />
+                  Estimates
+                </Link>
                 {isAdmin && (
                   <Link
                     to={createPageUrl("Admin")}
@@ -353,6 +377,18 @@ export default function Layout({ children, currentPageName }) {
                     Admin
                   </Link>
                 )}
+                <Link
+                  to={createPageUrl("Resources")}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    currentPageName === "Resources"
+                      ? "bg-white/15 text-white"
+                      : "text-white/55 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  <BookOpen className={`w-[17px] h-[17px] ${currentPageName === "Resources" ? "text-orange-300" : "text-white/40"}`} />
+                  Resources
+                </Link>
               </nav>
             </motion.div>
           </>
