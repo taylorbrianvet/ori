@@ -19,6 +19,8 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
   const [saving, setSaving] = useState(false);
   const [clinicians, setClinicians] = useState([]);
   const searchRef = useRef(null);
+  const inputRef = useRef(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
 
   const defaultDateStr = defaultDate ? `${format(defaultDate, "yyyy-MM-dd")}T08:00` : "";
 
