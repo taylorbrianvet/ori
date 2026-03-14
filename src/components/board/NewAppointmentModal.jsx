@@ -11,12 +11,14 @@ const APPOINTMENT_TYPES = ["Surgery", "Recheck", "Consult", "Tech Appointment", 
 const SPECIES = ["Canine", "Feline", "Equine", "Bovine", "Avian", "Exotic", "Other"];
 
 export default function NewAppointmentModal({ selectedService, defaultDate, onSaved, onClose }) {
-  const [patientId, setPatientId] = useState("");
+  const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
-  const [foundPatient, setFoundPatient] = useState(null);
-  const [showFullForm, setShowFullForm] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null); // null = none, "new" = create new
   const [saving, setSaving] = useState(false);
   const [clinicians, setClinicians] = useState([]);
+  const searchRef = useRef(null);
 
   const defaultDateStr = defaultDate ? `${format(defaultDate, "yyyy-MM-dd")}T08:00` : "";
 
