@@ -110,7 +110,7 @@ export default function EstimateForm({ estimate, allEstimates, serviceName, onSa
             value={form.estimate_low}
             onChange={(e) => set("estimate_low", e.target.value)}
             placeholder="0"
-            className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/8 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/25"
+            className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/10 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/35 backdrop-blur"
           />
         </div>
         <div>
@@ -121,7 +121,7 @@ export default function EstimateForm({ estimate, allEstimates, serviceName, onSa
             value={form.estimate_high}
             onChange={(e) => set("estimate_high", e.target.value)}
             placeholder="0"
-            className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/8 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/25"
+            className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/10 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/35 backdrop-blur"
           />
         </div>
       </div>
