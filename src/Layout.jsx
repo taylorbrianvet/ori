@@ -181,21 +181,6 @@ export default function Layout({ children, currentPageName }) {
         </nav>
         <div className="p-4 border-t border-white/10 space-y-1">
           <Link
-            to={createPageUrl("Pharmacy")}
-            title={!sidebarOpen ? "Pharmacy" : ""}
-            className={`flex items-center transition-all duration-200 group rounded-xl ${
-              sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
-            } text-sm font-medium ${
-              currentPageName === "Pharmacy"
-                ? "bg-white/15 text-white shadow-sm"
-                : "text-white/55 hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Pharmacy" ? "text-orange-300" : "text-white/40"}`} />
-            {sidebarOpen && <span>Pharmacy</span>}
-          </Link>
-
-          <Link
             to={createPageUrl("Directory")}
             title={!sidebarOpen ? "Directory" : ""}
             className={`flex items-center transition-all duration-200 group rounded-xl ${
@@ -209,6 +194,22 @@ export default function Layout({ children, currentPageName }) {
             <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-orange-300" : "text-white/40"}`} />
             {sidebarOpen && <span>Directory</span>}
           </Link>
+
+          <Link
+            to={createPageUrl("Estimates")}
+            title={!sidebarOpen ? "Estimates" : ""}
+            className={`flex items-center transition-all duration-200 group rounded-xl ${
+              sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
+            } text-sm font-medium ${
+              currentPageName === "Estimates"
+                ? "bg-white/15 text-white shadow-sm"
+                : "text-white/55 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            <DollarSign className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Estimates" ? "text-orange-300" : "text-white/40"}`} />
+            {sidebarOpen && <span>Estimates</span>}
+          </Link>
+
           {isAdmin && (
             <Link
               to={createPageUrl("Admin")}
@@ -225,6 +226,21 @@ export default function Layout({ children, currentPageName }) {
               {sidebarOpen && <span>Admin</span>}
             </Link>
           )}
+
+          <Link
+            to={createPageUrl("Resources")}
+            title={!sidebarOpen ? "Resources" : ""}
+            className={`flex items-center transition-all duration-200 group rounded-xl ${
+              sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
+            } text-sm font-medium ${
+              currentPageName === "Resources"
+                ? "bg-white/15 text-white shadow-sm"
+                : "text-white/55 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            <BookOpen className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Resources" ? "text-orange-300" : "text-white/40"}`} />
+            {sidebarOpen && <span>Resources</span>}
+          </Link>
 
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
