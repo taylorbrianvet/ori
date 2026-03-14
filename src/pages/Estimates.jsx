@@ -24,6 +24,23 @@ const SERVICES = [
 
 const fmt = (n) => (n !== undefined && n !== null ? `$${n.toLocaleString()}` : "—");
 
+// Service color palette — pulls from the app's blue/orange/eggplant background tones
+const SERVICE_COLORS = {
+  "Soft Tissue Surgery":   { text: "text-orange-300",    badge: "bg-orange-500/15 border-orange-400/25 text-orange-300" },
+  "Orthopedic Surgery":    { text: "text-amber-300",      badge: "bg-amber-500/15 border-amber-400/25 text-amber-300" },
+  "Cardiology":            { text: "text-rose-300",       badge: "bg-rose-500/15 border-rose-400/25 text-rose-300" },
+  "Internal Medicine":     { text: "text-sky-300",        badge: "bg-sky-500/15 border-sky-400/25 text-sky-300" },
+  "Neurology":             { text: "text-violet-300",     badge: "bg-violet-500/15 border-violet-400/25 text-violet-300" },
+  "Oncology":              { text: "text-teal-300",       badge: "bg-teal-500/15 border-teal-400/25 text-teal-300" },
+  "Dermatology":           { text: "text-lime-300",       badge: "bg-lime-500/15 border-lime-400/25 text-lime-300" },
+  "Emergency":             { text: "text-red-300",        badge: "bg-red-500/15 border-red-400/25 text-red-300" },
+  "Critical Care":         { text: "text-pink-300",       badge: "bg-pink-500/15 border-pink-400/25 text-pink-300" },
+  "Ophthalmology":         { text: "text-cyan-300",       badge: "bg-cyan-500/15 border-cyan-400/25 text-cyan-300" },
+  "Anesthesia":            { text: "text-indigo-300",     badge: "bg-indigo-500/15 border-indigo-400/25 text-indigo-300" },
+};
+
+const serviceColor = (name) => SERVICE_COLORS[name] || { text: "text-white/80", badge: "bg-white/8 border-white/15 text-white/55" };
+
 export default function Estimates() {
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("All Services");
