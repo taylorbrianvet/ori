@@ -163,25 +163,27 @@ export default function Estimates() {
                   </td>
                 </tr>
               )}
-              {filtered.map((e) => (
+              {filtered.map((e, i) => {
+                const svc = serviceColor(e.service_name);
+                return (
                 <tr
                   key={e.id}
                   onClick={() => setSelectedEstimate(e)}
-                  className="border-b border-white/6 hover:bg-white/5 transition-colors cursor-pointer"
+                  className={`transition-colors cursor-pointer hover:bg-white/5 ${i % 2 === 0 ? "bg-white/[0.02]" : "bg-purple-900/[0.06]"}`}
                 >
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="font-medium text-white text-xs">{e.procedure_name}</span>
+                    <span className={`font-medium text-xs ${svc.text}`}>{e.procedure_name}</span>
                     {e.species && (
-                      <span className="ml-2 text-[10px] text-orange-300/70 font-normal">{e.species}</span>
+                      <span className="ml-2 text-[10px] text-white/40 font-normal">{e.species}</span>
                     )}
                     {e.linked_estimate_ids?.length > 0 && (
-                      <span className="ml-2 text-[10px] text-sky-300/60">
+                      <span className="ml-2 text-[10px] text-white/30">
                         +{e.linked_estimate_ids.length} linked
                       </span>
                     )}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="px-2 py-0.5 rounded-full bg-white/8 border border-white/10 text-[11px] text-white/55">
+                    <span className={`px-2 py-0.5 rounded-full border text-[11px] ${svc.badge}`}>
                       {e.service_name}
                     </span>
                   </td>
