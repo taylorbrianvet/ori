@@ -1,8 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { Search, Check, Minus } from "lucide-react";
+import { Search, Check, Minus, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../components/shared/PageContainer";
+import EstimateDetailModal from "../components/estimates/EstimateDetailModal";
+import EstimateForm from "../components/estimates/EstimateForm";
+import { AnimatePresence } from "framer-motion";
 
 const SERVICES = [
   "All Services",
@@ -24,11 +27,37 @@ const fmt = (n) => (n !== undefined && n !== null ? `$${n.toLocaleString()}` : "
 export default function Estimates() {
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("All Services");
+  const [selectedEstimate, setSelectedEstimate] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const { data: estimates = [] } = useQuery({
     queryKey: ["estimates"],
     queryFn: () => base44.entities.Estimate.list(),
   });
+
+  // Load current user + their staff profile to check can_edit_estimates
+  const [staffProfile, setStaffProfile] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  React.useEffect(() => {
+    base44.auth.me().then((u) => {
+      setCurrentUser(u);
+      if (u?.email) {
+        base44.entities.Staff.filter({ email: u.email }).then((results) => {
+          if (results?.length > 0) setStaffProfile(results[0]);
+        }).catch(() => {});
+      }
+    }).catch(() => {});
+  }, []);
+
+  const canEditEstimates = staffProfile?.can_edit_estimates === true || currentUser?.role === "admin";
+  const userService = staffProfile?.service || "";
+
+  const canEditThisEstimate = (estimate) => {
+    if (!canEditEstimates) return false;
+    if (currentUser?.role === "admin") return true;
+    return estimate.service_name === userService;
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -44,14 +73,27 @@ export default function Estimates() {
     });
   }, [search, serviceFilter, estimates]);
 
+  const canAddNew = canEditEstimates;
+
   return (
     <PageContainer>
       {/* Header */}
-      <div className="mb-5">
-        <h1 className="text-2xl font-semibold text-white">Procedure Estimates</h1>
-        <p className="text-sm text-white/45 mt-0.5">
-          Approximate cost ranges for procedures across all services
-        </p>
+      <div className="flex items-start justify-between mb-5">
+        <div>
+          <h1 className="text-2xl font-semibold text-white">Procedure Estimates</h1>
+          <p className="text-sm text-white/45 mt-0.5">
+            Approximate cost ranges for procedures across all services
+          </p>
+        </div>
+        {canAddNew && (
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500/80 hover:bg-orange-500 border border-orange-400/30 text-sm text-white font-medium transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            New Estimate
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -96,10 +138,7 @@ export default function Estimates() {
             <tbody>
               {filtered.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="text-center py-10 text-white/30 text-sm"
-                  >
+                  <td colSpan={6} className="text-center py-10 text-white/30 text-sm">
                     No procedures found
                   </td>
                 </tr>
@@ -107,18 +146,22 @@ export default function Estimates() {
               {filtered.map((e) => (
                 <tr
                   key={e.id}
+                  onClick={() => setSelectedEstimate(e)}
                   className="border-b border-white/6 hover:bg-white/5 transition-colors cursor-pointer"
                 >
-                  <td className="px-4 py-3 font-medium text-white whitespace-nowrap text-xs">
-                    {e.procedure_name}
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className="font-medium text-white text-xs">{e.procedure_name}</span>
                     {e.species && (
-                      <span className="ml-2 text-[10px] text-orange-300/70 font-normal">
-                        {e.species}
+                      <span className="ml-2 text-[10px] text-orange-300/70 font-normal">{e.species}</span>
+                    )}
+                    {e.linked_estimate_ids?.length > 0 && (
+                      <span className="ml-2 text-[10px] text-sky-300/60">
+                        +{e.linked_estimate_ids.length} linked
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-white/55 whitespace-nowrap">
-                    <span className="px-2 py-0.5 rounded-full bg-white/8 border border-white/10 text-[11px]">
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className="px-2 py-0.5 rounded-full bg-white/8 border border-white/10 text-[11px] text-white/55">
                       {e.service_name}
                     </span>
                   </td>
@@ -144,10 +187,41 @@ export default function Estimates() {
           </table>
         </div>
         <div className="px-4 py-2 border-t border-white/8 text-[11px] text-white/25">
-          {filtered.length} procedure{filtered.length !== 1 ? "s" : ""} shown ·
-          Estimates are approximate and subject to change
+          {filtered.length} procedure{filtered.length !== 1 ? "s" : ""} shown · Estimates are approximate and subject to change
         </div>
       </div>
+
+      {/* Detail Modal */}
+      <AnimatePresence>
+        {selectedEstimate && (
+          <EstimateDetailModal
+            estimate={selectedEstimate}
+            allEstimates={estimates}
+            canEdit={canEditThisEstimate(selectedEstimate)}
+            onClose={() => setSelectedEstimate(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Add New Modal */}
+      <AnimatePresence>
+        {showAddForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setShowAddForm(false)}
+            />
+            <div className="relative glass-card w-full max-w-lg z-10 overflow-y-auto max-h-[90vh]">
+              <EstimateForm
+                allEstimates={estimates}
+                serviceName={userService}
+                onSaved={() => setShowAddForm(false)}
+                onCancel={() => setShowAddForm(false)}
+              />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </PageContainer>
   );
 }
