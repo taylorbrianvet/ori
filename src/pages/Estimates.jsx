@@ -94,19 +94,19 @@ export default function Estimates() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
           <input
             type="text"
             placeholder="Search procedures…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-white text-gray-800 placeholder:text-gray-400 border border-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-white/30"
+            className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/10 text-white placeholder:text-white/35 border border-white/20 text-sm focus:outline-none focus:border-white/40 backdrop-blur"
           />
         </div>
         <select
           value={serviceFilter}
           onChange={(e) => setServiceFilter(e.target.value)}
-          className="px-3 py-2 rounded-xl bg-white/15 border border-white/25 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur"
+          className="px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-sm text-white focus:outline-none focus:border-white/40 backdrop-blur"
         >
           {SERVICES.map((s) => (
             <option key={s} value={s} className="bg-slate-800 text-white">
