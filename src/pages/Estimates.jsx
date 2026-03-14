@@ -100,8 +100,16 @@ export default function Estimates() {
             placeholder="Search procedures…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/10 text-white placeholder:text-white/35 border border-white/20 text-sm focus:outline-none focus:border-white/40 backdrop-blur"
+            className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/10 text-white placeholder:text-white/35 border border-white/20 text-sm focus:outline-none focus:border-white/40 backdrop-blur"
           />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
         <select
           value={serviceFilter}
