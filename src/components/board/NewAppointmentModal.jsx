@@ -153,7 +153,7 @@ export default function NewAppointmentModal({ selectedService, defaultDate, onSa
 
       await base44.entities.PatientVisit.create({
         name: form.name.trim(),
-        patient_id: patientId.trim() || undefined,
+        patient_id: rawPatientId || undefined,
         global_patient_id: globalPatientId || undefined,
         species: form.species,
         breed: form.breed.trim() || undefined,
