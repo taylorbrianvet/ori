@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Search, Check, Minus, Plus } from "lucide-react";
+import { Search, Check, Minus, Plus, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../components/shared/PageContainer";
