@@ -143,7 +143,7 @@ export default function EstimateForm({ estimate, allEstimates, serviceName, onSa
         <select
           value={form.species}
           onChange={(e) => set("species", e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/8 border-white/15 focus:outline-none focus:border-white/30"
+          className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/10 border-white/15 focus:outline-none focus:border-white/30 backdrop-blur"
         >
           <option value="" className="bg-slate-800">— Any species —</option>
           {SPECIES_OPTIONS.map((s) => (
@@ -160,7 +160,7 @@ export default function EstimateForm({ estimate, allEstimates, serviceName, onSa
           onChange={(e) => set("notes", e.target.value)}
           rows={2}
           placeholder="Additional notes…"
-          className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/8 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/25 resize-none"
+          className="w-full px-3 py-2 rounded-lg border text-sm text-white bg-white/10 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/35 resize-none backdrop-blur"
         />
       </div>
 
@@ -189,7 +189,7 @@ export default function EstimateForm({ estimate, allEstimates, serviceName, onSa
             value={linkSearch}
             onChange={(e) => setLinkSearch(e.target.value)}
             placeholder="Search estimates to link…"
-            className="w-full pl-8 pr-3 py-2 rounded-lg border text-xs text-white bg-white/8 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/25"
+            className="w-full pl-8 pr-3 py-2 rounded-lg border text-xs text-white bg-white/10 border-white/15 focus:outline-none focus:border-white/30 placeholder:text-white/35 backdrop-blur"
           />
         </div>
         {linkResults.length > 0 && (
