@@ -204,7 +204,8 @@ export default function Estimates() {
                     {e.notes || "—"}
                   </td>
                 </tr>
-              );})}
+              );
+              })}
             </tbody>
           </table>
         </div>
