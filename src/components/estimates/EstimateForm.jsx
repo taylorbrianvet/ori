@@ -37,8 +37,8 @@ export default function EstimateForm({ estimate, allEstimates, serviceName, onSa
     ? allEstimates.filter(
         (e) =>
           e.id !== estimate?.id &&
-          (e.procedure_name.toLowerCase().includes(linkSearch.toLowerCase()) ||
-            e.service_name.toLowerCase().includes(linkSearch.toLowerCase()))
+          ((e.procedure_name || "").toLowerCase().includes(linkSearch.toLowerCase()) ||
+            (e.service_name || "").toLowerCase().includes(linkSearch.toLowerCase()))
       )
     : [];
 
