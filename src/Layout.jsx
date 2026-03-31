@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Stethoscope, Phone, BookOpen, Menu, X, Settings, Users, BookMarked, GraduationCap, ArrowLeftRight, Pill, DollarSign } from "lucide-react";
+import { Home, Stethoscope, Phone, BookOpen, Menu, X, Settings, Users, BookMarked, GraduationCap, ArrowLeftRight, Pill, DollarSign, PawPrint } from "lucide-react";
 import EditMyProfileModal from "@/components/shared/EditMyProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
@@ -36,6 +36,7 @@ const navItems = [
   { name: "Ed. Rounds", page: "EducationalRounds", icon: GraduationCap },
   { name: "Transfers", page: "Transfers", icon: ArrowLeftRight },
   { name: "Pharmacy", page: "Pharmacy", icon: Pill },
+  { name: "Patients", page: "Patients", icon: PawPrint },
 ];
 
 function UserAvatar({ user, staffProfile }) {
