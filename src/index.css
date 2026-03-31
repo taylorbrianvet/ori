@@ -93,28 +93,28 @@
 
 @layer utilities {
   .glass-panel {
-    background: rgba(185, 210, 228, 0.82);
+    background: rgba(155, 185, 208, 0.92);
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.60);
-    border-bottom: 1px solid rgba(120, 160, 190, 0.40);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-bottom: 1px solid rgba(100, 145, 175, 0.45);
     box-shadow:
-      0 8px 32px rgba(60, 100, 130, 0.28),
-      0 2px 8px rgba(60, 100, 130, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 0.75),
-      inset 0 -1px 0 rgba(100, 145, 175, 0.25);
+      0 8px 32px rgba(40, 80, 115, 0.35),
+      0 2px 8px rgba(40, 80, 115, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.70),
+      inset 0 -1px 0 rgba(80, 130, 165, 0.30);
   }
   .glass-card {
-    background: rgba(188, 212, 230, 0.78);
+    background: rgba(158, 188, 210, 0.88);
     backdrop-filter: blur(20px) saturate(155%);
     -webkit-backdrop-filter: blur(20px) saturate(155%);
-    border: 1px solid rgba(255, 255, 255, 0.62);
-    border-bottom: 1px solid rgba(120, 160, 190, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-bottom: 1px solid rgba(100, 145, 175, 0.40);
     box-shadow:
-      0 6px 28px rgba(60, 100, 130, 0.26),
-      0 2px 8px rgba(60, 100, 130, 0.16),
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      inset 0 -1px 0 rgba(100, 145, 175, 0.22);
+      0 6px 28px rgba(40, 80, 115, 0.32),
+      0 2px 8px rgba(40, 80, 115, 0.20),
+      inset 0 1px 0 rgba(255, 255, 255, 0.68),
+      inset 0 -1px 0 rgba(80, 130, 165, 0.26);
     border-radius: var(--radius);
   }
   .glass-hover {
@@ -122,12 +122,12 @@
   }
   .glass-hover:hover {
     transform: translateY(-2px);
-    background: rgba(200, 222, 240, 0.88) !important;
+    background: rgba(170, 200, 220, 0.94) !important;
     box-shadow:
-      0 12px 40px rgba(60, 100, 130, 0.32),
-      0 4px 12px rgba(60, 100, 130, 0.20),
-      inset 0 1px 0 rgba(255, 255, 255, 0.80),
-      inset 0 -1px 0 rgba(100, 145, 175, 0.28) !important;
+      0 12px 40px rgba(40, 80, 115, 0.38),
+      0 4px 12px rgba(40, 80, 115, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      inset 0 -1px 0 rgba(80, 130, 165, 0.32) !important;
     border-color: rgba(196, 168, 130, 0.45) !important;
   }
   .text-foreground {
