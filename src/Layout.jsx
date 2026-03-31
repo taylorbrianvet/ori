@@ -7,18 +7,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Toaster } from "sonner";
 
-// Soft light palette — muted blue-grays and warm cream tones
+// Richer blue-gray + warm sandy palette
 const GRADIENT_CONFIGS = [
-  // config 0
-  "radial-gradient(ellipse 70% 60% at 10% 85%, rgba(191,208,216,0.55) 0%, transparent 65%), radial-gradient(ellipse 65% 55% at 85% 10%, rgba(212,222,227,0.45) 0%, transparent 65%), radial-gradient(ellipse 50% 45% at 50% 45%, rgba(232,201,176,0.18) 0%, transparent 55%)",
-  // config 1
-  "radial-gradient(ellipse 65% 65% at 20% 70%, rgba(191,208,216,0.50) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 80% 15%, rgba(197,207,212,0.42) 0%, transparent 65%), radial-gradient(ellipse 45% 40% at 75% 80%, rgba(212,222,227,0.35) 0%, transparent 55%)",
-  // config 2
-  "radial-gradient(ellipse 80% 55% at 30% 90%, rgba(212,222,227,0.50) 0%, transparent 65%), radial-gradient(ellipse 70% 55% at 70% 5%, rgba(191,208,216,0.42) 0%, transparent 60%), radial-gradient(ellipse 40% 35% at 15% 20%, rgba(232,201,176,0.16) 0%, transparent 50%)",
-  // config 3
-  "radial-gradient(ellipse 60% 70% at 5% 60%, rgba(191,208,216,0.52) 0%, transparent 65%), radial-gradient(ellipse 65% 60% at 90% 35%, rgba(197,207,212,0.42) 0%, transparent 65%), radial-gradient(ellipse 50% 45% at 55% 90%, rgba(212,222,227,0.30) 0%, transparent 52%)",
-  // config 4
-  "radial-gradient(ellipse 75% 55% at 45% 95%, rgba(212,222,227,0.50) 0%, transparent 65%), radial-gradient(ellipse 60% 55% at 15% 10%, rgba(191,208,216,0.42) 0%, transparent 60%), radial-gradient(ellipse 45% 40% at 88% 55%, rgba(232,201,176,0.16) 0%, transparent 52%)",
+  // config 0 — steel blue + warm blush
+  "radial-gradient(ellipse 80% 70% at 0% 100%, rgba(140,170,188,0.80) 0%, transparent 60%), radial-gradient(ellipse 70% 60% at 100% 0%, rgba(172,191,202,0.70) 0%, transparent 60%), radial-gradient(ellipse 55% 50% at 50% 50%, rgba(215,198,178,0.30) 0%, transparent 55%)",
+  // config 1 — muted teal-blue
+  "radial-gradient(ellipse 75% 70% at 10% 80%, rgba(140,170,188,0.75) 0%, transparent 60%), radial-gradient(ellipse 65% 55% at 90% 10%, rgba(160,185,200,0.65) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 70% 70%, rgba(172,191,202,0.50) 0%, transparent 55%)",
+  // config 2 — cool gray-blue + peach warmth
+  "radial-gradient(ellipse 85% 60% at 25% 95%, rgba(155,178,195,0.78) 0%, transparent 60%), radial-gradient(ellipse 75% 60% at 75% 5%, rgba(140,170,188,0.65) 0%, transparent 60%), radial-gradient(ellipse 45% 40% at 10% 15%, rgba(215,198,178,0.28) 0%, transparent 50%)",
+  // config 3 — deep steel blue
+  "radial-gradient(ellipse 65% 75% at 0% 60%, rgba(140,170,188,0.80) 0%, transparent 60%), radial-gradient(ellipse 70% 65% at 95% 35%, rgba(160,185,200,0.65) 0%, transparent 60%), radial-gradient(ellipse 55% 50% at 55% 85%, rgba(172,191,202,0.45) 0%, transparent 55%)",
+  // config 4 — sandy warm + blue accent
+  "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(155,178,195,0.75) 0%, transparent 60%), radial-gradient(ellipse 65% 60% at 10% 5%, rgba(140,170,188,0.65) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 90% 55%, rgba(215,198,178,0.25) 0%, transparent 52%)",
 ];
 
 const PAGE_GRADIENT_MAP = {
@@ -115,7 +115,7 @@ export default function Layout({ children, currentPageName }) {
     }
   }, [currentPageName]);
 
-  const BASE_BG = "#eef1f4"; // soft off-white base
+  const BASE_BG = "#9eb8c8"; // richer steel-blue base
 
   return (
     <div className="min-h-screen font-inter flex" style={{ position: "relative", "--sidebar-width": sidebarOpen ? "16rem" : "5rem" }}>
