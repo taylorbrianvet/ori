@@ -206,7 +206,7 @@ export default function OnCallEditPanel({ staff, currentUser }) {
         <button
           key={svc}
           onClick={() => {setSelectedService(svc === selectedService ? null : svc);setEditingDay(null);}}
-          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${selectedService === svc ? "bg-white/20 text-white" : "bg-white/7 text-white/45 hover:bg-white/12 hover:text-white/70"}`}>
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${selectedService === svc ? "bg-[#8aa8b8]/30 text-slate-700 border border-[#8aa8b8]/50" : "bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200 hover:text-slate-700"}`}>
 
             {svc}
           </button>
@@ -217,15 +217,15 @@ export default function OnCallEditPanel({ staff, currentUser }) {
       <div className="glass-card p-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-white">{selectedService} Schedule</h3>
+            <h3 className="text-sm font-semibold text-slate-700">{selectedService} Schedule</h3>
             <div className="flex items-center gap-2">
-              <button onClick={() => setShowInstructions(true)} className="flex items-center gap-1.5 text-xs text-white/45 hover:text-white/70 bg-white/6 hover:bg-white/10 px-3 py-1.5 rounded-xl transition-colors">
+              <button onClick={() => setShowInstructions(true)} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition-colors border border-slate-200">
                 <HelpCircle className="w-3.5 h-3.5" />
                 Instructions
               </button>
               <button
               onClick={() => fileRef.current?.click()}
-              className="flex items-center gap-1.5 text-xs text-white bg-white/15 hover:bg-white/22 px-3 py-1.5 rounded-xl transition-colors">
+              className="flex items-center gap-1.5 text-xs text-white bg-[#6a92a6] hover:bg-[#5a8296] px-3 py-1.5 rounded-xl transition-colors">
 
                 <Upload className="w-3.5 h-3.5" />
                 {uploading ? "Uploading…" : "Upload CSV"}
@@ -236,18 +236,18 @@ export default function OnCallEditPanel({ staff, currentUser }) {
 
           {/* Calendar */}
           <div className="flex items-center justify-between mb-2">
-            <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center text-white/50 transition-colors">
+            <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-sm font-semibold text-white/80">{format(currentMonth, "MMMM yyyy")}</span>
-            <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center text-white/50 transition-colors">
+            <span className="text-sm font-semibold text-slate-600">{format(currentMonth, "MMMM yyyy")}</span>
+            <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
           <div className="grid grid-cols-7 mb-1">
             {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) =>
-          <div key={d} className="text-center text-[10px] font-semibold text-white/35 py-1.5">{d}</div>
+          <div key={d} className="text-center text-[10px] font-semibold text-slate-400 py-1.5">{d}</div>
           )}
           </div>
           <div className="grid grid-cols-7 gap-1">
@@ -262,17 +262,17 @@ export default function OnCallEditPanel({ staff, currentUser }) {
               <button
                 key={key}
                 onClick={() => inMonth && (isEditing ? setEditingDay(null) : openEdit(key))}
-                className={`rounded-xl p-1 min-h-[54px] text-left transition-all duration-150 ${!inMonth ? "opacity-20 pointer-events-none" : ""} ${isEditing ? "bg-white/18 ring-2 ring-white/30" : today ? "bg-white/12 ring-1 ring-white/20" : "hover:bg-white/8"}`}>
+                className={`rounded-xl p-1 min-h-[54px] text-left transition-all duration-150 ${!inMonth ? "opacity-20 pointer-events-none" : ""} ${isEditing ? "bg-[#8aa8b8]/20 ring-2 ring-[#8aa8b8]/40" : today ? "bg-[#8aa8b8]/10 ring-1 ring-[#8aa8b8]/25" : "hover:bg-slate-100"}`}>
 
-                  <span className={`text-[11px] font-medium block text-center mb-0.5 ${today ? "text-white" : "text-white/60"}`}>{format(day, "d")}</span>
+                  <span className={`text-[11px] font-medium block text-center mb-0.5 ${today ? "text-slate-700" : "text-slate-500"}`}>{format(day, "d")}</span>
                   {rec?.primary_name && inMonth &&
-                <div className="text-[8px] px-1 py-0.5 rounded-md bg-green-500/15 text-green-300 truncate leading-tight">{rec.primary_name.split(" ").slice(-1)[0]}</div>
+                <div className="text-[8px] px-1 py-0.5 rounded-md bg-green-100 text-green-700 truncate leading-tight">{rec.primary_name.split(" ").slice(-1)[0]}</div>
                 }
                   {rec?.secondary_name && inMonth &&
-                <div className="text-[8px] px-1 py-0.5 rounded-md bg-blue-500/15 text-blue-300 truncate leading-tight mt-0.5">{rec.secondary_name.split(" ").slice(-1)[0]}</div>
+                <div className="text-[8px] px-1 py-0.5 rounded-md bg-blue-100 text-blue-700 truncate leading-tight mt-0.5">{rec.secondary_name.split(" ").slice(-1)[0]}</div>
                 }
                   {dayStudents.length > 0 && inMonth &&
-                <div className="text-[7px] px-1 py-0.5 rounded-md bg-purple-500/15 text-purple-300 truncate leading-tight mt-0.5">
+                <div className="text-[7px] px-1 py-0.5 rounded-md bg-purple-100 text-purple-700 truncate leading-tight mt-0.5">
                   {dayStudents.map(s => s.student_name.split(" ").slice(-1)[0]).join(", ")}
                 </div>
                 }
@@ -283,15 +283,15 @@ export default function OnCallEditPanel({ staff, currentUser }) {
 
           {/* Edit form */}
           {editingDay &&
-        <div className="mt-4 pt-4 border-t border-white/8">
+        <div className="mt-4 pt-4 border-t border-slate-200">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-white/80">{format(new Date(editingDay + "T12:00:00"), "EEEE, MMMM d")}</p>
+                <p className="text-xs font-semibold text-slate-600">{format(new Date(editingDay + "T12:00:00"), "EEEE, MMMM d")}</p>
                 <div className="flex gap-2">
-                  <button onClick={saveEdit} className="flex items-center gap-1 text-xs text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 px-3 py-1.5 rounded-xl transition-colors">
+                  <button onClick={saveEdit} className="flex items-center gap-1 text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-3 py-1.5 rounded-xl transition-colors border border-emerald-200">
                     <Check className="w-3 h-3" /> Save
                   </button>
                   {editingRecord &&
-              <button onClick={async () => {await deleteMutation.mutateAsync(editingRecord.id);setEditingDay(null);}} className="flex items-center gap-1 text-xs text-red-300 bg-red-500/15 hover:bg-red-500/25 px-3 py-1.5 rounded-xl transition-colors">
+              <button onClick={async () => {await deleteMutation.mutateAsync(editingRecord.id);setEditingDay(null);}} className="flex items-center gap-1 text-xs text-red-700 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-xl transition-colors border border-red-200">
                       <X className="w-3 h-3" /> Clear
                     </button>
               }
@@ -299,14 +299,14 @@ export default function OnCallEditPanel({ staff, currentUser }) {
               </div>
               {["primary", "secondary", "tertiary"].map((slot) =>
           <div key={slot} className="flex items-center gap-2 mb-2">
-                  <span className="text-[11px] text-white/40 w-16 capitalize shrink-0">{slot}</span>
+                  <span className="text-[11px] text-slate-400 w-16 capitalize shrink-0">{slot}</span>
                   <select
               value={editForm[slot]}
-              onChange={(e) => setEditForm((f) => ({ ...f, [slot]: e.target.value }))} className="bg-gray-900 text-white px-3 py-1.5 text-xs rounded-xl flex-1 border border-white/20 focus:outline-none focus:border-white/40">
+              onChange={(e) => setEditForm((f) => ({ ...f, [slot]: e.target.value }))} className="bg-white text-slate-700 px-3 py-1.5 text-xs rounded-xl flex-1 border border-slate-200 focus:outline-none focus:border-[#8aa8b8]">
 
 
                     {doctorOptions.map((opt) =>
-              <option key={opt} value={opt} className="bg-gray-900 text-white">{opt || "— None —"}</option>
+              <option key={opt} value={opt}>{opt || "— None —"}</option>
               )}
                   </select>
                 </div>
@@ -324,23 +324,23 @@ export default function OnCallEditPanel({ staff, currentUser }) {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
           <div className="relative glass-panel rounded-2xl p-6 w-full max-w-md z-10" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2.5 mb-3">
-              <AlertTriangle className="w-5 h-5 text-amber-300" />
-              <h3 className="text-base font-semibold text-white">Conflicting Dates Found</h3>
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              <h3 className="text-base font-semibold text-slate-700">Conflicting Dates Found</h3>
             </div>
-            <p className="text-sm text-white/60 mb-3">The following date/service combinations already exist:</p>
+            <p className="text-sm text-slate-500 mb-3">The following date/service combinations already exist:</p>
             <div className="max-h-36 overflow-y-auto space-y-1 mb-4">
               {conflictModal.conflicts.map((c, i) =>
-            <div key={i} className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-200">
+            <div key={i} className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 border border-amber-200">
                   <span className="font-mono">{c.date}</span>
-                  <span className="text-amber-300/50">·</span>
+                  <span className="text-amber-400">·</span>
                   <span>{c.service}</span>
                 </div>
             )}
             </div>
-            <p className="text-xs text-white/45 mb-4">Would you like to override these {conflictModal.conflicts.length} existing record{conflictModal.conflicts.length !== 1 ? "s" : ""}?</p>
+            <p className="text-xs text-slate-400 mb-4">Would you like to override these {conflictModal.conflicts.length} existing record{conflictModal.conflicts.length !== 1 ? "s" : ""}?</p>
             <div className="flex gap-2">
-              <button onClick={() => doUpload(conflictModal.incoming, true)} className="flex-1 py-2 rounded-xl bg-white/15 hover:bg-white/22 text-sm font-medium text-white transition-colors">Override & Upload All</button>
-              <button onClick={() => setConflictModal(null)} className="flex-1 py-2 rounded-xl bg-white/7 hover:bg-white/12 text-sm text-white/60 transition-colors">Cancel</button>
+              <button onClick={() => doUpload(conflictModal.incoming, true)} className="flex-1 py-2 rounded-xl bg-[#6a92a6] hover:bg-[#5a8296] text-sm font-medium text-white transition-colors">Override & Upload All</button>
+              <button onClick={() => setConflictModal(null)} className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm text-slate-500 transition-colors border border-slate-200">Cancel</button>
             </div>
           </div>
         </div>

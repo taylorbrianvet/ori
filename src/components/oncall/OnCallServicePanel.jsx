@@ -21,7 +21,7 @@ function EntriesBlock({ entries, label }) {
   if (!entries || entries.length === 0) return null;
   return (
     <div className="mb-3">
-      <p className="text-[10px] font-semibold text-white/35 uppercase tracking-wider mb-1">{label}</p>
+      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
       {entries.map((e, i) => (
         <OnCallPersonRow
           key={i}
@@ -92,18 +92,18 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
         {/* Service header button */}
         <button
           onClick={() => { setExpanded(!expanded); setShowNextShift(false); setShowCalendar(false); }}
-          className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/5 transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors"
         >
           <div className="flex items-center gap-2.5">
-            <div className={`w-2 h-2 rounded-full shrink-0 ${hasData ? "bg-green-400 shadow-sm shadow-green-400/50" : "bg-white/20"}`} />
-            <span className="text-sm font-semibold text-white">{service}</span>
+            <div className={`w-2 h-2 rounded-full shrink-0 ${hasData ? "bg-green-500" : "bg-slate-300"}`} />
+            <span className="text-sm font-semibold text-slate-700">{service}</span>
             {hasData && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-green-500/15 text-green-300 font-medium">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 font-medium border border-green-200">
                 {currentSlots.length} on call
               </span>
             )}
           </div>
-          <ChevronDown className={`w-4 h-4 text-white/35 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
         </button>
 
         <AnimatePresence initial={false}>
@@ -115,9 +115,9 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
               transition={{ duration: 0.22 }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-4 border-t border-white/8">
+              <div className="px-4 pb-4 border-t border-slate-200">
                 {/* Current date label */}
-                <p className="text-[11px] text-white/35 pt-3 pb-2">
+                <p className="text-[11px] text-slate-400 pt-3 pb-2">
                   {format(new Date(shiftDate + "T12:00:00"), "EEEE, MMMM d")} · 8:00 AM → {format(addDays(new Date(shiftDate + "T12:00:00"), 1), "MMMM d")} 8:00 AM
                 </p>
 
@@ -128,18 +128,18 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
                 {showNextShift ? (
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs font-semibold text-amber-200">Next Shift — {format(new Date(nextShiftDate + "T12:00:00"), "MMMM d")}</p>
-                      <button onClick={() => setShowNextShift(false)} className="text-[10px] text-white/35 hover:text-white/60">← Current</button>
+                      <p className="text-xs font-semibold text-amber-600">Next Shift — {format(new Date(nextShiftDate + "T12:00:00"), "MMMM d")}</p>
+                      <button onClick={() => setShowNextShift(false)} className="text-[10px] text-slate-400 hover:text-slate-600">← Current</button>
                     </div>
                     {nextSlots.length === 0 ? (
-                      <p className="text-xs text-white/35 italic">No data for next shift yet.</p>
+                      <p className="text-xs text-slate-400 italic">No data for next shift yet.</p>
                     ) : nextSlots.map((s, i) => (
                       <OnCallPersonRow key={i} {...s} />
                     ))}
                     {/* Next shift students */}
                     {nextStudents.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-[10px] font-semibold text-white/35 uppercase tracking-wider mb-1">Students On Call</p>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Students On Call</p>
                         {nextStudents.map((s, i) => (
                           <OnCallPersonRow
                             key={i}
@@ -156,12 +156,12 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
                     {hasData ? currentSlots.map((s, i) => (
                       <OnCallPersonRow key={i} {...s} />
                     )) : (
-                      <p className="text-xs text-white/35 italic py-2">No on-call data for today.</p>
+                      <p className="text-xs text-slate-400 italic py-2">No on-call data for today.</p>
                     )}
                     {/* Current shift students */}
                     {currentStudents.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-[10px] font-semibold text-white/35 uppercase tracking-wider mb-1">Students On Call</p>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Students On Call</p>
                         {currentStudents.map((s, i) => (
                           <OnCallPersonRow
                             key={i}
@@ -176,10 +176,10 @@ export default function OnCallServicePanel({ service, allRecords, index }) {
                 )}
 
                 {/* Action buttons */}
-                <div className="flex gap-2 mt-3 pt-3 border-t border-white/8">
-                  <button
-                    onClick={() => { setShowCalendar(!showCalendar); setShowNextShift(false); }}
-                    className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 bg-white/6 hover:bg-white/10 px-3 py-1.5 rounded-xl transition-colors"
+                <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
+                <button
+                  onClick={() => { setShowCalendar(!showCalendar); setShowNextShift(false); }}
+                  className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition-colors border border-slate-200"
                   >
                     <CalendarDays className="w-3.5 h-3.5" />
                     {showCalendar ? "Hide Calendar" : "See Calendar"}
