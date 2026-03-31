@@ -9,13 +9,13 @@
     --font-inter: 'Inter', sans-serif;
 
     --background: 205 22% 82%;
-    --foreground: 215 30% 16%;
+    --foreground: 215 35% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 18%;
+    --card-foreground: 215 35% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 18%;
+    --popover-foreground: 215 35% 12%;
 
     --primary: 204 28% 50%;
     --primary-foreground: 0 0% 100%;
@@ -24,7 +24,7 @@
     --secondary-foreground: 215 25% 25%;
 
     --muted: 210 18% 92%;
-    --muted-foreground: 215 15% 48%;
+    --muted-foreground: 215 25% 35%;
 
     --accent: 32 38% 63%;
     --accent-foreground: 215 25% 18%;
@@ -60,8 +60,8 @@
   }
   body {
     @apply font-inter antialiased;
-    color: #2d3a47;
-    background-color: #b8c8d4;
+    color: #1e2a35;
+    background-color: #9eb8c8;
     min-height: 100vh;
   }
 }
@@ -69,22 +69,22 @@
 @layer components {
   .journal-club-summary h2 {
     @apply text-sm font-semibold mt-5 mb-2;
-    color: #2d3a47;
+    color: #1e2a35;
   }
   .journal-club-summary p {
     @apply text-sm leading-relaxed mb-3;
-    color: #4a5a6a;
+    color: #2e3d4e;
   }
   .journal-club-summary ul, .journal-club-summary ol {
     @apply pl-5 mb-3 space-y-1;
   }
   .journal-club-summary li {
     @apply text-sm leading-relaxed;
-    color: #4a5a6a;
+    color: #2e3d4e;
   }
   .journal-club-summary strong {
     @apply font-semibold;
-    color: #2d3a47;
+    color: #1e2a35;
   }
   .journal-club-summary article {
     @apply block;
@@ -93,18 +93,18 @@
 
 @layer utilities {
   .glass-panel {
-    background: rgba(200, 220, 232, 0.55);
-    backdrop-filter: blur(28px) saturate(150%);
-    -webkit-backdrop-filter: blur(28px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.50);
-    box-shadow: 0 4px 24px rgba(100, 140, 165, 0.25), inset 0 1px 0 rgba(255,255,255,0.70);
+    background: rgba(237, 226, 206, 0.82);
+    backdrop-filter: blur(28px) saturate(140%);
+    -webkit-backdrop-filter: blur(28px) saturate(140%);
+    border: 1px solid rgba(255, 248, 235, 0.70);
+    box-shadow: 0 4px 24px rgba(160, 135, 95, 0.18), inset 0 1px 0 rgba(255,255,255,0.75);
   }
   .glass-card {
-    background: rgba(210, 228, 238, 0.58);
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    box-shadow: 0 2px 16px rgba(100, 140, 165, 0.20), inset 0 1px 0 rgba(255,255,255,0.65);
+    background: rgba(237, 226, 206, 0.78);
+    backdrop-filter: blur(20px) saturate(130%);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    border: 1px solid rgba(255, 248, 235, 0.65);
+    box-shadow: 0 2px 16px rgba(160, 135, 95, 0.15), inset 0 1px 0 rgba(255,255,255,0.70);
     border-radius: var(--radius);
   }
   .glass-hover {
@@ -112,22 +112,22 @@
   }
   .glass-hover:hover {
     transform: translateY(-2px);
-    background: rgba(220, 236, 245, 0.75) !important;
-    box-shadow: 0 8px 32px rgba(100, 140, 165, 0.30), inset 0 1px 0 rgba(255,255,255,0.80);
-    border-color: rgba(196, 168, 130, 0.50) !important;
+    background: rgba(243, 234, 216, 0.90) !important;
+    box-shadow: 0 8px 32px rgba(160, 135, 95, 0.25), inset 0 1px 0 rgba(255,255,255,0.80);
+    border-color: rgba(196, 168, 130, 0.60) !important;
   }
   .text-foreground {
-    color: #2d3a47;
+    color: #1e2a35;
   }
   .text-muted-foreground {
-    color: #6b7d8e;
+    color: #4a5a6a;
   }
   /* Light-theme text helpers — replaces dark-bg white text usage */
   .page-title {
-    color: #2d3a47;
+    color: #1e2a35;
     font-weight: 600;
   }
   .page-subtitle {
-    color: #6b7d8e;
+    color: #4a5a6a;
   }
 }
