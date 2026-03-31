@@ -61,15 +61,18 @@ export default {
   },
   safelist: [
     "grid-cols-1", "grid-cols-2", "grid-cols-3",
-    "text-orange-300", "text-amber-300", "text-rose-300", "text-sky-300",
-    "text-violet-300", "text-teal-300", "text-lime-300", "text-red-300",
-    "text-pink-300", "text-cyan-300", "text-indigo-300",
-    "bg-orange-500/15", "bg-amber-500/15", "bg-rose-500/15", "bg-sky-500/15",
-    "bg-violet-500/15", "bg-teal-500/15", "bg-lime-500/15", "bg-red-500/15",
-    "bg-pink-500/15", "bg-cyan-500/15", "bg-indigo-500/15",
-    "border-orange-400/25", "border-amber-400/25", "border-rose-400/25", "border-sky-400/25",
-    "border-violet-400/25", "border-teal-400/25", "border-lime-400/25", "border-red-400/25",
-    "border-pink-400/25", "border-cyan-400/25", "border-indigo-400/25",
+    // Dark text for light backgrounds
+    "text-orange-700", "text-amber-700", "text-rose-700", "text-sky-700",
+    "text-violet-700", "text-teal-700", "text-lime-700", "text-red-700",
+    "text-pink-700", "text-cyan-700", "text-indigo-700",
+    // Light badge backgrounds
+    "bg-orange-100", "bg-amber-100", "bg-rose-100", "bg-sky-100",
+    "bg-violet-100", "bg-teal-100", "bg-lime-100", "bg-red-100",
+    "bg-pink-100", "bg-cyan-100", "bg-indigo-100",
+    // Badge borders
+    "border-orange-300", "border-amber-300", "border-rose-300", "border-sky-300",
+    "border-violet-300", "border-teal-300", "border-lime-300", "border-red-300",
+    "border-pink-300", "border-cyan-300", "border-indigo-300",
   ],
   plugins: [require("tailwindcss-animate")],
 }

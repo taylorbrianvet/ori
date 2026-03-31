@@ -52,8 +52,8 @@ function StudentScheduleTab({ rotationBlocks, currentUser }) {
             onClick={() => setStudentService(svc)}
             className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
               studentService === svc
-                ? "bg-white/20 text-white border border-white/40"
-                : "bg-white/8 text-white/70 border border-white/12 hover:bg-white/12 hover:text-white"
+                ? "bg-white text-slate-700 border border-slate-300 shadow-sm"
+                : "bg-white/50 text-slate-500 border border-slate-200 hover:bg-white hover:text-slate-700"
             }`}
           >
             {svc}
@@ -112,7 +112,7 @@ export default function OnCall() {
       />
 
       {/* Tabs — only show Edit tab if user has permission, Student tab if user is student/faculty/resident */}
-      <div className="flex gap-1 p-1 bg-white/8 backdrop-blur rounded-2xl mb-6 w-fit border border-white/10">
+      <div className="flex gap-1 p-1 bg-slate-200/50 backdrop-blur rounded-2xl mb-6 w-fit border border-slate-200">
         {TABS.filter(t => 
           t.id === "current" || 
           (t.id === "edit" && canEditSchedule) ||
@@ -123,8 +123,8 @@ export default function OnCall() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
               activeTab === tab.id
-                ? "bg-white/20 text-white shadow-sm"
-                : "text-white/45 hover:text-white/75"
+                ? "bg-white text-slate-700 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             <tab.icon className="w-3.5 h-3.5" />
