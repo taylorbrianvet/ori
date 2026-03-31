@@ -8,49 +8,44 @@
   :root {
     --font-inter: 'Inter', sans-serif;
 
-    --background: 30 30% 94%;
-    --foreground: 20 40% 10%;
+    --background: 210 20% 96%;
+    --foreground: 215 25% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 20 30% 12%;
+    --card-foreground: 215 25% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 20 30% 12%;
+    --popover-foreground: 215 25% 18%;
 
-    --primary: 18 90% 52%;
+    --primary: 207 35% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 25% 88%;
-    --secondary-foreground: 20 30% 20%;
+    --secondary: 210 20% 90%;
+    --secondary-foreground: 215 25% 25%;
 
-    --muted: 30 20% 90%;
-    --muted-foreground: 20 15% 45%;
+    --muted: 210 18% 92%;
+    --muted-foreground: 215 15% 48%;
 
-    --accent: 28 75% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 25 50% 75%;
+    --accent-foreground: 215 25% 18%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 25 20% 82%;
-    --input: 25 20% 82%;
-    --ring: 18 85% 52%;
+    --border: 210 18% 84%;
+    --input: 210 18% 84%;
+    --ring: 207 35% 55%;
 
-    --radius: 1rem;
+    --radius: 0.875rem;
 
     --sidebar-background: transparent;
-    --sidebar-foreground: 20 30% 12%;
-    --sidebar-primary: 18 90% 52%;
+    --sidebar-foreground: 215 25% 18%;
+    --sidebar-primary: 207 35% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 25% 88%;
-    --sidebar-accent-foreground: 20 30% 20%;
-    --sidebar-border: 25 20% 75%;
-    --sidebar-ring: 18 85% 52%;
-
-    --glass-bg: rgba(10, 20, 60, 0.45);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-    --glass-highlight: rgba(255, 255, 255, 0.08);
+    --sidebar-accent: 210 20% 90%;
+    --sidebar-accent-foreground: 215 25% 25%;
+    --sidebar-border: 210 18% 80%;
+    --sidebar-ring: 207 35% 55%;
   }
 }
 
@@ -65,27 +60,31 @@
   }
   body {
     @apply font-inter antialiased;
-    color: rgba(255, 255, 255, 0.92);
-    background-color: #0d1a3a;
+    color: #2d3a47;
+    background-color: #eef1f4;
     min-height: 100vh;
   }
 }
 
 @layer components {
   .journal-club-summary h2 {
-    @apply text-sm font-semibold text-white/85 mt-5 mb-2;
+    @apply text-sm font-semibold mt-5 mb-2;
+    color: #2d3a47;
   }
   .journal-club-summary p {
-    @apply text-sm text-white/70 leading-relaxed mb-3;
+    @apply text-sm leading-relaxed mb-3;
+    color: #4a5a6a;
   }
   .journal-club-summary ul, .journal-club-summary ol {
     @apply pl-5 mb-3 space-y-1;
   }
   .journal-club-summary li {
-    @apply text-sm text-white/65 leading-relaxed;
+    @apply text-sm leading-relaxed;
+    color: #4a5a6a;
   }
   .journal-club-summary strong {
-    @apply text-white/85 font-semibold;
+    @apply font-semibold;
+    color: #2d3a47;
   }
   .journal-club-summary article {
     @apply block;
@@ -94,18 +93,18 @@
 
 @layer utilities {
   .glass-panel {
-    background: rgba(10, 20, 60, 0.40);
-    backdrop-filter: blur(28px) saturate(140%);
-    -webkit-backdrop-filter: blur(28px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255,255,255,0.08);
+    background: rgba(245, 248, 251, 0.72);
+    backdrop-filter: blur(28px) saturate(130%);
+    -webkit-backdrop-filter: blur(28px) saturate(130%);
+    border: 1px solid rgba(180, 200, 215, 0.55);
+    box-shadow: 0 4px 24px rgba(150, 175, 200, 0.18), inset 0 1px 0 rgba(255,255,255,0.70);
   }
   .glass-card {
-    background: rgba(10, 20, 60, 0.38);
-    backdrop-filter: blur(24px) saturate(130%);
-    -webkit-backdrop-filter: blur(24px) saturate(130%);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+    background: rgba(250, 252, 254, 0.80);
+    backdrop-filter: blur(20px) saturate(120%);
+    -webkit-backdrop-filter: blur(20px) saturate(120%);
+    border: 1px solid rgba(180, 200, 215, 0.45);
+    box-shadow: 0 2px 16px rgba(150, 175, 200, 0.14), inset 0 1px 0 rgba(255,255,255,0.60);
     border-radius: var(--radius);
   }
   .glass-hover {
@@ -113,13 +112,13 @@
   }
   .glass-hover:hover {
     transform: translateY(-2px);
-    background: rgba(15, 30, 80, 0.55) !important;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.10);
+    background: rgba(255, 255, 255, 0.92) !important;
+    box-shadow: 0 8px 32px rgba(150, 175, 200, 0.25), inset 0 1px 0 rgba(255,255,255,0.80);
   }
   .text-foreground {
-    color: rgba(255, 255, 255, 0.92);
+    color: #2d3a47;
   }
   .text-muted-foreground {
-    color: rgba(255, 255, 255, 0.55);
+    color: #6b7d8e;
   }
 }
