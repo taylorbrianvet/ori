@@ -169,11 +169,11 @@ export default function Layout({ children, currentPageName }) {
                   sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
                 } text-sm font-medium ${
                   isActive
-                    ? "bg-sky-100/70 text-slate-700 shadow-sm"
+                    ? "bg-[#8aa8b8]/20 text-slate-700 shadow-sm border border-[#8aa8b8]/30"
                     : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
                 }`}
               >
-                <item.icon className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-sky-500" : "text-slate-400"}`} />
+                <item.icon className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-[#6a92a6]" : "text-slate-400"}`} />
                 {sidebarOpen && <span>{item.name}</span>}
               </Link>
             );
@@ -187,11 +187,11 @@ export default function Layout({ children, currentPageName }) {
               sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
             } text-sm font-medium ${
               currentPageName === "Directory"
-                ? "bg-sky-100/70 text-slate-700 shadow-sm"
+                ? "bg-[#8aa8b8]/20 text-slate-700 shadow-sm border border-[#8aa8b8]/30"
                 : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
             }`}
           >
-            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-sky-500" : "text-slate-400"}`} />
+            <Users className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Directory" ? "text-[#6a92a6]" : "text-slate-400"}`} />
             {sidebarOpen && <span>Directory</span>}
           </Link>
 
@@ -202,11 +202,11 @@ export default function Layout({ children, currentPageName }) {
               sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
             } text-sm font-medium ${
               currentPageName === "Estimates"
-                ? "bg-sky-100/70 text-slate-700 shadow-sm"
+                ? "bg-[#c4a882]/20 text-slate-700 shadow-sm border border-[#c4a882]/35"
                 : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
             }`}
           >
-            <DollarSign className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Estimates" ? "text-sky-500" : "text-slate-400"}`} />
+            <DollarSign className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Estimates" ? "text-[#b08a5e]" : "text-slate-400"}`} />
             {sidebarOpen && <span>Estimates</span>}
           </Link>
 
@@ -218,11 +218,11 @@ export default function Layout({ children, currentPageName }) {
                 sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
               } text-sm font-medium ${
                 currentPageName === "Admin"
-                  ? "bg-sky-100/70 text-slate-700 shadow-sm"
+                  ? "bg-[#8aa8b8]/20 text-slate-700 shadow-sm border border-[#8aa8b8]/30"
                   : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
               }`}
             >
-              <Settings className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-sky-500" : "text-slate-400"}`} />
+              <Settings className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Admin" ? "text-[#6a92a6]" : "text-slate-400"}`} />
               {sidebarOpen && <span>Admin</span>}
             </Link>
           )}
@@ -234,11 +234,11 @@ export default function Layout({ children, currentPageName }) {
               sidebarOpen ? "gap-3 px-4 py-2.5" : "justify-center px-3 py-2.5"
             } text-sm font-medium ${
               currentPageName === "Resources"
-                ? "bg-sky-100/70 text-slate-700 shadow-sm"
+                ? "bg-[#8aa8b8]/20 text-slate-700 shadow-sm border border-[#8aa8b8]/30"
                 : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
             }`}
           >
-            <BookOpen className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Resources" ? "text-sky-500" : "text-slate-400"}`} />
+            <BookOpen className={`w-[17px] h-[17px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${currentPageName === "Resources" ? "text-[#6a92a6]" : "text-slate-400"}`} />
             {sidebarOpen && <span>Resources</span>}
           </Link>
 
@@ -330,11 +330,11 @@ export default function Layout({ children, currentPageName }) {
                       onClick={() => setMobileOpen(false)}
                       className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-sky-100/70 text-slate-700"
+                          ? "bg-[#8aa8b8]/20 text-slate-700 border border-[#8aa8b8]/30"
                           : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
                       }`}
                     >
-                      <item.icon className={`w-[17px] h-[17px] ${isActive ? "text-sky-500" : "text-slate-400"}`} />
+                      <item.icon className={`w-[17px] h-[17px] ${isActive ? "text-[#6a92a6]" : "text-slate-400"}`} />
                       {item.name}
                     </Link>
                   );
@@ -344,11 +344,11 @@ export default function Layout({ children, currentPageName }) {
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     currentPageName === "Directory"
-                      ? "bg-sky-100/70 text-slate-700"
+                      ? "bg-[#8aa8b8]/20 text-slate-700 border border-[#8aa8b8]/30"
                       : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
                   }`}
                 >
-                  <Users className={`w-[17px] h-[17px] ${currentPageName === "Directory" ? "text-sky-500" : "text-slate-400"}`} />
+                  <Users className={`w-[17px] h-[17px] ${currentPageName === "Directory" ? "text-[#6a92a6]" : "text-slate-400"}`} />
                   Directory
                 </Link>
                 <Link
@@ -356,11 +356,11 @@ export default function Layout({ children, currentPageName }) {
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     currentPageName === "Estimates"
-                      ? "bg-sky-100/70 text-slate-700"
+                      ? "bg-[#c4a882]/20 text-slate-700 border border-[#c4a882]/35"
                       : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
                   }`}
                 >
-                  <DollarSign className={`w-[17px] h-[17px] ${currentPageName === "Estimates" ? "text-sky-500" : "text-slate-400"}`} />
+                  <DollarSign className={`w-[17px] h-[17px] ${currentPageName === "Estimates" ? "text-[#b08a5e]" : "text-slate-400"}`} />
                   Estimates
                 </Link>
                 {isAdmin && (
@@ -369,11 +369,11 @@ export default function Layout({ children, currentPageName }) {
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                       currentPageName === "Admin"
-                        ? "bg-sky-100/70 text-slate-700"
+                        ? "bg-[#8aa8b8]/20 text-slate-700 border border-[#8aa8b8]/30"
                         : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
                     }`}
                   >
-                    <Settings className={`w-[17px] h-[17px] ${currentPageName === "Admin" ? "text-sky-500" : "text-slate-400"}`} />
+                    <Settings className={`w-[17px] h-[17px] ${currentPageName === "Admin" ? "text-[#6a92a6]" : "text-slate-400"}`} />
                     Admin
                   </Link>
                 )}
@@ -382,11 +382,11 @@ export default function Layout({ children, currentPageName }) {
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     currentPageName === "Resources"
-                      ? "bg-sky-100/70 text-slate-700"
+                      ? "bg-[#8aa8b8]/20 text-slate-700 border border-[#8aa8b8]/30"
                       : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-700"
                   }`}
                 >
-                  <BookOpen className={`w-[17px] h-[17px] ${currentPageName === "Resources" ? "text-sky-500" : "text-slate-400"}`} />
+                  <BookOpen className={`w-[17px] h-[17px] ${currentPageName === "Resources" ? "text-[#6a92a6]" : "text-slate-400"}`} />
                   Resources
                 </Link>
               </nav>
