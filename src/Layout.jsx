@@ -136,7 +136,7 @@ export default function Layout({ children, currentPageName }) {
         transition: "opacity 1.4s ease-in-out",
       }} />
       {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 border-r transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`} style={{ background: "rgba(238, 247, 253, 0.82)", backdropFilter: "blur(32px) saturate(160%)", WebkitBackdropFilter: "blur(32px) saturate(160%)", borderColor: "rgba(255,255,255,0.75)", boxShadow: "4px 0 24px rgba(80,120,150,0.18), inset -1px 0 0 rgba(255,255,255,0.60)" }}>
+      <aside className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-40 border-r transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`} style={{ background: "rgba(245, 247, 249, 0.95)", backdropFilter: "blur(32px) saturate(140%)", WebkitBackdropFilter: "blur(32px) saturate(140%)", borderColor: "rgba(210,218,225,0.80)", boxShadow: "4px 0 24px rgba(80,120,150,0.15), inset -1px 0 0 rgba(255,255,255,0.70)" }}>
         <div className={`border-b border-slate-200/60 transition-all duration-300 ${sidebarOpen ? "p-6" : "p-4"}`}>
           <div className={`flex items-center transition-all duration-300 ${sidebarOpen ? "gap-3" : "flex-col gap-2"}`}>
             <img
