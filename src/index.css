@@ -93,7 +93,7 @@
 
 @layer utilities {
   .glass-panel {
-    background: rgba(155, 185, 208, 0.92);
+    background: rgba(120, 158, 185, 0.96);
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     border: 1px solid rgba(255, 255, 255, 0.55);
@@ -105,7 +105,7 @@
       inset 0 -1px 0 rgba(80, 130, 165, 0.30);
   }
   .glass-card {
-    background: rgba(158, 188, 210, 0.88);
+    background: rgba(120, 158, 185, 0.94);
     backdrop-filter: blur(20px) saturate(155%);
     -webkit-backdrop-filter: blur(20px) saturate(155%);
     border: 1px solid rgba(255, 255, 255, 0.55);
@@ -122,7 +122,7 @@
   }
   .glass-hover:hover {
     transform: translateY(-2px);
-    background: rgba(170, 200, 220, 0.94) !important;
+    background: rgba(135, 170, 195, 0.98) !important;
     box-shadow:
       0 12px 40px rgba(40, 80, 115, 0.38),
       0 4px 12px rgba(40, 80, 115, 0.24),
