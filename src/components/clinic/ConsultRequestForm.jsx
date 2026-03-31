@@ -42,24 +42,21 @@ export default function ConsultRequestForm({ onClose, onSuccess, consultingServi
     }
     setSaving(true);
 
-    // Find or create patient
-    let patientId = null;
+    // Find or create GlobalPatient
+    let globalPatientId = null;
     if (form.patient_case_number) {
-      const existing = await base44.entities.Patient.filter({ patient_id: form.patient_case_number });
+      const existing = await base44.entities.GlobalPatient.filter({ patient_id: form.patient_case_number });
       if (existing?.length > 0) {
-        patientId = existing[0].id;
+        globalPatientId = existing[0].id;
       } else {
-        const newPt = await base44.entities.Patient.create({
+        const newPt = await base44.entities.GlobalPatient.create({
           name: form.patient_name,
           patient_id: form.patient_case_number,
           species: form.species || "Canine",
-          breed: form.breed,
-          age_years: parseFloat(form.age_years) || undefined,
+          breed: form.breed || undefined,
           sex: form.sex || undefined,
-          weight_kg: parseFloat(form.weight_kg) || undefined,
-          patient_type: "Inpatient",
         });
-        patientId = newPt.id;
+        globalPatientId = newPt.id;
       }
     }
 
@@ -67,7 +64,7 @@ export default function ConsultRequestForm({ onClose, onSuccess, consultingServi
       ...form,
       age_years: parseFloat(form.age_years) || undefined,
       weight_kg: parseFloat(form.weight_kg) || undefined,
-      patient_id: patientId,
+      global_patient_id: globalPatientId,
       consulting_service: consultingService,
       status: "pending",
       consult_date: format(new Date(), "yyyy-MM-dd"),

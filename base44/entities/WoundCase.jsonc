@@ -1,0 +1,105 @@
+{
+  "name": "WoundCase",
+  "type": "object",
+  "properties": {
+    "global_patient_id": {
+      "type": "string",
+      "description": "Reference to GlobalPatient entity ID"
+    },
+    "patient_name": {
+      "type": "string",
+      "description": "Patient name (denormalized for display)"
+    },
+    "patient_case_number": {
+      "type": "string",
+      "description": "Hospital case / patient ID number"
+    },
+    "species": {
+      "type": "string",
+      "enum": [
+        "Canine",
+        "Feline",
+        "Equine",
+        "Bovine",
+        "Avian",
+        "Exotic",
+        "Other"
+      ],
+      "description": "Species"
+    },
+    "breed": {
+      "type": "string",
+      "description": "Breed"
+    },
+    "age_years": {
+      "type": "number",
+      "description": "Age in years"
+    },
+    "weight_kg": {
+      "type": "number",
+      "description": "Weight in kg"
+    },
+    "sex": {
+      "type": "string",
+      "enum": [
+        "Female Spayed",
+        "Female Intact",
+        "Male Neutered",
+        "Male Intact"
+      ],
+      "description": "Sex / reproductive status"
+    },
+    "service": {
+      "type": "string",
+      "enum": [
+        "Soft Tissue Surgery",
+        "Orthopedic Surgery",
+        "Neurology",
+        "Dermatology",
+        "Cardiology",
+        "Internal Medicine",
+        "Oncology",
+        "Ophthalmology",
+        "Emergency",
+        "Critical Care",
+        "Primary Care",
+        "General Surgery"
+      ],
+      "description": "Clinical service managing this case"
+    },
+    "wound_locations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of wound location labels, e.g. ['Left forelimb distal', 'Dorsal lumbar']"
+    },
+    "wound_statuses": {
+      "type": "object",
+      "description": "Map of wound location to status: 'active' or 'healed'"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "complete"
+      ],
+      "default": "active",
+      "description": "Overall case status \u2014 complete when all wounds healed"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Initial case notes / history"
+    },
+    "primary_clinician": {
+      "type": "string",
+      "description": "Primary clinician managing this case"
+    }
+  },
+  "required": [
+    "patient_name",
+    "species",
+    "wound_locations",
+    "service"
+  ]
+}
