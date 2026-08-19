@@ -1,0 +1,22 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user",
+      "description": "App role"
+    },
+    "default_rounds_department": {
+      "type": "string",
+      "description": "User's preferred department for Educational Rounds tab"
+    }
+  },
+  "required": [
+    "default_rounds_department"
+  ]
+}

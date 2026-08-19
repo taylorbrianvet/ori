@@ -1,0 +1,35 @@
+{
+  "name": "Service",
+  "type": "object",
+  "properties": {
+    "service_name": {
+      "type": "string",
+      "description": "Name of the hospital service/department"
+    },
+    "service_slug": {
+      "type": "string",
+      "description": "URL-friendly identifier"
+    },
+    "service_subtext": {
+      "type": "string",
+      "description": "Short description of the service"
+    },
+    "service_image_url": {
+      "type": "string",
+      "description": "Image URL for the service card"
+    },
+    "display_order": {
+      "type": "number",
+      "description": "Order in which to display the service"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the service is currently active"
+    }
+  },
+  "required": [
+    "service_name",
+    "service_slug"
+  ]
+}

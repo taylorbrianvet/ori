@@ -1,0 +1,84 @@
+{
+  "name": "ClinicSchedule",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the clinic block (ISO date)"
+    },
+    "service": {
+      "type": "string",
+      "enum": [
+        "Anesthesia",
+        "Cardiology",
+        "Clinical Pathology",
+        "Dermatology",
+        "Emergency",
+        "Critical Care",
+        "Internal Medicine",
+        "Interventional Radiology",
+        "Neurology",
+        "Nutrition",
+        "Medical Oncology",
+        "Radiation Oncology",
+        "Ophthalmology",
+        "Orthopedic Surgery",
+        "Primary Care",
+        "General Surgery",
+        "Radiology",
+        "Soft Tissue Surgery"
+      ],
+      "description": "Clinical service for this row"
+    },
+    "team_split": {
+      "type": "string",
+      "description": "Team label for split services: IM1, IM2, Team A, Team B, Team 1, Team 2, Large Animal, Small Animal. Leave blank if no split."
+    },
+    "faculty_1": {
+      "type": "string",
+      "description": "Primary faculty name"
+    },
+    "faculty_2": {
+      "type": "string",
+      "description": "Secondary faculty name"
+    },
+    "house_officer_1": {
+      "type": "string",
+      "description": "House officer 1 (resident or intern)"
+    },
+    "house_officer_2": {
+      "type": "string",
+      "description": "House officer 2"
+    },
+    "house_officer_3": {
+      "type": "string",
+      "description": "House officer 3"
+    },
+    "house_officer_4": {
+      "type": "string",
+      "description": "House officer 4"
+    },
+    "house_officer_5": {
+      "type": "string",
+      "description": "House officer 5"
+    },
+    "house_officer_6": {
+      "type": "string",
+      "description": "House officer 6"
+    },
+    "on_consults": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this team/service is currently designated to receive consults"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes for this block"
+    }
+  },
+  "required": [
+    "date",
+    "service"
+  ]
+}

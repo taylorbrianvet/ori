@@ -1,0 +1,121 @@
+{
+  "name": "Diagnostic",
+  "type": "object",
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "description": "Hospital patient/case ID number"
+    },
+    "patient_name": {
+      "type": "string",
+      "description": "Patient name (denormalized)"
+    },
+    "request_category": {
+      "type": "string",
+      "enum": [
+        "Pathology",
+        "Imaging"
+      ],
+      "description": "Category of diagnostic request"
+    },
+    "diagnostic_type": {
+      "type": "string",
+      "enum": [
+        "CBC",
+        "Chemistry",
+        "Mini Chemistry Panel",
+        "PT/PTT",
+        "TCM",
+        "Urinalysis",
+        "Urine Culture",
+        "Aerobic Culture",
+        "Fungal Culture",
+        "Histopathology",
+        "Cytology",
+        "Culture (General)",
+        "NOVA",
+        "Other Pathology",
+        "Radiograph",
+        "Abdominal Ultrasound",
+        "CT",
+        "MRI",
+        "Fluoroscopy",
+        "Other Imaging"
+      ],
+      "description": "Specific diagnostic test requested"
+    },
+    "sample_type": {
+      "type": "string",
+      "enum": [
+        "Blood",
+        "Urine",
+        "Tissue",
+        "Fluid",
+        "Swab",
+        "Aspirate",
+        "Other"
+      ],
+      "description": "Type of sample (Pathology only)"
+    },
+    "location": {
+      "type": "string",
+      "description": "Sample location (aspirate/tissue/fluid/swab) or imaging body region"
+    },
+    "requesting_clinician": {
+      "type": "string",
+      "description": "Clinician requesting the diagnostic"
+    },
+    "requesting_service": {
+      "type": "string",
+      "description": "Service requesting the diagnostic"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "processing",
+        "completed",
+        "cleared"
+      ],
+      "default": "submitted",
+      "description": "Workflow status of the diagnostic"
+    },
+    "owner_communicated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Results reviewed and discussed with owner if necessary"
+    },
+    "submission_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time request was submitted"
+    },
+    "completion_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time diagnostic was completed"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "sample_collected": {
+      "type": "boolean",
+      "default": false,
+      "description": "Legacy: whether sample was collected"
+    },
+    "diagnostic_complete": {
+      "type": "boolean",
+      "default": false,
+      "description": "Legacy: whether diagnostic is complete"
+    }
+  },
+  "required": [
+    "patient_id",
+    "patient_name",
+    "request_category",
+    "diagnostic_type",
+    "requesting_clinician",
+    "requesting_service"
+  ]
+}

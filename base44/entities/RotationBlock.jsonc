@@ -1,0 +1,24 @@
+{
+  "name": "RotationBlock",
+  "type": "object",
+  "properties": {
+    "service": {
+      "type": "string",
+      "enum": [
+        "Anesthesia",
+        "Surgery",
+        "Neurosurgery"
+      ],
+      "description": "Service this rotation block belongs to"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start date of this rotation block (block goes live at 8am this day)"
+    }
+  },
+  "required": [
+    "service",
+    "start_date"
+  ]
+}

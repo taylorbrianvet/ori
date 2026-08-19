@@ -1,0 +1,123 @@
+{
+  "name": "InterserviceTransfer",
+  "type": "object",
+  "properties": {
+    "patient_name": {
+      "type": "string",
+      "description": "Patient name"
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Hospital patient ID"
+    },
+    "global_patient_id": {
+      "type": "string",
+      "description": "Reference to GlobalPatient entity ID (set after lookup/creation)"
+    },
+    "patient_visit_id": {
+      "type": "string",
+      "description": "Reference to the associated PatientVisit entity ID"
+    },
+    "age_years": {
+      "type": "number",
+      "description": "Age in years at time of transfer"
+    },
+    "age_months": {
+      "type": "number",
+      "description": "Age in months at time of transfer (supplement to years)"
+    },
+    "age_weeks": {
+      "type": "number",
+      "description": "Age in weeks at time of transfer (for very young patients)"
+    },
+    "sex": {
+      "type": "string",
+      "enum": [
+        "MI",
+        "MC",
+        "FI",
+        "FS"
+      ],
+      "description": "Sex: Male Intact, Male Castrated, Female Intact, Female Spayed"
+    },
+    "species": {
+      "type": "string",
+      "enum": [
+        "Canine",
+        "Feline",
+        "Equine",
+        "Bovine",
+        "Avian",
+        "Exotic",
+        "Other"
+      ],
+      "description": "Species"
+    },
+    "breed": {
+      "type": "string",
+      "description": "Breed (required)"
+    },
+    "location": {
+      "type": "string",
+      "enum": [
+        "ICU",
+        "PCW",
+        "ER",
+        "Ward",
+        "Recovery",
+        "Imaging",
+        "OR",
+        "Other"
+      ],
+      "description": "Current patient location"
+    },
+    "problem_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Structured list of problems / diagnoses"
+    },
+    "requesting_service": {
+      "type": "string",
+      "description": "Service initiating the transfer"
+    },
+    "receiving_service": {
+      "type": "string",
+      "description": "Primary receiving service (kept for backward compat)"
+    },
+    "receiving_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "All receiving services (supports double transfers \u2014 up to 2)"
+    },
+    "requesting_clinician": {
+      "type": "string",
+      "description": "Person initiating the transfer"
+    },
+    "estimate": {
+      "type": "number",
+      "description": "Financial estimate discussed with owners"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional transfer notes"
+    },
+    "already_transferred": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the patient has already been transferred"
+    }
+  },
+  "required": [
+    "patient_name",
+    "patient_id",
+    "species",
+    "breed",
+    "requesting_service",
+    "receiving_service",
+    "requesting_clinician"
+  ]
+}

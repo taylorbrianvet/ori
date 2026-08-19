@@ -1,0 +1,160 @@
+{
+  "name": "BandageChange",
+  "type": "object",
+  "properties": {
+    "wound_case_id": {
+      "type": "string",
+      "description": "Reference to WoundCase entity ID"
+    },
+    "wound_location": {
+      "type": "string",
+      "description": "Which wound this bandage change is for"
+    },
+    "clinician": {
+      "type": "string",
+      "description": "Clinician performing wound care"
+    },
+    "service": {
+      "type": "string",
+      "description": "Clinical service"
+    },
+    "change_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of bandage change"
+    },
+    "transcript": {
+      "type": "string",
+      "description": "Full voice transcript for this bandage change session"
+    },
+    "image_pre_url": {
+      "type": "string",
+      "description": "Pre wound care image URL"
+    },
+    "image_post_url": {
+      "type": "string",
+      "description": "Post wound care image URL"
+    },
+    "wound_type": {
+      "type": "string",
+      "enum": [
+        "Open wound",
+        "Graft site",
+        "Abscess",
+        "Dehiscence",
+        "Surgical wound",
+        "Laceration",
+        "Pressure wound",
+        "Other"
+      ],
+      "description": "Type of wound"
+    },
+    "exudate_type": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Serous",
+        "Serosanguineous",
+        "Sanguineous",
+        "Purulent",
+        "Mucopurulent"
+      ],
+      "description": "Type of exudate"
+    },
+    "exudate_amount": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Minimal",
+        "Mild",
+        "Moderate",
+        "Marked"
+      ],
+      "description": "Amount of exudate"
+    },
+    "pocketing_present": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether pocketing is present"
+    },
+    "pocketing_description": {
+      "type": "string",
+      "description": "Description of pocketing, e.g. '5cm dorsally, 1cm ventrally'"
+    },
+    "granulation_tissue": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether granulation tissue is present"
+    },
+    "granulation_description": {
+      "type": "string",
+      "description": "Description of granulation tissue, e.g. 'Healthy granulation tissue, 70% of wound bed'"
+    },
+    "debridement_performed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether debridement was performed"
+    },
+    "debridement_type": {
+      "type": "string",
+      "description": "Type of debridement, e.g. 'Sharp debridement'"
+    },
+    "wound_closed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether wound was closed"
+    },
+    "suture_type": {
+      "type": "string",
+      "description": "Suture material and pattern used, e.g. '3-0 nylon, simple interrupted'"
+    },
+    "topical_therapy": {
+      "type": "string",
+      "description": "Topical medication applied, e.g. 'Topical amikacin gel', 'Triple antibiotic'"
+    },
+    "primary_dressing": {
+      "type": "string",
+      "description": "Primary wound dressing, e.g. 'Non-adherent pad', 'Honey alginate', 'Silver alginate', 'Prisma'"
+    },
+    "secondary_dressing": {
+      "type": "string",
+      "description": "Secondary dressing layer, e.g. '2x ABD pads', 'Hydrophilic foam', 'Cast padding'"
+    },
+    "bandage_type": {
+      "type": "string",
+      "enum": [
+        "Tie-over",
+        "Modified Robert Jones",
+        "Adherent Hypafix",
+        "Soft padded",
+        "Robert Jones",
+        "Other"
+      ],
+      "description": "Type of bandage"
+    },
+    "next_change_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Scheduled date for next bandage change"
+    },
+    "wound_healed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this wound is considered fully healed at this visit"
+    },
+    "additional_notes": {
+      "type": "string",
+      "description": "Additional notes not captured elsewhere"
+    },
+    "ai_processed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether AI has parsed this entry"
+    }
+  },
+  "required": [
+    "wound_case_id",
+    "wound_location",
+    "change_date"
+  ]
+}

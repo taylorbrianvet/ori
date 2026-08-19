@@ -1,0 +1,59 @@
+{
+  "name": "Estimate",
+  "type": "object",
+  "properties": {
+    "service_id": {
+      "type": "string",
+      "description": "Associated service ID"
+    },
+    "service_name": {
+      "type": "string",
+      "description": "Service name (denormalized for display)"
+    },
+    "procedure_name": {
+      "type": "string",
+      "description": "Name of the procedure"
+    },
+    "species": {
+      "type": "string",
+      "enum": [
+        "Canine",
+        "Feline",
+        "Equine",
+        "Bovine",
+        "Avian",
+        "Exotic",
+        "Other"
+      ],
+      "description": "Optional species this estimate applies to"
+    },
+    "estimate_low": {
+      "type": "number",
+      "description": "Low end of the price estimate"
+    },
+    "estimate_high": {
+      "type": "number",
+      "description": "High end of the price estimate"
+    },
+    "includes_anesthesia": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether anesthesia is included in the estimate"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the procedure"
+    },
+    "linked_estimate_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of other estimates linked to this one"
+    }
+  },
+  "required": [
+    "service_name",
+    "procedure_name"
+  ]
+}

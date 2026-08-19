@@ -1,0 +1,54 @@
+{
+  "name": "StudentOnCallSchedule",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the shift (ISO format)"
+    },
+    "service": {
+      "type": "string",
+      "enum": [
+        "Neurosurgery",
+        "Surgery"
+      ],
+      "description": "Service for this shift"
+    },
+    "shift_period": {
+      "type": "string",
+      "enum": [
+        "day",
+        "night"
+      ],
+      "description": "Day shift (8am-8pm) or night shift (8pm-8am)"
+    },
+    "position": {
+      "type": "string",
+      "enum": [
+        "primary",
+        "secondary"
+      ],
+      "description": "Primary or secondary position"
+    },
+    "student_name": {
+      "type": "string",
+      "description": "Name of the student assigned to this shift"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Email of the student assigned to this shift"
+    },
+    "block_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start date of the two-week block this shift belongs to"
+    }
+  },
+  "required": [
+    "date",
+    "service",
+    "shift_period",
+    "position"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Announcement",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Announcement title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Announcement message body"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Priority level"
+    },
+    "service_id": {
+      "type": "string",
+      "description": "Associated service ID (optional, null for hospital-wide)"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the announcement is active"
+    }
+  },
+  "required": [
+    "title",
+    "message"
+  ]
+}

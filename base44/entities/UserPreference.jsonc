@@ -1,0 +1,17 @@
+{
+  "name": "UserPreference",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email"
+    },
+    "selected_department": {
+      "type": "string",
+      "description": "Department selected for filtering on EducationalRounds page"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "name": "Staff",
+  "type": "object",
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "description": "First name"
+    },
+    "last_name": {
+      "type": "string",
+      "description": "Last name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "department": {
+      "type": "string",
+      "enum": [
+        "Anesthesia",
+        "Cardiology",
+        "Clinical Pathology",
+        "Dermatology",
+        "Emergency and Critical Care",
+        "Internal Medicine",
+        "Interventional Radiology",
+        "Neurology",
+        "Nutrition",
+        "Oncology",
+        "Ophthalmology",
+        "Surgery",
+        "Radiology",
+        "Hospital"
+      ],
+      "description": "Primary department"
+    },
+    "service": {
+      "type": "string",
+      "enum": [
+        "Anesthesia - Small Animal",
+        "Anesthesia - Large Animal",
+        "Cardiology",
+        "Clinical Pathology",
+        "Dermatology",
+        "Emergency",
+        "Critical Care",
+        "Internal Medicine",
+        "Interventional Radiology",
+        "Neurology",
+        "Nutrition",
+        "Medical Oncology",
+        "Radiation Oncology",
+        "Ophthalmology",
+        "Orthopedic Surgery",
+        "Primary Care",
+        "General Surgery",
+        "Radiology - Imaging",
+        "Radiology - Ultrasound",
+        "Soft Tissue Surgery",
+        "Hospital"
+      ],
+      "description": "Specific service within department"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "Faculty",
+        "Resident",
+        "Intern",
+        "Technician",
+        "Student"
+      ],
+      "description": "Role / training level"
+    },
+    "profile_image_url": {
+      "type": "string",
+      "description": "Profile photo URL"
+    },
+    "receive_transfer_emails": {
+      "type": "boolean",
+      "default": true,
+      "description": "Opt in to daily 6am inter-service transfer emails"
+    },
+    "is_service_admin": {
+      "type": "boolean",
+      "default": false,
+      "description": "Can upload and manage on-call schedules for their service"
+    },
+    "can_edit_estimates": {
+      "type": "boolean",
+      "default": false,
+      "description": "Can add and edit estimates for their own service"
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name",
+    "department",
+    "role"
+  ]
+}

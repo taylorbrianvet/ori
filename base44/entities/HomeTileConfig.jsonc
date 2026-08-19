@@ -1,0 +1,18 @@
+{
+  "name": "HomeTileConfig",
+  "type": "object",
+  "properties": {
+    "tile_key": {
+      "type": "string",
+      "description": "Unique identifier for the tile (e.g. 'my_workspace')"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Custom image URL for this tile"
+    }
+  },
+  "required": [
+    "tile_key",
+    "image_url"
+  ]
+}

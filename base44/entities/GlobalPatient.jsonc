@@ -1,0 +1,87 @@
+{
+  "name": "GlobalPatient",
+  "type": "object",
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "description": "Unique hospital patient ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Patient (animal) name"
+    },
+    "birthdate": {
+      "type": "string",
+      "format": "date",
+      "description": "Back-calculated birthdate from age at time of first entry"
+    },
+    "age_years": {
+      "type": "number",
+      "description": "Age in years at time of record creation (used to calculate birthdate)"
+    },
+    "age_months": {
+      "type": "number",
+      "description": "Age in months at time of record creation (supplement to years)"
+    },
+    "age_weeks": {
+      "type": "number",
+      "description": "Age in weeks at time of record creation (for very young patients)"
+    },
+    "species": {
+      "type": "string",
+      "enum": [
+        "Canine",
+        "Feline",
+        "Equine",
+        "Bovine",
+        "Avian",
+        "Exotic",
+        "Other"
+      ],
+      "description": "Species"
+    },
+    "breed": {
+      "type": "string",
+      "description": "Breed"
+    },
+    "sex": {
+      "type": "string",
+      "enum": [
+        "Female Spayed",
+        "Female Intact",
+        "Male Neutered",
+        "Male Intact"
+      ],
+      "description": "Sex / reproductive status"
+    },
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Aggression Alert",
+          "Escape Risk",
+          "Handler Risk",
+          "Other"
+        ]
+      },
+      "description": "Behavioral or safety alerts"
+    },
+    "infectious_status": {
+      "type": "string",
+      "enum": [
+        "Negative",
+        "MRSP Positive",
+        "ESBL Positive",
+        "Other Positive"
+      ],
+      "default": "Negative",
+      "description": "Infectious disease status \u2014 can be updated when cleared"
+    }
+  },
+  "required": [
+    "patient_id",
+    "name",
+    "species"
+  ]
+}

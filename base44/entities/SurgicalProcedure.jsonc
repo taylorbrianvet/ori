@@ -1,0 +1,27 @@
+{
+  "name": "SurgicalProcedure",
+  "type": "object",
+  "properties": {
+    "procedure_name": {
+      "type": "string",
+      "description": "Name of the surgical procedure"
+    },
+    "subcategory": {
+      "type": "string",
+      "description": "Subcategory within the category (e.g. Stomach, Elbow, Laparoscopy)"
+    },
+    "category": {
+      "type": "string",
+      "description": "Broad surgical category (e.g. Gastrointestinal Surgery, Orthopedics - Fracture Fixation)"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this procedure is available for selection"
+    }
+  },
+  "required": [
+    "procedure_name",
+    "category"
+  ]
+}

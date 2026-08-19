@@ -1,0 +1,28 @@
+{
+  "name": "SplitShiftDay",
+  "type": "object",
+  "properties": {
+    "service": {
+      "type": "string",
+      "enum": [
+        "Anesthesia",
+        "Surgery",
+        "Neurosurgery"
+      ],
+      "description": "Service this split shift day belongs to"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date that should be treated as a split shift (8am\u20138pm and 8pm\u20138am)"
+    },
+    "label": {
+      "type": "string",
+      "description": "Optional label for this day (e.g. Spring Break, Holiday)"
+    }
+  },
+  "required": [
+    "service",
+    "date"
+  ]
+}

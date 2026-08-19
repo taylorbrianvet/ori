@@ -1,0 +1,88 @@
+{
+  "name": "OnCallSchedule",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "On-call date (shift runs 8am this date to 8am next date)"
+    },
+    "service": {
+      "type": "string",
+      "enum": [
+        "Emergency",
+        "Critical Care",
+        "HP TPE",
+        "Internal Medicine",
+        "Interventional Radiology",
+        "Endoscopy",
+        "Cardiology",
+        "Surgery",
+        "Orthopedic Surgery",
+        "Neurosurgery",
+        "Neuromedicine",
+        "Oncology",
+        "Ophthalmology",
+        "Radiology",
+        "Dermatology",
+        "Anesthesia",
+        "Pharmacy",
+        "Clinical Pathology"
+      ],
+      "description": "On-call service"
+    },
+    "primary_name": {
+      "type": "string",
+      "description": "Primary on-call person name"
+    },
+    "primary_role": {
+      "type": "string",
+      "description": "Primary person role (e.g. Surgery Resident)"
+    },
+    "primary_phone": {
+      "type": "string",
+      "description": "Primary person phone"
+    },
+    "primary_email": {
+      "type": "string",
+      "description": "Primary person email"
+    },
+    "secondary_name": {
+      "type": "string",
+      "description": "Secondary / backup on-call name"
+    },
+    "secondary_role": {
+      "type": "string",
+      "description": "Secondary person role"
+    },
+    "secondary_phone": {
+      "type": "string",
+      "description": "Secondary person phone"
+    },
+    "secondary_email": {
+      "type": "string",
+      "description": "Secondary person email"
+    },
+    "tertiary_name": {
+      "type": "string",
+      "description": "Tertiary on-call name (optional)"
+    },
+    "tertiary_role": {
+      "type": "string",
+      "description": "Tertiary person role"
+    },
+    "tertiary_phone": {
+      "type": "string",
+      "description": "Tertiary person phone"
+    },
+    "tertiary_email": {
+      "type": "string",
+      "description": "Tertiary person email"
+    }
+  },
+  "required": [
+    "date",
+    "service",
+    "primary_name"
+  ]
+}

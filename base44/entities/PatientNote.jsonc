@@ -1,0 +1,28 @@
+{
+  "name": "PatientNote",
+  "type": "object",
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to Patient entity ID"
+    },
+    "note_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the note"
+    },
+    "content": {
+      "type": "string",
+      "description": "Note content - progress notes, updates, plans"
+    },
+    "clinician": {
+      "type": "string",
+      "description": "Clinician who entered the note"
+    }
+  },
+  "required": [
+    "patient_id",
+    "note_date",
+    "content"
+  ]
+}

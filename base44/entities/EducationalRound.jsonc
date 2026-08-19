@@ -1,0 +1,130 @@
+{
+  "name": "EducationalRound",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the educational round"
+    },
+    "departments": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Surgery",
+          "Internal Medicine",
+          "Emergency & Critical Care",
+          "Neurology",
+          "Oncology",
+          "Dermatology",
+          "Cardiology",
+          "Ophthalmology",
+          "Radiology",
+          "Anesthesia"
+        ]
+      },
+      "description": "Departments running the rounds (can be multiple)"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "Journal Club",
+        "Textbook Review",
+        "Morbidity & Mortality",
+        "Formal Case Presentation",
+        "Seminar",
+        "Other"
+      ],
+      "description": "Type of educational event"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Topic or description of the rounds content"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "Start time (HH:MM)"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "End time (HH:MM)"
+    },
+    "clinician": {
+      "type": "string",
+      "description": "Primary clinician / faculty leading rounds"
+    },
+    "presenters_everyone": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, all residents in all departments are presenters"
+    },
+    "presenters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of specific presenter names"
+    },
+    "attendance_everyone": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, all residents in all departments should attend"
+    },
+    "attendance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of specific resident names expected to attend"
+    },
+    "faculty_present": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of faculty names who were present"
+    },
+    "journal_assignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "resident": {
+            "type": "string"
+          },
+          "journal_id": {
+            "type": "string"
+          },
+          "citation": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Array of {resident, journal_id, citation} for journal club article assignments"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "approved",
+        "completed",
+        "cancelled"
+      ],
+      "default": "scheduled",
+      "description": "scheduled (not approved), approved (visible for logging), completed (no logging), cancelled"
+    },
+    "logged_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of user emails who have logged attendance"
+    }
+  },
+  "required": [
+    "date",
+    "event_type",
+    "departments"
+  ]
+}

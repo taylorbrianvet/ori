@@ -1,0 +1,72 @@
+{
+  "name": "PharmacyRefillRequest",
+  "type": "object",
+  "properties": {
+    "clinician_name": {
+      "type": "string",
+      "description": "Name of clinician requesting refill"
+    },
+    "clinician_role": {
+      "type": "string",
+      "enum": [
+        "Faculty",
+        "Resident",
+        "Intern"
+      ],
+      "description": "Role of clinician"
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Patient ID"
+    },
+    "patient_name": {
+      "type": "string",
+      "description": "Patient name"
+    },
+    "medication": {
+      "type": "string",
+      "description": "Medication name and strength (e.g., Trazodone 150mg tablet)"
+    },
+    "instructions": {
+      "type": "string",
+      "description": "Medication instructions (e.g., half tablet by mouth every 8-12 hours as needed)"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Refill quantity requested"
+    },
+    "service": {
+      "type": "string",
+      "description": "Service this refill belongs to"
+    },
+    "last_prescribed_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date medication was last prescribed"
+    },
+    "approved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether refill request has been approved by clinician"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "completed"
+      ],
+      "default": "pending",
+      "description": "Status of refill request"
+    }
+  },
+  "required": [
+    "clinician_name",
+    "patient_id",
+    "patient_name",
+    "medication",
+    "instructions",
+    "quantity",
+    "service"
+  ]
+}

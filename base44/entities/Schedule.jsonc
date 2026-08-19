@@ -1,0 +1,68 @@
+{
+  "name": "Schedule",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Schedule date"
+    },
+    "service_id": {
+      "type": "string",
+      "description": "Associated service ID"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Assigned user ID"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Display name of the assigned user"
+    },
+    "assignment_type": {
+      "type": "string",
+      "enum": [
+        "clinic",
+        "on_call",
+        "surgery",
+        "rounds",
+        "admin"
+      ],
+      "description": "Type of assignment"
+    },
+    "subtype": {
+      "type": "string",
+      "description": "Role subtype: faculty, resident, intern, technician"
+    },
+    "team_name": {
+      "type": "string",
+      "description": "Team name (e.g. Team 1, Team 2, or a custom split name)"
+    },
+    "split_name": {
+      "type": "string",
+      "description": "Split label if teams are divided"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "Start time (HH:MM)"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "End time (HH:MM)"
+    },
+    "on_call": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is an on-call shift"
+    },
+    "on_clinic": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a clinic shift"
+    }
+  },
+  "required": [
+    "date",
+    "service_id"
+  ]
+}

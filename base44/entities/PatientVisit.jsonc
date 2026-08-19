@@ -1,0 +1,192 @@
+{
+  "name": "PatientVisit",
+  "type": "object",
+  "properties": {
+    "global_patient_id": {
+      "type": "string",
+      "description": "Reference to GlobalPatient entity ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Patient name (denormalized from GlobalPatient for display)"
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Hospital patient ID (denormalized from GlobalPatient)"
+    },
+    "species": {
+      "type": "string",
+      "enum": [
+        "Canine",
+        "Feline",
+        "Equine",
+        "Bovine",
+        "Avian",
+        "Exotic",
+        "Other"
+      ],
+      "description": "Species (denormalized)"
+    },
+    "breed": {
+      "type": "string",
+      "description": "Breed (denormalized)"
+    },
+    "sex": {
+      "type": "string",
+      "enum": [
+        "Female Spayed",
+        "Female Intact",
+        "Male Neutered",
+        "Male Intact"
+      ],
+      "description": "Sex (denormalized)"
+    },
+    "age_years": {
+      "type": "number",
+      "description": "Age in years at time of visit (snapshot from GlobalPatient birthdate)"
+    },
+    "age_months": {
+      "type": "number",
+      "description": "Age in months at time of visit (snapshot)"
+    },
+    "age_weeks": {
+      "type": "number",
+      "description": "Age in weeks at time of visit (snapshot for very young patients)"
+    },
+    "weight_kg": {
+      "type": "number",
+      "description": "Weight in kg at time of visit"
+    },
+    "patient_type": {
+      "type": "string",
+      "enum": [
+        "Inpatient",
+        "Day Patient",
+        "Appointment",
+        "Discharged"
+      ],
+      "default": "Inpatient",
+      "description": "Inpatient = admitted; Day Patient = appointment only; Appointment = scheduled future visit; Discharged = closed visit"
+    },
+    "involved_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "All services involved in this visit. For appointments: all booked services. For inpatients: reduced to the single admitting service."
+    },
+    "transfer_status": {
+      "type": "string",
+      "enum": [
+        "pending_transfer",
+        "transferred_in",
+        "transferred_out",
+        "not_transferred"
+      ],
+      "default": "not_transferred",
+      "description": "Transfer state for this visit"
+    },
+    "transfer_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "single",
+        "double"
+      ],
+      "default": "none",
+      "description": "Single or double transfer"
+    },
+    "transfer_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date transfer was submitted / expected"
+    },
+    "primary_service_claimed": {
+      "type": "string",
+      "description": "For double transfers: service that claimed primary \u2014 triggers involved_services reduction to this single service"
+    },
+    "team": {
+      "type": "string",
+      "description": "Sub-team assignment (e.g. Team 1, IM1)"
+    },
+    "primary_clinician": {
+      "type": "string",
+      "description": "Primary clinician responsible for this visit"
+    },
+    "problem_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Active problem list for this visit"
+    },
+    "discharge_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "scheduled",
+        "discharged"
+      ],
+      "default": "active",
+      "description": "active = current; scheduled = DC pending; discharged = visit closed"
+    },
+    "scheduled_discharge_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled or actual discharge datetime"
+    },
+    "discharge_notes": {
+      "type": "string",
+      "description": "Notes at discharge"
+    },
+    "notes": {
+      "type": "string",
+      "description": "General visit notes"
+    },
+    "is_wound_patient": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether wound care is a primary focus of this visit"
+    },
+    "is_chemotherapy_patient": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether chemotherapy is a primary focus of this visit"
+    },
+    "originated_from_appointment": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this visit was originally created as an Appointment and later promoted"
+    },
+    "appointment_datetime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled appointment date and time (America/Chicago)"
+    },
+    "appointment_reason": {
+      "type": "string",
+      "enum": [
+        "Surgery",
+        "Recheck",
+        "Consult",
+        "Tech Appointment",
+        "General Appointment",
+        "Other"
+      ],
+      "description": "Reason for the appointment"
+    },
+    "appointment_clinician": {
+      "type": "string",
+      "description": "Clinician assigned to the appointment (Faculty / Resident / Intern)"
+    },
+    "appointment_notes": {
+      "type": "string",
+      "description": "Additional notes specific to the appointment"
+    }
+  },
+  "required": [
+    "global_patient_id",
+    "name",
+    "species"
+  ]
+}

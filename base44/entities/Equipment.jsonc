@@ -1,0 +1,27 @@
+{
+  "name": "Equipment",
+  "type": "object",
+  "properties": {
+    "service_id": {
+      "type": "string",
+      "description": "Associated service ID"
+    },
+    "equipment_name": {
+      "type": "string",
+      "description": "Name of the equipment"
+    },
+    "status": {
+      "type": "boolean",
+      "default": true,
+      "description": "Operational status (true = operational)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes about the equipment"
+    }
+  },
+  "required": [
+    "service_id",
+    "equipment_name"
+  ]
+}

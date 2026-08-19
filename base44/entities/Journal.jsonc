@@ -1,0 +1,120 @@
+{
+  "name": "Journal",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Article title"
+    },
+    "journal_name": {
+      "type": "string",
+      "description": "Journal name abbreviation (e.g. JAVMA, VCOT, JVIM)"
+    },
+    "journal_year": {
+      "type": "number",
+      "description": "Year of publication"
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of authors"
+    },
+    "abstract": {
+      "type": "string",
+      "description": "Article abstract"
+    },
+    "full_text": {
+      "type": "string",
+      "description": "Full extracted text from PDF"
+    },
+    "pdf_url": {
+      "type": "string",
+      "description": "URL to uploaded PDF"
+    },
+    "article_url": {
+      "type": "string",
+      "description": "External link to original article (DOI or URL)"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated summary of the article"
+    },
+    "ai_clinical_takeaway": {
+      "type": "string",
+      "description": "AI-generated 1-2 sentence clinical takeaway"
+    },
+    "associated_services": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Anesthesia",
+          "Cardiology",
+          "Clinical Pathology",
+          "Dermatology",
+          "Emergency",
+          "Critical Care",
+          "Internal Medicine",
+          "Interventional Radiology",
+          "Neurology",
+          "Nutrition",
+          "Medical Oncology",
+          "Radiation Oncology",
+          "Ophthalmology",
+          "Orthopedic Surgery",
+          "Primary Care",
+          "General Surgery",
+          "Radiology",
+          "Soft Tissue Surgery"
+        ]
+      },
+      "description": "Services this article is relevant to"
+    },
+    "procedures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Procedures discussed in the article"
+    },
+    "disease_processes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Disease processes or diagnoses discussed"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Key search terms extracted from the article"
+    },
+    "uploaded_by": {
+      "type": "string",
+      "description": "Email of the user who uploaded the article"
+    },
+    "uploaded_by_name": {
+      "type": "string",
+      "description": "Display name of the uploader"
+    },
+    "favorited_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of user emails who have favorited this article"
+    },
+    "ai_processed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether AI has processed this article"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}
